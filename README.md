@@ -2,6 +2,8 @@
 
 ## DEV Ortamı Kurulum
 
+.env için iletişime geçin [@ashetian](https://github.com/ashetian)
+
 ```bash
 npm install
 ```
