@@ -1,26 +1,115 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Temel Renkler - Açık Tema */
+  --background: #f8fafc;
+  --foreground: #1e293b;
+  --card: #ffffff;
+  --card-foreground: #1e293b;
+  
+  /* KTÜ Kurumsal Renkler - Mavi Tonları (Ön Plan) */
+  --primary: #1B71AC;           /* KTÜ Mavi */
+  --primary-hover: #0033B4;     /* KTÜ Koyu Mavi */
+  --primary-light: #E3F2FD;     /* Açık Mavi Arka Plan */
+  
+  /* Vurgu ve Destek Renkleri */
+  --accent: #1B71AC;            /* KTÜ Mavi (vurgu) */
+  --accent-light: #E8F4F8;      /* Açık Mavi Ton */
+  --gold: #C7B247;              /* KTÜ Gold (özel vurgular için) */
+  
+  /* Nötr Tonlar */
+  --border: #e2e8f0;
+  --border-dark: #cbd5e1;
+  --muted: #919498;             /* KTÜ Gri */
+  --muted-bg: #f1f5f9;
+  
+  /* Durum Renkleri */
+  --success: #3B8238;           /* KTÜ Yeşil */
+  --warning: #DDA11E;           /* KTÜ Sarı */
+  --error: #A12123;             /* KTÜ Kırmızı */
+  
+  /* Gölgeler */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-light: var(--primary-light);
+  --color-accent: var(--accent);
+  --color-accent-light: var(--accent-light);
+  --color-gold: var(--gold);
+  --color-border: var(--border);
+  --color-muted: var(--muted);
+  --color-muted-bg: var(--muted-bg);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-error: var(--error);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #0f172a;
+    --foreground: #f1f5f9;
+    --card: #1e293b;
+    --card-foreground: #f1f5f9;
+    
+    /* KTÜ Kurumsal Renkler - Koyu Tema */
+    --primary: #1B71AC;           /* KTÜ Mavi (koyu temada daha parlak) */
+    --primary-hover: #2196F3;     /* Hover için daha açık ton */
+    --primary-light: #0d3a5c;     /* Koyu arka plan için */
+    
+    --accent: #1B71AC;            /* KTÜ Mavi */
+    --accent-light: #0d3a5c;      /* Koyu ton */
+    --gold: #C7B247;              /* KTÜ Gold */
+    
+    --border: #334155;
+    --border-dark: #475569;
+    --muted: #919498;             /* KTÜ Gri */
+    --muted-bg: #1e293b;
+    
+    --success: #3B8238;           /* KTÜ Yeşil */
+    --warning: #DDA11E;           /* KTÜ Sarı */
+    --error: #A12123;             /* KTÜ Kırmızı */
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Özel Scroll Bar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--muted-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--muted);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+/* Smooth transitions */
+* {
+  transition-property: color, background-color, border-color;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
 }
