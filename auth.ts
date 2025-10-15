@@ -1,13 +1,13 @@
-import CredentialsProvider from "next-auth/providers/credentials";
-import { JWT } from "next-auth/jwt";
-import { Session, User as NextAuthUser } from "next-auth";
-import prisma from "./lib/db";
+// auth.ts
+import NextAuth from "next-auth";
+import Credentials from "next-auth/providers/credentials";
+import prisma from "@/lib/db";
 import bcrypt from "bcryptjs";
 
-export const authOptions = {
-  session: { strategy: "jwt" as const },
+export const { handlers, auth, signIn, signOut } = NextAuth({
+  session: { strategy: "jwt" },
   providers: [
-    CredentialsProvider({
+    Credentials({
       name: "Credentials",
       credentials: {
         email: {
@@ -17,7 +17,7 @@ export const authOptions = {
         },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials: Record<string, unknown> | undefined) {
+      async authorize(credentials) {
         const email =
           typeof credentials?.email === "string"
             ? credentials.email.toLowerCase().trim()
@@ -50,19 +50,15 @@ export const authOptions = {
           phoneNumber: user.phoneNumber,
           image: user.image || "",
           role: user.role,
-        } as NextAuthUser;
+        };
       },
     }),
   ],
-  pages: { signIn: "/login" },
+  pages: {
+    signIn: "/login",
+  },
   callbacks: {
-    async jwt({
-      token,
-      user,
-    }: {
-      token: JWT;
-      user?: NextAuthUser | undefined;
-    }) {
+    async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
         token.firstName = user.firstName;
@@ -73,25 +69,13 @@ export const authOptions = {
       }
       return token;
     },
-    async session({
-      session,
-      token,
-    }: {
-      session: Session;
-      token: JWT & {
-        id?: string;
-        firstName?: string;
-        lastName?: string;
-        phoneNumber?: string;
-        role?: string;
-      };
-    }) {
+    async session({ session, token }) {
       if (session.user) {
-        session.user.id = token.id!;
-        session.user.firstName = token.firstName!;
-        session.user.lastName = token.lastName!;
-        session.user.email = token.email!;
-        session.user.phoneNumber = token.phoneNumber!;
+        session.user.id = token.id as string;
+        session.user.firstName = token.firstName as string;
+        session.user.lastName = token.lastName as string;
+        session.user.email = token.email as string;
+        session.user.phoneNumber = token.phoneNumber as string;
         session.user.image = token.image as string;
         session.user.role = token.role as "admin" | "user";
       }
@@ -99,4 +83,4 @@ export const authOptions = {
     },
   },
   secret: process.env.NEXTAUTH_SECRET,
-};
+});
