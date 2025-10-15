@@ -39,7 +39,8 @@ const mockAlumniDetails = {
       company: "Tech Corp",
       position: "Kıdemli Yazılım Geliştirici",
       period: "2021 - Günümüz",
-      description: "Full-stack web uygulamaları geliştirme, mikroservis mimarisi tasarımı",
+      description:
+        "Full-stack web uygulamaları geliştirme, mikroservis mimarisi tasarımı",
     },
     {
       company: "Startup XYZ",
@@ -62,7 +63,12 @@ export default function AlumniProfile({ params }: { params: { id: string } }) {
             href="/"
             className="inline-flex items-center gap-2 text-blue-100 hover:text-white mb-6 transition-colors"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -84,20 +90,31 @@ export default function AlumniProfile({ params }: { params: { id: string } }) {
                 />
               ) : (
                 <span className="text-5xl font-bold text-white">
-                  {alumni.name.split(" ").map((n) => n[0]).join("").toUpperCase()}
+                  {alumni.name
+                    .split(" ")
+                    .map((n) => n[0])
+                    .join("")
+                    .toUpperCase()}
                 </span>
               )}
             </div>
 
             {/* Temel Bilgiler */}
             <div className="flex-1">
-              <h1 className="text-3xl sm:text-4xl font-bold mb-2">{alumni.name}</h1>
+              <h1 className="text-3xl sm:text-4xl font-bold mb-2">
+                {alumni.name}
+              </h1>
               <p className="text-xl text-blue-100 mb-2">
                 {alumni.jobTitle} • {alumni.company}
               </p>
               <div className="flex flex-wrap gap-4 text-blue-100">
                 <div className="flex items-center gap-2">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -108,7 +125,12 @@ export default function AlumniProfile({ params }: { params: { id: string } }) {
                   {alumni.faculty}
                 </div>
                 <div className="flex items-center gap-2">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -125,7 +147,12 @@ export default function AlumniProfile({ params }: { params: { id: string } }) {
                   {alumni.city}
                 </div>
                 <div className="flex items-center gap-2">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -158,7 +185,11 @@ export default function AlumniProfile({ params }: { params: { id: string } }) {
                     rel="noopener noreferrer"
                     className="px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-lg transition-colors flex items-center gap-2"
                   >
-                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <svg
+                      className="w-5 h-5"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
                       <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
                     </svg>
                     LinkedIn
@@ -171,7 +202,12 @@ export default function AlumniProfile({ params }: { params: { id: string } }) {
                     rel="noopener noreferrer"
                     className="px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-lg transition-colors flex items-center gap-2"
                   >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -196,7 +232,12 @@ export default function AlumniProfile({ params }: { params: { id: string } }) {
             {/* Hakkında */}
             <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
               <h2 className="text-2xl font-semibold text-foreground mb-4 flex items-center gap-2">
-                <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg
+                  className="w-6 h-6 text-primary"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -206,13 +247,20 @@ export default function AlumniProfile({ params }: { params: { id: string } }) {
                 </svg>
                 Hakkında
               </h2>
-              <p className="text-foreground leading-relaxed whitespace-pre-line">{alumni.bio}</p>
+              <p className="text-foreground leading-relaxed whitespace-pre-line">
+                {alumni.bio}
+              </p>
             </div>
 
             {/* Deneyim */}
             <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
               <h2 className="text-2xl font-semibold text-foreground mb-4 flex items-center gap-2">
-                <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg
+                  className="w-6 h-6 text-primary"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -225,7 +273,9 @@ export default function AlumniProfile({ params }: { params: { id: string } }) {
               <div className="space-y-6">
                 {alumni.experience.map((exp, index) => (
                   <div key={index} className="border-l-2 border-primary pl-4">
-                    <h3 className="text-lg font-semibold text-foreground">{exp.position}</h3>
+                    <h3 className="text-lg font-semibold text-foreground">
+                      {exp.position}
+                    </h3>
                     <p className="text-primary font-medium">{exp.company}</p>
                     <p className="text-sm text-muted mb-2">{exp.period}</p>
                     <p className="text-foreground">{exp.description}</p>
@@ -239,13 +289,20 @@ export default function AlumniProfile({ params }: { params: { id: string } }) {
           <div className="space-y-6">
             {/* İletişim */}
             <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
-              <h3 className="text-xl font-semibold text-foreground mb-4">İletişim</h3>
+              <h3 className="text-xl font-semibold text-foreground mb-4">
+                İletişim
+              </h3>
               <div className="space-y-3">
                 <a
                   href={`mailto:${alumni.email}`}
                   className="flex items-center gap-3 text-foreground hover:text-primary transition-colors"
                 >
-                  <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg
+                    className="w-5 h-5 flex-shrink-0"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -259,7 +316,12 @@ export default function AlumniProfile({ params }: { params: { id: string } }) {
                   href={`tel:${alumni.phone}`}
                   className="flex items-center gap-3 text-foreground hover:text-primary transition-colors"
                 >
-                  <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg
+                    className="w-5 h-5 flex-shrink-0"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -274,7 +336,9 @@ export default function AlumniProfile({ params }: { params: { id: string } }) {
 
             {/* Yetenekler */}
             <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
-              <h3 className="text-xl font-semibold text-foreground mb-4">Yetenekler</h3>
+              <h3 className="text-xl font-semibold text-foreground mb-4">
+                Yetenekler
+              </h3>
               <div className="flex flex-wrap gap-2">
                 {alumni.skills.map((skill) => (
                   <span
@@ -289,11 +353,18 @@ export default function AlumniProfile({ params }: { params: { id: string } }) {
 
             {/* Diller */}
             <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
-              <h3 className="text-xl font-semibold text-foreground mb-4">Diller</h3>
+              <h3 className="text-xl font-semibold text-foreground mb-4">
+                Diller
+              </h3>
               <div className="space-y-3">
                 {alumni.languages.map((lang) => (
-                  <div key={lang.name} className="flex justify-between items-center">
-                    <span className="text-foreground font-medium">{lang.name}</span>
+                  <div
+                    key={lang.name}
+                    className="flex justify-between items-center"
+                  >
+                    <span className="text-foreground font-medium">
+                      {lang.name}
+                    </span>
                     <span className="text-sm text-muted">{lang.level}</span>
                   </div>
                 ))}
@@ -302,11 +373,17 @@ export default function AlumniProfile({ params }: { params: { id: string } }) {
 
             {/* Eğitim */}
             <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
-              <h3 className="text-xl font-semibold text-foreground mb-4">Eğitim</h3>
+              <h3 className="text-xl font-semibold text-foreground mb-4">
+                Eğitim
+              </h3>
               <div>
-                <h4 className="font-semibold text-foreground">{alumni.department}</h4>
+                <h4 className="font-semibold text-foreground">
+                  {alumni.department}
+                </h4>
                 <p className="text-muted text-sm">{alumni.faculty}</p>
-                <p className="text-muted text-sm">Mezuniyet: {alumni.graduationYear}</p>
+                <p className="text-muted text-sm">
+                  Mezuniyet: {alumni.graduationYear}
+                </p>
               </div>
             </div>
           </div>
@@ -315,4 +392,3 @@ export default function AlumniProfile({ params }: { params: { id: string } }) {
     </div>
   );
 }
-

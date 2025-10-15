@@ -28,10 +28,47 @@ Karadeniz Teknik Üniversitesi mezunlarını bir araya getiren, kariyer gelişim
 ### Kurulum
 
 .env dosyası için [@ashetian](https://github.com/ashetian) ile iletişime geçin.
+# 🎓 KTÜ Mezun Platformu
+
+Karadeniz Teknik Üniversitesi mezunlarını bir araya getiren, kariyer gelişimini destekleyen ve networking fırsatları sunan modern web platformu.
+
+![Next.js](https://img.shields.io/badge/Next.js-15.5-black?style=flat-square&logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat-square&logo=typescript)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.0-38bdf8?style=flat-square&logo=tailwind-css)
+![Prisma](https://img.shields.io/badge/Prisma-6.16-2D3748?style=flat-square&logo=prisma)
+
+---
+
+## ✨ Özellikler
+
+- **🔍 Gelişmiş Arama:** Real-time arama ve çoklu filtre seçenekleri (şehir, bölüm, iş alanı)
+- **👤 Detaylı Profiller:** Deneyim, yetenekler, sosyal medya linkleri ile kapsamlı mezun profilleri
+- **🎨 Modern Tasarım:** Kurumsal mavi tonları, açık/koyu tema desteği, mobil öncelikli responsive tasarım
+- **⚡ Hızlı & Akıcı:** Next.js 15 App Router, smooth animasyonlar, optimized performans
+
+---
+
+## 🚀 Hızlı Başlangıç
+
+### Gereksinimler
+- Node.js 20+
+- Docker
+- npm
+
+### Kurulum
+
+.env dosyası için [@ashetian](https://github.com/ashetian) ile iletişime geçin.
 
 ```bash
 # 1. Bağımlılıkları yükle
+# 1. Bağımlılıkları yükle
 npm install
+
+# 2. Docker ile veritabanını başlat
+docker compose -f docker-compose-dev.yml up
+
+# 3. Tarayıcıda aç
+# http://localhost:3000
 
 # 2. Docker ile veritabanını başlat
 docker compose -f docker-compose-dev.yml up
@@ -41,10 +78,13 @@ docker compose -f docker-compose-dev.yml up
 ```
 
 **Yeniden build (gerekirse):**
+**Yeniden build (gerekirse):**
 ```bash
+docker compose -f docker-compose-dev.yml build --no-cache
 docker compose -f docker-compose-dev.yml build --no-cache
 ```
 
+### Diğer Komutlar
 ### Diğer Komutlar
 ```bash
 npm run dev          # Geliştirme sunucusu

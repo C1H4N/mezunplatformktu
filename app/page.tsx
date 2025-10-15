@@ -3,6 +3,7 @@
 import { useState } from "react";
 import SearchFilters, { type FilterState } from "./components/SearchFilters";
 import AlumniCard from "./components/AlumniCard";
+import TurkeyMap from "./components/TurkeyMap";
 
 // Örnek mezun verileri - Gerçek uygulamada API'den gelecek
 const mockAlumni = [
@@ -98,8 +99,19 @@ const mockAlumni = [
 
 export default function Home() {
   const [filteredAlumni, setFilteredAlumni] = useState(mockAlumni);
+  const [selectedMapCity, setSelectedMapCity] = useState<string>("Tümü");
+  const [currentFilters, setCurrentFilters] = useState<FilterState>({
+    search: "",
+    city: "Tümü",
+    department: "Tümü",
+    jobField: "Tümü",
+  });
 
-  const handleFilterChange = (filters: FilterState) => {
+  const handleFilterChange = (
+    filters: FilterState,
+    mapCityOverride?: string
+  ) => {
+    setCurrentFilters(filters);
     let filtered = mockAlumni;
 
     // Arama filtresi
@@ -113,14 +125,19 @@ export default function Home() {
       );
     }
 
-    // Şehir filtresi
-    if (filters.city !== "Tümü") {
-      filtered = filtered.filter((alumni) => alumni.city === filters.city);
+    // Şehir filtresi (dropdown + harita birleşik)
+    const effectiveMapCity = mapCityOverride ?? selectedMapCity;
+    const cityFilter =
+      filters.city !== "Tümü" ? filters.city : effectiveMapCity;
+    if (cityFilter !== "Tümü") {
+      filtered = filtered.filter((alumni) => alumni.city === cityFilter);
     }
 
     // Bölüm filtresi
     if (filters.department !== "Tümü") {
-      filtered = filtered.filter((alumni) => alumni.department === filters.department);
+      filtered = filtered.filter(
+        (alumni) => alumni.department === filters.department
+      );
     }
 
     // İş alanı filtresi (jobTitle içinde arama)
@@ -133,59 +150,36 @@ export default function Home() {
     setFilteredAlumni(filtered);
   };
 
+  const handleMapCitySelect = (city: string) => {
+    setSelectedMapCity(city);
+    const updated = { ...currentFilters, city } as FilterState;
+    handleFilterChange(updated, city);
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Hero Section */}
-      <section className="bg-gradient-to-br from-primary via-primary-hover to-accent text-white py-12 sm:py-16 lg:py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
-              KTÜ Mezun Platformu
-            </h1>
-            <p className="text-lg sm:text-xl text-blue-100 max-w-3xl mx-auto">
-              Binlerce mezunumuzla bağlantı kurun, kariyer fırsatlarını keşfedin ve güçlü bir
-              network oluşturun.
-            </p>
-            <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <div className="flex items-center gap-2 text-blue-100">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                  />
-                </svg>
-                <span className="font-semibold">{mockAlumni.length}+ Mezun</span>
-              </div>
-              <div className="flex items-center gap-2 text-blue-100">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                  />
-                </svg>
-                <span className="font-semibold">Kariyer Fırsatları</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Ana İçerik */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-        {/* Arama ve Filtreler */}
-        <div className="mb-8">
-          <SearchFilters onFilterChange={handleFilterChange} />
+        {/* Türkiye Haritası ve Filtreler - Masaüstünde yan yana */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8 items-start">
+          <div className="lg:col-span-7">
+            <TurkeyMap
+              selectedCity={selectedMapCity}
+              onCitySelect={handleMapCitySelect}
+            />
+          </div>
+          <div className="lg:col-span-5">
+            <SearchFilters onFilterChange={handleFilterChange} />
+          </div>
         </div>
 
         {/* Sonuç Sayısı */}
         <div className="mb-6">
           <p className="text-muted">
-            <span className="font-semibold text-foreground">{filteredAlumni.length}</span> mezun
-            bulundu
+            <span className="font-semibold text-foreground">
+              {filteredAlumni.length}
+            </span>{" "}
+            mezun bulundu
           </p>
         </div>
 
@@ -213,7 +207,9 @@ export default function Home() {
                 />
               </svg>
             </div>
-            <h3 className="text-xl font-semibold text-foreground mb-2">Sonuç bulunamadı</h3>
+            <h3 className="text-xl font-semibold text-foreground mb-2">
+              Sonuç bulunamadı
+            </h3>
             <p className="text-muted">
               Arama kriterlerinizi değiştirerek tekrar deneyebilirsiniz.
             </p>

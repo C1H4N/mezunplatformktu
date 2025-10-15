@@ -6,32 +6,34 @@
   --foreground: #1e293b;
   --card: #ffffff;
   --card-foreground: #1e293b;
-  
-  /* Mavi Tonları - Kurumsal & Modern */
-  --primary: #2563eb;
-  --primary-hover: #1d4ed8;
-  --primary-light: #dbeafe;
-  
-  /* Vurgu Renkleri */
-  --accent: #0ea5e9;
-  --accent-light: #e0f2fe;
-  
+
+  /* KTÜ Kurumsal Renkler - Mavi Tonları (Ön Plan) */
+  --primary: #1b71ac; /* KTÜ Mavi */
+  --primary-hover: #0033b4; /* KTÜ Koyu Mavi */
+  --primary-light: #e3f2fd; /* Açık Mavi Arka Plan */
+
+  /* Vurgu ve Destek Renkleri */
+  --accent: #1b71ac; /* KTÜ Mavi (vurgu) */
+  --accent-light: #e8f4f8; /* Açık Mavi Ton */
+  --gold: #c7b247; /* KTÜ Gold (özel vurgular için) */
+
   /* Nötr Tonlar */
   --border: #e2e8f0;
   --border-dark: #cbd5e1;
-  --muted: #64748b;
+  --muted: #919498; /* KTÜ Gri */
   --muted-bg: #f1f5f9;
-  
+
   /* Durum Renkleri */
-  --success: #10b981;
-  --warning: #f59e0b;
-  --error: #ef4444;
-  
+  --success: #3b8238; /* KTÜ Yeşil */
+  --warning: #dda11e; /* KTÜ Sarı */
+  --error: #a12123; /* KTÜ Kırmızı */
+
   /* Gölgeler */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1),
+    0 4px 6px -4px rgb(0 0 0 / 0.1);
 }
 
 @theme inline {
@@ -43,6 +45,7 @@
   --color-primary-light: var(--primary-light);
   --color-accent: var(--accent);
   --color-accent-light: var(--accent-light);
+  --color-gold: var(--gold);
   --color-border: var(--border);
   --color-muted: var(--muted);
   --color-muted-bg: var(--muted-bg);
@@ -59,22 +62,24 @@
     --foreground: #f1f5f9;
     --card: #1e293b;
     --card-foreground: #f1f5f9;
-    
-    --primary: #3b82f6;
-    --primary-hover: #2563eb;
-    --primary-light: #1e3a8a;
-    
-    --accent: #0ea5e9;
-    --accent-light: #0c4a6e;
-    
+
+    /* KTÜ Kurumsal Renkler - Koyu Tema */
+    --primary: #1b71ac; /* KTÜ Mavi (koyu temada daha parlak) */
+    --primary-hover: #2196f3; /* Hover için daha açık ton */
+    --primary-light: #0d3a5c; /* Koyu arka plan için */
+
+    --accent: #1b71ac; /* KTÜ Mavi */
+    --accent-light: #0d3a5c; /* Koyu ton */
+    --gold: #c7b247; /* KTÜ Gold */
+
     --border: #334155;
     --border-dark: #475569;
-    --muted: #94a3b8;
+    --muted: #919498; /* KTÜ Gri */
     --muted-bg: #1e293b;
-    
-    --success: #10b981;
-    --warning: #f59e0b;
-    --error: #ef4444;
+
+    --success: #3b8238; /* KTÜ Yeşil */
+    --warning: #dda11e; /* KTÜ Sarı */
+    --error: #a12123; /* KTÜ Kırmızı */
   }
 }
 
