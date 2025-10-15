@@ -12,13 +12,20 @@ export default function Navbar() {
         <div className="flex justify-between items-center h-16">
           {/* Logo ve Başlık */}
           <div className="flex items-center gap-3">
-            <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+            <Link
+              href="/"
+              className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+            >
               <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-lg">KTÜ</span>
               </div>
               <div className="hidden sm:block">
-                <h1 className="text-lg font-semibold text-foreground">Mezun Platformu</h1>
-                <p className="text-xs text-muted">Karadeniz Teknik Üniversitesi</p>
+                <h1 className="text-lg font-semibold text-foreground">
+                  Mezun Platformu
+                </h1>
+                <p className="text-xs text-muted">
+                  Karadeniz Teknik Üniversitesi
+                </p>
               </div>
             </Link>
           </div>
@@ -38,13 +45,13 @@ export default function Navbar() {
               Mezunlar
             </Link>
             <Link
-              href="/api/auth/signin"
+              href="/login"
               className="px-4 py-2 rounded-lg text-foreground hover:bg-muted-bg hover:text-primary transition-colors font-medium"
             >
               Giriş
             </Link>
             <Link
-              href="/kayit"
+              href="/register"
               className="px-4 py-2 ml-2 rounded-lg bg-primary text-white hover:bg-primary-hover transition-colors font-medium shadow-sm"
             >
               Kayıt Ol
@@ -82,7 +89,12 @@ export default function Navbar() {
               aria-label="Menü"
             >
               {mobileMenuOpen ? (
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -91,7 +103,12 @@ export default function Navbar() {
                   />
                 </svg>
               ) : (
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -123,14 +140,14 @@ export default function Navbar() {
                 Mezunlar
               </Link>
               <Link
-                href="/api/auth/signin"
+                href="/login"
                 className="px-4 py-3 rounded-lg text-foreground hover:bg-muted-bg hover:text-primary transition-colors font-medium"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Giriş
               </Link>
               <Link
-                href="/kayit"
+                href="/register"
                 className="px-4 py-3 rounded-lg bg-primary text-white hover:bg-primary-hover transition-colors font-medium text-center shadow-sm"
                 onClick={() => setMobileMenuOpen(false)}
               >
@@ -143,4 +160,3 @@ export default function Navbar() {
     </nav>
   );
 }
-
