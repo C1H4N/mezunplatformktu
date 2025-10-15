@@ -4,7 +4,7 @@ import path from "path";
 
 export async function GET() {
   try {
-    const filePath = path.resolve(process.cwd(), "mezun_son.html");
+    const filePath = path.resolve(process.cwd(), "harita_svg.html");
     const content = await fs.readFile(filePath, "utf8");
 
     // Yalnızca SVG'yi ayıkla (id=svg-turkiye-haritasi)
