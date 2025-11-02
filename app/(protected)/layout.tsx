@@ -10,10 +10,15 @@ export default async function ProtectedLayout({
   // Server-side session kontrolü
   const session = await auth();
 
-  if (session) {
+  if (!session) {
     // Login yoksa giriş sayfasına yönlendir
-    return redirect("/");
+    return redirect("/login");
   }
 
-  return <main>{children}</main>;
+  return (
+    <div className="min-h-screen bg-zinc-950 text-white">
+      <Navbar />
+      <main className="max-w-7xl mx-auto px-4 py-8">{children}</main>
+    </div>
+  );
 }
