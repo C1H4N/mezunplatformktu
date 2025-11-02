@@ -3,6 +3,9 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import { SessionProvider } from "next-auth/react";
+import { Toaster } from "react-hot-toast";
+import { Session } from "./generated/prisma/index";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,8 +19,16 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "KTU Mezun Platformu",
-  description: "Karadeniz Teknik Üniversitesi Mezun Platformu - Mezunlarımızı bir araya getiren, kariyer gelişimini destekleyen networking platformu",
-  keywords: ["KTÜ", "Karadeniz Teknik Üniversitesi", "mezun", "alumni", "network", "kariyer"],
+  description:
+    "Karadeniz Teknik Üniversitesi Mezun Platformu - Mezunlarımızı bir araya getiren, kariyer gelişimini destekleyen networking platformu",
+  keywords: [
+    "KTÜ",
+    "Karadeniz Teknik Üniversitesi",
+    "mezun",
+    "alumni",
+    "network",
+    "kariyer",
+  ],
 };
 
 export default function RootLayout({
@@ -30,9 +41,33 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
       >
-        <Navbar />
-        {children}
-        <Footer />
+        <SessionProvider>
+          <Navbar />
+          {children}
+          <Footer />
+          <Toaster
+            position="bottom-right"
+            toastOptions={{
+              duration: 4000,
+              style: {
+                background: "#333",
+                color: "#fff",
+              },
+              success: {
+                style: {
+                  background: "#4BB543",
+                  color: "#fff",
+                },
+              },
+              error: {
+                style: {
+                  background: "#FF3333",
+                  color: "#fff",
+                },
+              },
+            }}
+          />
+        </SessionProvider>
       </body>
     </html>
   );

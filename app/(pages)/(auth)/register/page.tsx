@@ -11,10 +11,7 @@ import { z } from "zod";
 
 type Field = keyof z.infer<typeof registerSchema>;
 
-// NOT: Zod şemasında `password` ve `confirmPassword` alanlarının
-// eşleşme kontrolünü (refine) yaptığınız varsayılmıştır.
-
-export default function Register() {
+export default function RegisterPage() {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -32,15 +29,10 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  // "confirmPassword" de dahil tüm alanlar için Zod validasyonu yapılıyor.
   const handleChange = (field: Field | "confirmPassword", value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-
-    // Hata durumunu temizle
     setErrors((prev) => ({ ...prev, [field]: "" }));
 
-    // Anlık validasyon, Zod şeması üzerinden yapılır.
-    // confirmPassword için eşleşme kontrolü Zod'un refine metoduyla handleSubmit'e bırakılmalıdır.
     if (field !== "confirmPassword") {
       const fieldSchema = z.object({
         [field]: registerSchema.shape[field as Field],
@@ -53,64 +45,61 @@ export default function Register() {
           [field]: result.error.issues[0].message,
         }));
       }
-    } else {
-      // confirmPassword alanı için sadece value güncellemesi yapılır,
-      // eşleşme hatası handleSubmit'te toplanır.
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Zod, refine metodu sayesinde `password === confirmPassword` kontrolünü de yapar.
     const parsed = registerSchema.safeParse(formData);
+
     if (!parsed.success) {
       setErrors(getZodFieldErrors(parsed.error));
       toast.error("Lütfen formdaki hataları düzeltin.");
       return;
     }
 
-    // Validasyon başarılı: API çağrısı
     setLoading(true);
-
-    // Payload'da telefon numarasını ülke koduyla birleştiriyoruz
     const payload = {
-      firstName: formData.firstName,
-      lastName: formData.lastName,
+      firstName: formData.firstName.trim(),
+      lastName: formData.lastName.trim(),
       email: formData.email.toLowerCase(),
       phoneNumber: formData.countryCode + formData.phoneNumber,
       password: formData.password,
-      // confirmPassword, API'ye gönderilmez
     };
 
-    const res = await fetch("/api/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-    setLoading(false);
+    try {
+      const res = await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
 
-    if (res.ok) {
-      toast.success("Kayıt başarılı! Girişe yönlendiriliyorsun.");
-      router.push("/login");
-    } else {
-      const data = await res.json();
-      toast.error(data.message || "Kayıt sırasında bir hata oluştu.");
+      if (!res.ok) {
+        const data = await res.json();
+        toast.error(data.message || "Kayıt sırasında bir hata oluştu.");
+      } else {
+        toast.success("Kayıt başarılı! Giriş sayfasına yönlendiriliyorsun...");
+        setTimeout(() => router.push("/login"), 1500);
+      }
+    } catch (err) {
+      toast.error("Sunucuya bağlanılamadı.");
+    } finally {
+      setLoading(false);
     }
   };
 
   const inputClass = (field: Field | "confirmPassword") =>
-    `w-full px-4 py-2 bg-gray-700 border ${
+    `w-full px-4 py-2 rounded-md bg-zinc-800 border ${
       errors[field]
         ? "border-red-500 focus:ring-red-500"
-        : "border-gray-500 focus:ring-indigo-500" // Accent rengi
-    } focus:outline-none focus:ring-1 placeholder:text-gray-400`;
+        : "border-zinc-600 focus:ring-indigo-500"
+    } focus:ring-2 outline-none placeholder:text-zinc-500 transition`;
 
   return (
-    <div className="flex items-center mt-18 justify-center min-h-screen bg-background px-4">
-      <div className="w-full max-w-sm p-8 border border-gray-600 bg-gray-800 text-white shadow-xl transition-all duration-300">
-        <h1 className="text-3xl font-semibold mb-6 text-center text-indigo-400">
-          Ktu Mezun Platformu
+    <div className="flex min-h-screen items-center justify-center bg-zinc-950 text-white px-4">
+      <div className="w-full max-w-sm p-8 border border-zinc-700 bg-zinc-900 rounded-xl shadow-lg">
+        <h1 className="text-3xl font-bold text-center mb-6 text-indigo-400">
+          KTÜ Mezun Platformu
         </h1>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-5">
@@ -137,7 +126,7 @@ export default function Register() {
 
           {/* Telefon alanı */}
           <div className="flex w-full min-w-0">
-            <span className="px-3 py-2 bg-gray-700 border border-r-0 border-gray-500 text-gray-400 text-sm select-none whitespace-nowrap">
+            <span className="px-3 py-2 bg-zinc-800 border border-r-0 rounded-l-md border-zinc-600 text-zinc-400 text-sm select-none">
               +90
             </span>
             <input
@@ -147,14 +136,14 @@ export default function Register() {
               autoComplete="off"
               value={formData.phoneNumber}
               onChange={(e) => handleChange("phoneNumber", e.target.value)}
-              className={`${inputClass("phoneNumber")} flex-1 min-w-0`}
+              className={`${inputClass("phoneNumber")} flex-1 rounded-l-none`}
             />
           </div>
           {errors.phoneNumber && (
-            <p className="text-xs text-red-400 -mt-4">{errors.phoneNumber}</p>
+            <p className="text-xs text-red-400 -mt-3">{errors.phoneNumber}</p>
           )}
 
-          {/* Şifre alanı */}
+          {/* Şifre */}
           <div className="relative flex flex-col gap-1">
             <input
               autoComplete="off"
@@ -166,8 +155,8 @@ export default function Register() {
             />
             <button
               type="button"
-              onClick={() => setShowPassword((prev) => !prev)}
-              className="absolute top-2.5 right-2 text-gray-400 hover:text-indigo-400 transition-colors"
+              onClick={() => setShowPassword((p) => !p)}
+              className="absolute right-3 top-2.5 text-zinc-400 hover:text-indigo-400 transition"
             >
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
@@ -176,7 +165,7 @@ export default function Register() {
             )}
           </div>
 
-          {/* Confirm Şifre (Artık koşulsuz gösteriliyor) */}
+          {/* Şifre Tekrar */}
           <div className="flex flex-col gap-1">
             <input
               autoComplete="off"
@@ -191,23 +180,19 @@ export default function Register() {
             )}
           </div>
 
-          {/* Tek sefer checkbox kaldırıldı */}
-
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-2 font-medium bg-indigo-600 text-white transition-opacity duration-300 hover:bg-indigo-700 ${
-              loading ? "opacity-70 cursor-not-allowed" : ""
-            }`}
+            className={`mt-2 w-full py-2 font-medium bg-indigo-600 hover:bg-indigo-700 rounded-md transition disabled:opacity-60 disabled:cursor-not-allowed`}
           >
             {loading ? "Kayıt olunuyor..." : "Kayıt Ol"}
           </button>
 
           <Link
             href="/login"
-            className="text-center text-sm text-gray-400 underline underline-offset-2 hover:text-indigo-400 transition-colors"
+            className="text-center text-sm text-zinc-400 underline underline-offset-2 hover:text-indigo-400 transition"
           >
-            Zaten kendin misin? Giriş yap
+            Zaten hesabın var mı? Giriş yap
           </Link>
         </form>
       </div>
