@@ -14,10 +14,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// --------------------------------------
-// Buraya model tartışılıp konacak
-// --------------------------------------
-
 enum Role {
   admin
   user
@@ -38,13 +34,42 @@ model User {
   updatedAt DateTime  @updatedAt
   lastLogin DateTime?
 
+  moreinfo Info?
   accounts Account[]
   sessions Session[]
 }
 
+model Info {
+  id        String   @id @default(cuid())
+  userId    String
+  firstName String
+  lastName  String
+  phoneNumber String
+  email String
+  image String
+  company String
+  position String
+  location String
+  about String
+  website String
+  linkedin String
+  github String
+  twitter String
+  instagram String
+  youtube String
+  facebook String
+  telegram String
+  discord String
+  twitch String
+  tiktok String
+
+  createdAt DateTime  @default(now())
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
 model Account {
   id                String  @id @default(cuid())
-  userId            String
+  userId            String  @unique
   type              String
   provider          String
   providerAccountId String

@@ -21,8 +21,14 @@ export default function Navbar() {
             href="/"
             className="flex items-center gap-3 hover:opacity-80 transition-opacity"
           >
-            <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-lg">KTÜ</span>
+            <div className="w-10 h-10 bg-none rounded-lg flex items-center justify-center">
+              <Image
+                src="/favicon.ico"
+                alt="KTÜ Logo"
+                width={40}
+                height={40}
+                className="w-10 h-10 bg-none invert grayscale-100 rounded-lg flex items-center justify-center"
+              />
             </div>
             <div className="hidden sm:block">
               <h1 className="text-lg font-semibold text-foreground">

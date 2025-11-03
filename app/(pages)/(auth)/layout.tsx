@@ -1,6 +1,5 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
-import Navbar from "@/app/components/Navbar";
 
 export default async function ProtectedLayout({
   children,
