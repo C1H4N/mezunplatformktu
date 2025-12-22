@@ -14,6 +14,7 @@ services:
       - 3000:3000
     environment:
       - NODE_ENV=development
+      - DATABASE_URL=${INTERNAL_DATABASE_URL}
     env_file:
       - .env
     depends_on:

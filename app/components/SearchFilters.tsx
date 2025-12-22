@@ -15,7 +15,7 @@ export interface FilterState {
 
 // Örnek veri - Gerçek uygulamada API'den gelecek
 const cities = [
-  "Tümü",
+  "Seçin",
   "İstanbul",
   "Ankara",
   "İzmir",
@@ -29,7 +29,7 @@ const cities = [
 ];
 
 const departments = [
-  "Tümü",
+  "Seçin",
   "Bilgisayar Mühendisliği",
   "Elektrik-Elektronik Mühendisliği",
   "Makine Mühendisliği",
@@ -43,7 +43,7 @@ const departments = [
 ];
 
 const jobFields = [
-  "Tümü",
+  "Seçin",
   "Yazılım Geliştirme",
   "Veri Bilimi",
   "Proje Yönetimi",
@@ -61,9 +61,9 @@ const jobFields = [
 export default function SearchFilters({ onFilterChange }: SearchFiltersProps) {
   const [filters, setFilters] = useState<FilterState>({
     search: "",
-    city: "Tümü",
-    department: "Tümü",
-    jobField: "Tümü",
+    city: "Seçin",
+    department: "Seçin",
+    jobField: "Seçin",
   });
 
   const [showFilters, setShowFilters] = useState(false);
@@ -77,22 +77,22 @@ export default function SearchFilters({ onFilterChange }: SearchFiltersProps) {
   const clearFilters = () => {
     const resetFilters: FilterState = {
       search: "",
-      city: "Tümü",
-      department: "Tümü",
-      jobField: "Tümü",
+      city: "Seçin",
+      department: "Seçin",
+      jobField: "Seçin",
     };
     setFilters(resetFilters);
     onFilterChange(resetFilters);
   };
 
   const activeFilterCount = [
-    filters.city !== "Tümü",
-    filters.department !== "Tümü",
-    filters.jobField !== "Tümü",
+    filters.city !== "Seçin",
+    filters.department !== "Seçin",
+    filters.jobField !== "Seçin",
   ].filter(Boolean).length;
 
   return (
-    <div className="bg-card border border-border rounded-xl p-4 sm:p-6 shadow-sm">
+    <div className="bg-card/30 backdrop-blur-md border border-border/50 rounded-xl p-6 shadow-sm sticky top-24">
       {/* Arama Çubuğu */}
       <div className="relative mb-4">
         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -115,7 +115,7 @@ export default function SearchFilters({ onFilterChange }: SearchFiltersProps) {
           placeholder="İsim, şirket veya pozisyon ara..."
           value={filters.search}
           onChange={(e) => handleFilterUpdate("search", e.target.value)}
-          className="w-full pl-10 pr-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+          className="w-full pl-10 pr-4 py-3 bg-background/50 border border-border/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all placeholder:text-muted/70"
         />
       </div>
 
@@ -172,7 +172,7 @@ export default function SearchFilters({ onFilterChange }: SearchFiltersProps) {
             id="city"
             value={filters.city}
             onChange={(e) => handleFilterUpdate("city", e.target.value)}
-            className="w-full px-4 py-2.5 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all appearance-none cursor-pointer"
+            className="w-full px-4 py-2.5 bg-background/50 border border-border/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all appearance-none cursor-pointer"
           >
             {cities.map((city) => (
               <option key={city} value={city}>
@@ -191,7 +191,7 @@ export default function SearchFilters({ onFilterChange }: SearchFiltersProps) {
             id="department"
             value={filters.department}
             onChange={(e) => handleFilterUpdate("department", e.target.value)}
-            className="w-full px-4 py-2.5 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all appearance-none cursor-pointer"
+            className="w-full px-4 py-2.5 bg-background/50 border border-border/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all appearance-none cursor-pointer"
           >
             {departments.map((dept) => (
               <option key={dept} value={dept}>
@@ -210,7 +210,7 @@ export default function SearchFilters({ onFilterChange }: SearchFiltersProps) {
             id="jobField"
             value={filters.jobField}
             onChange={(e) => handleFilterUpdate("jobField", e.target.value)}
-            className="w-full px-4 py-2.5 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all appearance-none cursor-pointer"
+            className="w-full px-4 py-2.5 bg-background/50 border border-border/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all appearance-none cursor-pointer"
           >
             {jobFields.map((field) => (
               <option key={field} value={field}>

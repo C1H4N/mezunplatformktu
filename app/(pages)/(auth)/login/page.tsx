@@ -13,19 +13,28 @@ export default function LoginPage() {
     e.preventDefault();
 
     startTransition(async () => {
-      const result = await signIn("credentials", {
-        email,
-        password,
-        redirect: false,
-      });
+      try {
+        const result = await signIn("credentials", {
+          email,
+          password,
+          redirect: false,
+        });
 
-      if (result?.error) {
-        toast.error(result.error || "Giriş başarısız!");
-      } else {
-        toast.success("Giriş başarılı!");
-        setTimeout(() => {
-          window.location.href = "/account";
-        }, 1000);
+        if (result?.error) {
+          console.error("Login error:", result.error);
+          if (result.error === "CredentialsSignin") {
+            toast.error("Email veya şifre hatalı!");
+          } else {
+            toast.error(result.error || "Giriş başarısız! Lütfen tekrar deneyin.");
+          }
+        } else {
+          toast.success("Giriş başarılı! Yönlendiriliyorsunuz...");
+          // Force a hard navigation to ensure session is picked up
+          window.location.href = "/profile"; 
+        }
+      } catch (error) {
+        console.error("Login exception:", error);
+        toast.error("Bir hata oluştu. Lütfen tekrar deneyin.");
       }
     });
   };
@@ -34,11 +43,11 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center">
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col gap-6 p-8 bg-black/20 border border-zinc-700 rounded-xl shadow-xl w-full max-w-sm"
+        className="flex flex-col gap-6 p-8 bg-black/20 border border-zinc-700 rounded-xl shadow-xl w-full max-w-sm animate-fade-in-up"
       >
-        <h1 className="text-2xl font-bold text-center mb-2">Giriş Yap</h1>
+        <h1 className="text-2xl font-bold text-center mb-2 animate-fade-in opacity-0 animation-delay-100">Giriş Yap</h1>
 
-        <label className="flex flex-col text-sm">
+        <label className="flex flex-col text-sm animate-fade-in opacity-0 animation-delay-200">
           <span className="mb-1 text-zinc-400">Email</span>
           <input
             name="email"
@@ -50,7 +59,7 @@ export default function LoginPage() {
           />
         </label>
 
-        <label className="flex flex-col text-sm">
+        <label className="flex flex-col text-sm animate-fade-in opacity-0 animation-delay-300">
           <span className="mb-1 text-zinc-400">Şifre</span>
           <input
             name="password"
@@ -65,12 +74,12 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={isPending}
-          className="bg-white text-black py-2 rounded-md font-medium hover:bg-zinc-200 transition disabled:opacity-70 disabled:cursor-not-allowed"
+          className="bg-white text-black py-2 rounded-md font-medium hover:bg-zinc-200 transition disabled:opacity-70 disabled:cursor-not-allowed animate-fade-in opacity-0 animation-delay-300"
         >
           {isPending ? "Giriş Yapılıyor…" : "Giriş Yap"}
         </button>
 
-        <p className="text-center text-sm text-zinc-500">
+        <p className="text-center text-sm text-zinc-500 animate-fade-in opacity-0 animation-delay-300">
           Hesabınız Var mı?{" "}
           <a
             href="/register"

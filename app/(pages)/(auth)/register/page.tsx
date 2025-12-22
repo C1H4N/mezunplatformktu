@@ -89,113 +89,124 @@ export default function RegisterPage() {
   };
 
   const inputClass = (field: Field | "confirmPassword") =>
-    `w-full px-4 py-2 rounded-md bg-zinc-800 border ${
+    `w-full bg-white/10 border ${
       errors[field]
         ? "border-red-500 focus:ring-red-500"
-        : "border-zinc-600 focus:ring-indigo-500"
-    } focus:ring-2 outline-none placeholder:text-zinc-500 transition`;
+        : "border-zinc-700 focus:ring-zinc-500"
+    } p-2 rounded-md focus:ring-2 outline-none transition`;
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-950 text-white px-4">
-      <div className="w-full max-w-sm p-8 border border-zinc-700 bg-zinc-900 rounded-xl shadow-lg">
-        <h1 className="text-3xl font-bold text-center mb-6 text-indigo-400">
-          KTÜ Mezun Platformu
-        </h1>
+    <div className="flex min-h-screen items-center justify-center">
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col gap-6 p-8 bg-black/20 border border-zinc-700 rounded-xl shadow-xl w-full max-w-sm animate-fade-in-up"
+      >
+        <h1 className="text-2xl font-bold text-center mb-2 animate-fade-in opacity-0 animation-delay-100">Kayıt Ol</h1>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+        <div className="flex flex-col gap-4 animate-fade-in opacity-0 animation-delay-200">
           {(["firstName", "lastName", "email"] as Field[]).map((field) => (
-            <div key={field} className="flex flex-col gap-1">
+            <label key={field} className="flex flex-col text-sm">
+              <span className="mb-1 text-zinc-400">
+                {field === "firstName"
+                  ? "Ad"
+                  : field === "lastName"
+                  ? "Soyad"
+                  : "Email"}
+              </span>
               <input
                 type={field === "email" ? "email" : "text"}
-                placeholder={
-                  field === "firstName"
-                    ? "Ad"
-                    : field === "lastName"
-                    ? "Soyad"
-                    : "Email"
-                }
                 value={formData[field]}
                 onChange={(e) => handleChange(field, e.target.value)}
                 className={inputClass(field)}
               />
               {errors[field] && (
-                <p className="text-xs text-red-400">{errors[field]}</p>
+                <p className="text-xs text-red-400 mt-1">{errors[field]}</p>
               )}
-            </div>
+            </label>
           ))}
 
           {/* Telefon alanı */}
-          <div className="flex w-full min-w-0">
-            <span className="px-3 py-2 bg-zinc-800 border border-r-0 rounded-l-md border-zinc-600 text-zinc-400 text-sm select-none">
-              +90
-            </span>
-            <input
-              type="tel"
-              maxLength={10}
-              placeholder="5xx xxx xxxx (Başına 0 koymayın)"
-              autoComplete="off"
-              value={formData.phoneNumber}
-              onChange={(e) => handleChange("phoneNumber", e.target.value)}
-              className={`${inputClass("phoneNumber")} flex-1 rounded-l-none`}
-            />
-          </div>
-          {errors.phoneNumber && (
-            <p className="text-xs text-red-400 -mt-3">{errors.phoneNumber}</p>
-          )}
+          <label className="flex flex-col text-sm">
+            <span className="mb-1 text-zinc-400">Telefon Numarası</span>
+            <div className="flex w-full min-w-0">
+              <span className="px-3 py-2 bg-white/10 border border-r-0 rounded-l-md border-zinc-700 text-zinc-400 text-sm select-none flex items-center">
+                +90
+              </span>
+              <input
+                type="tel"
+                maxLength={10}
+                placeholder="5xx xxx xxxx"
+                autoComplete="off"
+                value={formData.phoneNumber}
+                onChange={(e) => handleChange("phoneNumber", e.target.value)}
+                className={`${inputClass("phoneNumber")} rounded-l-none`}
+              />
+            </div>
+            {errors.phoneNumber && (
+              <p className="text-xs text-red-400 mt-1">{errors.phoneNumber}</p>
+            )}
+          </label>
 
           {/* Şifre */}
-          <div className="relative flex flex-col gap-1">
-            <input
-              autoComplete="off"
-              type={showPassword ? "text" : "password"}
-              placeholder="Şifre (Min 8 karakter)"
-              value={formData.password}
-              onChange={(e) => handleChange("password", e.target.value)}
-              className={`${inputClass("password")} pr-10`}
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword((p) => !p)}
-              className="absolute right-3 top-2.5 text-zinc-400 hover:text-indigo-400 transition"
-            >
-              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-            </button>
+          <label className="flex flex-col text-sm relative">
+            <span className="mb-1 text-zinc-400">Şifre</span>
+            <div className="relative">
+              <input
+                autoComplete="off"
+                type={showPassword ? "text" : "password"}
+                value={formData.password}
+                onChange={(e) => handleChange("password", e.target.value)}
+                className={`${inputClass("password")} pr-10`}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((p) => !p)}
+                className="absolute right-3 top-2.5 text-zinc-400 hover:text-white transition"
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
             {errors.password && (
-              <p className="text-xs text-red-400">{errors.password}</p>
+              <p className="text-xs text-red-400 mt-1">{errors.password}</p>
             )}
-          </div>
+          </label>
 
           {/* Şifre Tekrar */}
-          <div className="flex flex-col gap-1">
+          <label className="flex flex-col text-sm">
+            <span className="mb-1 text-zinc-400">Şifre Tekrar</span>
             <input
               autoComplete="off"
               type={showPassword ? "text" : "password"}
-              placeholder="Şifre Tekrar"
               value={formData.confirmPassword}
               onChange={(e) => handleChange("confirmPassword", e.target.value)}
               className={inputClass("confirmPassword")}
             />
             {errors.confirmPassword && (
-              <p className="text-xs text-red-400">{errors.confirmPassword}</p>
+              <p className="text-xs text-red-400 mt-1">
+                {errors.confirmPassword}
+              </p>
             )}
-          </div>
+          </label>
+        </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className={`mt-2 w-full py-2 font-medium bg-indigo-600 hover:bg-indigo-700 rounded-md transition disabled:opacity-60 disabled:cursor-not-allowed`}
-          >
-            {loading ? "Kayıt olunuyor..." : "Kayıt Ol"}
-          </button>
+        <button
+          type="submit"
+          disabled={loading}
+          className="bg-white text-black py-2 rounded-md font-medium hover:bg-zinc-200 transition disabled:opacity-70 disabled:cursor-not-allowed mt-2 animate-fade-in opacity-0 animation-delay-300"
+        >
+          {loading ? "Kayıt olunuyor..." : "Kayıt Ol"}
+        </button>
 
+        <p className="text-center text-sm text-zinc-500 animate-fade-in opacity-0 animation-delay-300">
+          Zaten hesabın var mı?{" "}
           <Link
             href="/login"
-            className="text-center text-sm text-zinc-400 underline underline-offset-2 hover:text-indigo-400 transition"
+            className="text-white underline hover:no-underline"
           >
-            Zaten hesabın var mı? Giriş yap
+            Giriş yap
           </Link>
-        </form>
-      </div>
+        </p>
+      </form>
     </div>
   );
 }

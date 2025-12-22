@@ -14,9 +14,36 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  admin
-  user
+enum UserRole {
+  STUDENT
+  ALUMNI
+  EMPLOYER
+  MODERATOR
+  ADMIN
+  USER // Default fallback
+}
+
+enum JobType {
+  JOB
+  INTERNSHIP
+}
+
+enum ApplicationStatus {
+  PENDING
+  REVIEWED
+  ACCEPTED
+  REJECTED
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum JobStatus {
+  OPEN
+  CLOSED
 }
 
 model User {
@@ -26,22 +53,193 @@ model User {
   email         String    @unique
   password      String
   emailVerified DateTime?
-  role          Role      @default(user)
+  role          UserRole  @default(USER)
   image         String?
-  phoneNumber   String    @unique
+  coverImage    String?
+  phoneNumber   String?   @unique
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   lastLogin DateTime?
 
+  // Existing relations
   moreinfo Info?
   accounts Account[]
   sessions Session[]
+
+  // New relations from UML
+  student   Student?
+  alumni    Alumni?
+  employer  Employer?
+  admin     Admin?
+  moderator Moderator?
+
+  sentMessages     Message[] @relation("SentMessages")
+  receivedMessages Message[] @relation("ReceivedMessages")
+  
+  organizedEvents  Event[]
+  
+  experiences Experience[]
+  educations  Education[]
 }
 
+model Experience {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  title       String
+  company     String
+  location    String?
+  startDate   DateTime
+  endDate     DateTime? // Null if currently working
+  current     Boolean   @default(false)
+  description String?
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Education {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  school       String
+  degree       String
+  fieldOfStudy String
+  startDate    DateTime
+  endDate      DateTime?
+  current      Boolean   @default(false)
+  description  String?
+  
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model Student {
+  id         String   @id @default(cuid())
+  userId     String   @unique
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  studentNo  String   @unique
+  department String
+  interests  String[] // Array of strings
+
+  applications       JobApplication[]
+  mentorshipRequests MentorshipRequest[]
+}
+
+model Alumni {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  graduationYear  Int
+  department      String? // Added for filtering
+  currentPosition String
+  competencies    String[]
+  mentorshipTopics String[]
+
+  mentorshipRequests MentorshipRequest[]
+}
+
+model Employer {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  companyName String
+  taxNumber   String
+  sector      String
+
+  jobAdvertisements JobAdvertisement[]
+}
+
+model Admin {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Moderator {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model JobAdvertisement {
+  id          String    @id @default(cuid())
+  title       String
+  description String
+  location    String
+  type        JobType
+  status      JobStatus @default(OPEN)
+  publisherId String
+  publisher   Employer  @relation(fields: [publisherId], references: [id])
+  
+  createdAt   DateTime  @default(now())
+
+  applications JobApplication[]
+}
+
+model JobApplication {
+  id              String            @id @default(cuid())
+  applicationDate DateTime          @default(now())
+  status          ApplicationStatus @default(PENDING)
+  coverLetter     String?
+
+  jobId String
+  job   JobAdvertisement @relation(fields: [jobId], references: [id])
+
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id])
+}
+
+model MentorshipRequest {
+  id          String        @id @default(cuid())
+  status      RequestStatus @default(PENDING)
+  requestType String
+
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id])
+
+  alumniId String
+  alumni   Alumni @relation(fields: [alumniId], references: [id])
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  title       String
+  date        DateTime
+  location    String
+  organizerId String
+  organizer   User     @relation(fields: [organizerId], references: [id])
+}
+
+model EducationRecommendation {
+  id             String @id @default(cuid())
+  department     String
+  suggestedPaths String
+  frequencyScore Float
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  content   String
+  timestamp DateTime @default(now())
+
+  senderId String
+  sender   User   @relation("SentMessages", fields: [senderId], references: [id])
+
+  receiverId String
+  receiver   User   @relation("ReceivedMessages", fields: [receiverId], references: [id])
+}
+
+// Existing models preserved
 model Info {
   id        String   @id @default(cuid())
-  userId    String
+  userId    String   @unique
   firstName String
   lastName  String
   phoneNumber String
@@ -69,7 +267,7 @@ model Info {
 
 model Account {
   id                String  @id @default(cuid())
-  userId            String  @unique
+  userId            String  
   type              String
   provider          String
   providerAccountId String

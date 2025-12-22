@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 
 interface TurkeyMapProps {
   selectedCity: string;
   onCitySelect: (city: string) => void;
+  alumniCounts?: Record<string, number>;
 }
 
 // Şehir isimlerini normalize ederek filtre dropdown ile eşleşmeyi kolaylaştırır
@@ -95,8 +96,21 @@ function applyRegionStyles(root: HTMLElement) {
 export default function TurkeyMap({
   selectedCity,
   onCitySelect,
+  alumniCounts = {},
 }: TurkeyMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [hoveredCity, setHoveredCity] = useState<string | null>(null);
+
+  // Heatmap renk skalası (Maviden Yeşile)
+  const getColor = (count: number) => {
+    if (count === 0) return "var(--card)"; // Veri yoksa kart rengi
+    if (count < 5) return "#e3f2fd"; // Çok açık mavi
+    if (count < 10) return "#90caf9"; // Açık mavi
+    if (count < 20) return "#42a5f5"; // Mavi
+    if (count < 50) return "#26a69a"; // Teal/Yeşilimsi
+    if (count < 100) return "#66bb6a"; // Yeşil
+    return "#2e7d32"; // Koyu Yeşil
+  };
 
   useEffect(() => {
     let isMounted = true;
@@ -112,8 +126,8 @@ export default function TurkeyMap({
       if (!root) return;
 
       // Stil: tema renklerine uyumlu
-      (root as SVGElement).style.maxWidth = "100%";
-      (root as SVGElement).style.height = "auto";
+      (root as SVGElement).style.width = "100%";
+      (root as SVGElement).style.height = "100%";
       (root as SVGElement).style.display = "block";
       (root as SVGGraphicsElement).style.transformOrigin = "center";
 
@@ -140,15 +154,6 @@ export default function TurkeyMap({
         // getBBox desteklenmiyorsa default viewBox kullanılmaya devam eder
       }
 
-      // Desktop'ta bir miktar büyüt (küçük görünümü telafi etmek için)
-      if (
-        typeof window !== "undefined" &&
-        window.matchMedia &&
-        window.matchMedia("(min-width: 1024px)").matches
-      ) {
-        (root as SVGGraphicsElement).style.transform = "scale(1.01)";
-      }
-
       // Bölge bazlı renkler
       applyRegionStyles(containerRef.current);
 
@@ -160,15 +165,36 @@ export default function TurkeyMap({
           g.getAttribute("data-iladi") || g.getAttribute("data-province") || "";
         const city = normalizeCityName(cityAttr);
 
+        // Heatmap renklendirmesi
+        const count = alumniCounts[city] || 0;
+        const baseColor = getColor(count);
+        
+        // Şekilleri renklendir
+        const shapes = g.querySelectorAll<SVGElement>(
+          "path, polygon, rect, circle, polyline"
+        );
+        shapes.forEach((sh) => {
+          if (selectedCity && city === selectedCity) {
+             sh.setAttribute("fill", "var(--color-gold, var(--primary))");
+          } else {
+             sh.setAttribute("fill", baseColor);
+          }
+        });
+
         // Hover ve seçili stilleri
         g.style.cursor = "pointer";
         g.style.transition = "transform 120ms ease, filter 120ms ease";
+        
         g.addEventListener("mouseenter", () => {
-          g.style.filter = "brightness(1.1)";
+          g.style.filter = "brightness(0.9)";
+          setHoveredCity(city);
         });
+        
         g.addEventListener("mouseleave", () => {
           g.style.filter = "";
+          setHoveredCity(null);
         });
+        
         g.addEventListener("mousedown", () => {
           g.style.transform = "scale(0.985)"; // basılma hissi
         });
@@ -192,12 +218,13 @@ export default function TurkeyMap({
         if (selectedCity && city === selectedCity) {
           g.style.filter =
             "drop-shadow(0 0 0.5rem var(--color-gold, var(--primary))) brightness(1.08)";
-          const shapes = g.querySelectorAll<SVGElement>(
-            "path, polygon, rect, circle, polyline"
-          );
           shapes.forEach((sh) => {
             sh.setAttribute("stroke", "var(--color-gold, var(--primary))");
             sh.setAttribute("stroke-width", "1.25");
+            sh.setAttribute("fill", "var(--primary)"); // Seçili ise primary renk
+            if (sh.tagName === 'path') {
+               sh.style.fill = "var(--primary)";
+            }
           });
         }
       });
@@ -207,7 +234,7 @@ export default function TurkeyMap({
     return () => {
       isMounted = false;
     };
-  }, [selectedCity, onCitySelect]);
+  }, [selectedCity, onCitySelect, alumniCounts]);
 
   return (
     //* Sadece Desktop'ta map gösterimi
@@ -236,11 +263,20 @@ export default function TurkeyMap({
           </button>
         </div>
       </div>
-      <div
-        ref={containerRef}
-        className="w-full overflow-hidden p-4"
-        aria-label="Türkiye Haritası"
-      />
+      <div className="w-full h-[500px] overflow-hidden relative bg-muted-bg/30 rounded-lg border border-border/50 flex items-center justify-center p-4">
+        {/* Fixed City Label */}
+        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-10 bg-background/80 backdrop-blur-sm px-4 py-2 rounded-full border border-border shadow-sm pointer-events-none transition-all duration-200">
+          <span className="text-lg font-semibold text-foreground">
+            {hoveredCity || selectedCity !== "Tümü" ? (hoveredCity || selectedCity) : "Şehir Seçin"}
+          </span>
+        </div>
+
+        <div
+          ref={containerRef}
+          className="w-full h-full flex items-center justify-center"
+          aria-label="Türkiye Haritası"
+        />
+      </div>
       <div className="mt-0 text-xs text-muted px-2 sm:px-3">
         Şehre tıklayarak filtreleyin. Temizle ile sıfırlayabilirsiniz.
       </div>

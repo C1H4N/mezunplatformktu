@@ -18,6 +18,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
+        console.log("Authorize called with:", { email: credentials?.email });
         const email =
           typeof credentials?.email === "string"
             ? credentials.email.toLowerCase().trim()
@@ -25,29 +26,44 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const password =
           typeof credentials?.password === "string" ? credentials.password : "";
 
-        if (!email || !password)
+        if (!email || !password) {
+          console.log("Missing credentials");
           throw new Error("Email/telefon ve şifre gerekli.");
+        }
 
         const user = await prisma.user.findFirst({
           where: { OR: [{ email }, { phoneNumber: email }] },
         });
 
-        if (!user || !user.password) throw new Error("Kullanıcı bulunamadı.");
+        if (!user) {
+          console.log("User not found for:", email);
+          throw new Error("Kullanıcı bulunamadı.");
+        }
+        
+        if (!user.password) {
+             console.log("User has no password set");
+             throw new Error("Kullanıcı bulunamadı.");
+        }
 
         const isValid = await bcrypt.compare(password, user.password);
-        if (!isValid) throw new Error("Geçersiz şifre.");
+        if (!isValid) {
+          console.log("Invalid password for:", email);
+          throw new Error("Geçersiz şifre.");
+        }
 
         await prisma.user.update({
           where: { id: user.id },
           data: { lastLogin: new Date() },
         });
 
+        console.log("Login successful for:", email);
+
         return {
           id: user.id,
           firstName: user.firstName,
           lastName: user.lastName,
           email: user.email,
-          phoneNumber: user.phoneNumber,
+          phoneNumber: user.phoneNumber || "", // Handle null
           image: user.image || "",
           role: user.role,
         };
@@ -58,7 +74,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     signIn: "/login",
   },
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         token.id = user.id;
         token.firstName = user.firstName;
@@ -66,7 +82,19 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.email = user.email;
         token.phoneNumber = user.phoneNumber;
         token.role = user.role;
+        token.image = user.image;
+        token.coverImage = user.coverImage;
       }
+      
+      if (trigger === "update" && session?.user) {
+        token.firstName = session.user.firstName;
+        token.lastName = session.user.lastName;
+        token.phoneNumber = session.user.phoneNumber;
+        token.email = session.user.email;
+        token.image = session.user.image;
+        token.coverImage = session.user.coverImage;
+      }
+      
       return token;
     },
     async session({ session, token }) {
@@ -77,7 +105,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.email = token.email as string;
         session.user.phoneNumber = token.phoneNumber as string;
         session.user.image = token.image as string;
-        session.user.role = token.role as "admin" | "user";
+        session.user.role = token.role as any; // Allow new roles
       }
       return session;
     },

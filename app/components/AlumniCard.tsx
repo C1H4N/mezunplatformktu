@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { buttonVariants } from "./ui/Button";
 
 interface AlumniCardProps {
   id: string;
@@ -24,7 +25,7 @@ export default function AlumniCard({
   profileImage,
 }: AlumniCardProps) {
   return (
-    <div className="bg-card border border-border rounded-xl p-6 hover:shadow-md transition-all duration-300 hover:border-primary group">
+    <div className="bg-card/30 backdrop-blur-md border border-border/50 rounded-xl p-6 hover:shadow-lg hover:bg-card/50 transition-all duration-300 hover:border-primary/50 group">
       <div className="flex flex-col h-full">
         {/* Profil Fotoğrafı ve Temel Bilgi */}
         <div className="flex items-start gap-4 mb-4">
@@ -111,7 +112,7 @@ export default function AlumniCard({
         <div className="flex gap-2 pt-4 border-t border-border">
           <Link
             href={`/mezunlar/${id}`}
-            className="flex-1 px-4 py-2 text-sm font-medium text-primary bg-primary-light hover:bg-primary hover:text-white rounded-lg transition-colors text-center"
+            className={buttonVariants({ variant: "outline", className: "flex-1" })}
           >
             Profili Görüntüle
           </Link>
@@ -120,7 +121,7 @@ export default function AlumniCard({
               href={linkedinUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-4 py-2 text-sm font-medium text-muted hover:text-primary bg-muted-bg hover:bg-primary-light rounded-lg transition-colors"
+              className={buttonVariants({ variant: "ghost", size: "icon" })}
               aria-label="LinkedIn"
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">

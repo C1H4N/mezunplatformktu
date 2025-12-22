@@ -8,25 +8,37 @@
   --card-foreground: #1e293b;
 
   /* KTÜ Kurumsal Renkler - Mavi Tonları (Ön Plan) */
-  --primary: #1b71ac; /* KTÜ Mavi */
-  --primary-hover: #0033b4; /* KTÜ Koyu Mavi */
-  --primary-light: #e3f2fd; /* Açık Mavi Arka Plan */
+  --primary: #1b71ac;
+  /* KTÜ Mavi */
+  --primary-hover: #0033b4;
+  /* KTÜ Koyu Mavi */
+  --primary-light: #e3f2fd;
+  /* Açık Mavi Arka Plan */
 
   /* Vurgu ve Destek Renkleri */
-  --accent: #1b71ac; /* KTÜ Mavi (vurgu) */
-  --accent-light: #e8f4f8; /* Açık Mavi Ton */
-  --gold: #c7b247; /* KTÜ Gold (özel vurgular için) */
+  --accent: #1b71ac;
+  /* KTÜ Mavi (vurgu) */
+  --accent-light: #e8f4f8;
+  /* Açık Mavi Ton */
+  --gold: #c7b247;
+  /* KTÜ Gold (özel vurgular için) */
 
   /* Nötr Tonlar */
   --border: #e2e8f0;
   --border-dark: #cbd5e1;
-  --muted: #919498; /* KTÜ Gri */
+  --muted: #919498;
+  /* KTÜ Gri */
   --muted-bg: #f1f5f9;
 
   /* Durum Renkleri */
-  --success: #3b8238; /* KTÜ Yeşil */
-  --warning: #dda11e; /* KTÜ Sarı */
-  --error: #a12123; /* KTÜ Kırmızı */
+  --success: #3b8238;
+  /* KTÜ Yeşil */
+  --warning: #dda11e;
+  /* KTÜ Sarı */
+  --error: #a12123;
+  /* KTÜ Kırmızı */
+  --destructive: #dc2626;
+  --destructive-foreground: #f8fafc;
 
   /* Gölgeler */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
@@ -52,6 +64,8 @@
   --color-success: var(--success);
   --color-warning: var(--warning);
   --color-error: var(--error);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -64,22 +78,34 @@
     --card-foreground: #f1f5f9;
 
     /* KTÜ Kurumsal Renkler - Koyu Tema */
-    --primary: #1b71ac; /* KTÜ Mavi (koyu temada daha parlak) */
-    --primary-hover: #2196f3; /* Hover için daha açık ton */
-    --primary-light: #0d3a5c; /* Koyu arka plan için */
+    --primary: #1b71ac;
+    /* KTÜ Mavi (koyu temada daha parlak) */
+    --primary-hover: #2196f3;
+    /* Hover için daha açık ton */
+    --primary-light: #0d3a5c;
+    /* Koyu arka plan için */
 
-    --accent: #1b71ac; /* KTÜ Mavi */
-    --accent-light: #0d3a5c; /* Koyu ton */
-    --gold: #c7b247; /* KTÜ Gold */
+    --accent: #1b71ac;
+    /* KTÜ Mavi */
+    --accent-light: #0d3a5c;
+    /* Koyu ton */
+    --gold: #c7b247;
+    /* KTÜ Gold */
 
     --border: #334155;
     --border-dark: #475569;
-    --muted: #919498; /* KTÜ Gri */
+    --muted: #919498;
+    /* KTÜ Gri */
     --muted-bg: #1e293b;
 
-    --success: #3b8238; /* KTÜ Yeşil */
-    --warning: #dda11e; /* KTÜ Sarı */
-    --error: #a12123; /* KTÜ Kırmızı */
+    --success: #3b8238;
+    /* KTÜ Yeşil */
+    --warning: #dda11e;
+    /* KTÜ Sarı */
+    --error: #a12123;
+    /* KTÜ Kırmızı */
+    --destructive: #7f1d1d;
+    --destructive-foreground: #f8fafc;
   }
 }
 
@@ -114,9 +140,70 @@ body {
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 150ms;
   /** No user select */
-  -webkit-touch-callout: none; /* iOS Safari */
-  -moz-user-select: none; /* Firefox */
-  -webkit-user-select: none; /* Safari */
-  -ms-user-select: none; /* IE 10 and IE 11 */
-  user-select: none; /* Standard syntax */
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+  -moz-user-select: none;
+  /* Firefox */
+  -webkit-user-select: none;
+  /* Safari */
+  -ms-user-select: none;
+  /* IE 10 and IE 11 */
+  user-select: none;
+  /* Standard syntax */
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+.animation-delay-100 {
+  animation-delay: 100ms;
+}
+
+.animation-delay-200 {
+  animation-delay: 200ms;
+}
+
+.animation-delay-300 {
+  animation-delay: 300ms;
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+.animate-fade-out {
+  animation: fadeOut 0.3s ease-in forwards;
 }
