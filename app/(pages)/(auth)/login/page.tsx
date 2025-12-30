@@ -30,7 +30,7 @@ export default function LoginPage() {
         } else {
           toast.success("Giriş başarılı! Yönlendiriliyorsunuz...");
           // Force a hard navigation to ensure session is picked up
-          window.location.href = "/profile"; 
+          window.location.href = "/profile";
         }
       } catch (error) {
         console.error("Login exception:", error);
@@ -80,12 +80,12 @@ export default function LoginPage() {
         </button>
 
         <p className="text-center text-sm text-zinc-500 animate-fade-in opacity-0 animation-delay-300">
-          Hesabınız Var mı?{" "}
+          Hesabınız yok mu?{" "}
           <a
             href="/register"
             className="text-white underline hover:no-underline"
           >
-            Giriş Yapın
+            Kayıt Olun
           </a>
         </p>
       </form>
