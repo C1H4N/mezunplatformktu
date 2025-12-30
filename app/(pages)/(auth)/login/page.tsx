@@ -60,7 +60,15 @@ export default function LoginPage() {
         </label>
 
         <label className="flex flex-col text-sm animate-fade-in opacity-0 animation-delay-300">
-          <span className="mb-1 text-zinc-400">Şifre</span>
+          <div className="flex justify-between items-center mb-1">
+            <span className="text-zinc-400">Şifre</span>
+            <a
+              href="/forgot-password"
+              className="text-xs text-primary hover:underline"
+            >
+              Şifremi unuttum
+            </a>
+          </div>
           <input
             name="password"
             type="password"

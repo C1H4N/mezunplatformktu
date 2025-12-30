@@ -1,58 +1,118 @@
+"use client";
+
+import { useState, useEffect, use } from "react";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
+import Image from "next/image";
+import {
+  ArrowLeft,
+  Mail,
+  Phone,
+  MapPin,
+  Building2,
+  GraduationCap,
+  Briefcase,
+  Linkedin,
+  Github,
+  Globe,
+  MessageSquare,
+  Users,
+  Award,
+  BookOpen,
+} from "lucide-react";
 
-// Örnek veri - Gerçek uygulamada API'den gelecek
-const mockAlumniDetails = {
-  id: "1",
-  name: "Ahmet Yılmaz",
-  department: "Bilgisayar Mühendisliği",
-  faculty: "Mühendislik Fakültesi",
-  city: "İstanbul",
-  jobTitle: "Kıdemli Yazılım Geliştirici",
-  company: "Tech Corp",
-  graduationYear: 2018,
-  email: "ahmet.yilmaz@example.com",
-  phone: "+90 555 123 4567",
-  linkedinUrl: "https://linkedin.com/in/ahmetyilmaz",
-  websiteUrl: "https://ahmetyilmaz.com",
-  profileImage: "",
-  bio: `Bilgisayar Mühendisliği mezunu olarak 5+ yıldır yazılım geliştirme alanında çalışmaktayım. 
-  Modern web teknolojileri ve bulut altyapıları konusunda deneyimliyim. Açık kaynak projelere katkıda 
-  bulunmayı ve yeni teknolojileri öğrenmeyi seviyorum. KTÜ'deki eğitimim sayesinde güçlü bir teknik 
-  altyapı ve problem çözme becerileri kazandım.`,
-  skills: [
-    "JavaScript",
-    "TypeScript",
-    "React",
-    "Node.js",
-    "Python",
-    "AWS",
-    "Docker",
-    "PostgreSQL",
-  ],
-  languages: [
-    { name: "Türkçe", level: "Ana Dil" },
-    { name: "İngilizce", level: "İleri" },
-    { name: "Almanca", level: "Orta" },
-  ],
-  experience: [
-    {
-      company: "Tech Corp",
-      position: "Kıdemli Yazılım Geliştirici",
-      period: "2021 - Günümüz",
-      description:
-        "Full-stack web uygulamaları geliştirme, mikroservis mimarisi tasarımı",
-    },
-    {
-      company: "Startup XYZ",
-      position: "Yazılım Geliştirici",
-      period: "2018 - 2021",
-      description: "React ve Node.js kullanarak SaaS ürün geliştirme",
-    },
-  ],
-};
+interface AlumniProfile {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  department: string;
+  faculty: string;
+  city: string;
+  jobTitle: string;
+  company: string;
+  graduationYear?: number;
+  linkedinUrl?: string;
+  websiteUrl?: string;
+  profileImage?: string;
+  bio: string;
+  skills: string[];
+  competencies: string[];
+  mentorshipTopics: string[];
+  experience: {
+    id: string;
+    company: string;
+    position: string;
+    period: string;
+    description: string;
+  }[];
+  education: {
+    id: string;
+    school: string;
+    degree: string;
+    field: string;
+    period: string;
+  }[];
+  socialLinks: {
+    linkedin?: string;
+    github?: string;
+    twitter?: string;
+    website?: string;
+  };
+}
 
-export default function AlumniProfile({ params }: { params: { id: string } }) {
-  const alumni = mockAlumniDetails;
+export default function AlumniProfilePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
+  const { data: session } = useSession();
+  const [alumni, setAlumni] = useState<AlumniProfile | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchAlumni = async () => {
+      try {
+        const res = await fetch(`/api/alumni/${id}`);
+        if (!res.ok) {
+          const data = await res.json();
+          throw new Error(data.error || "Mezun bulunamadı");
+        }
+        const data = await res.json();
+        setAlumni(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Bir hata oluştu");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAlumni();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (error || !alumni) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <Users className="w-16 h-16 mx-auto text-muted mb-4" />
+          <h2 className="text-xl font-semibold mb-2">Mezun Bulunamadı</h2>
+          <p className="text-muted mb-4">{error}</p>
+          <Link
+            href="/mezunlar"
+            className="text-primary hover:underline"
+          >
+            ← Mezunlara Dön
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -60,22 +120,10 @@ export default function AlumniProfile({ params }: { params: { id: string } }) {
       <div className="bg-gradient-to-br from-primary via-primary-hover to-accent text-white">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <Link
-            href="/"
+            href="/mezunlar"
             className="inline-flex items-center gap-2 text-blue-100 hover:text-white mb-6 transition-colors"
           >
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
+            <ArrowLeft className="w-5 h-5" />
             Mezunlara Dön
           </Link>
 
@@ -83,9 +131,11 @@ export default function AlumniProfile({ params }: { params: { id: string } }) {
             {/* Profil Fotoğrafı */}
             <div className="w-32 h-32 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center overflow-hidden border-4 border-white/30 flex-shrink-0">
               {alumni.profileImage ? (
-                <img
+                <Image
                   src={alumni.profileImage}
                   alt={alumni.name}
+                  width={128}
+                  height={128}
                   className="w-full h-full object-cover"
                 />
               ) : (
@@ -94,7 +144,8 @@ export default function AlumniProfile({ params }: { params: { id: string } }) {
                     .split(" ")
                     .map((n) => n[0])
                     .join("")
-                    .toUpperCase()}
+                    .toUpperCase()
+                    .slice(0, 2)}
                 </span>
               )}
             </div>
@@ -104,119 +155,74 @@ export default function AlumniProfile({ params }: { params: { id: string } }) {
               <h1 className="text-3xl sm:text-4xl font-bold mb-2">
                 {alumni.name}
               </h1>
-              <p className="text-xl text-blue-100 mb-2">
-                {alumni.jobTitle} • {alumni.company}
-              </p>
+              {(alumni.jobTitle || alumni.company) && (
+                <p className="text-xl text-blue-100 mb-2">
+                  {alumni.jobTitle}
+                  {alumni.company && ` • ${alumni.company}`}
+                </p>
+              )}
               <div className="flex flex-wrap gap-4 text-blue-100">
                 <div className="flex items-center gap-2">
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                    />
-                  </svg>
-                  {alumni.faculty}
+                  <GraduationCap className="w-5 h-5" />
+                  {alumni.department}
                 </div>
-                <div className="flex items-center gap-2">
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                    />
-                  </svg>
-                  {alumni.city}
-                </div>
-                <div className="flex items-center gap-2">
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 14l9-5-9-5-9 5 9 5z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"
-                    />
-                  </svg>
-                  Mezuniyet: {alumni.graduationYear}
-                </div>
+                {alumni.city && alumni.city !== "Bilinmiyor" && (
+                  <div className="flex items-center gap-2">
+                    <MapPin className="w-5 h-5" />
+                    {alumni.city}
+                  </div>
+                )}
+                {alumni.graduationYear && (
+                  <div className="flex items-center gap-2">
+                    <Award className="w-5 h-5" />
+                    Mezuniyet: {alumni.graduationYear}
+                  </div>
+                )}
               </div>
 
               {/* Sosyal Medya */}
               <div className="flex gap-3 mt-6">
-                {alumni.linkedinUrl && (
+                {alumni.socialLinks.linkedin && (
                   <a
-                    href={alumni.linkedinUrl}
+                    href={alumni.socialLinks.linkedin}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-lg transition-colors flex items-center gap-2"
                   >
-                    <svg
-                      className="w-5 h-5"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-                    </svg>
+                    <Linkedin className="w-5 h-5" />
                     LinkedIn
                   </a>
                 )}
-                {alumni.websiteUrl && (
+                {alumni.socialLinks.github && (
                   <a
-                    href={alumni.websiteUrl}
+                    href={alumni.socialLinks.github}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-lg transition-colors flex items-center gap-2"
                   >
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"
-                      />
-                    </svg>
+                    <Github className="w-5 h-5" />
+                    GitHub
+                  </a>
+                )}
+                {alumni.socialLinks.website && (
+                  <a
+                    href={alumni.socialLinks.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-lg transition-colors flex items-center gap-2"
+                  >
+                    <Globe className="w-5 h-5" />
                     Website
                   </a>
+                )}
+                {session?.user && session.user.id !== alumni.id && (
+                  <Link
+                    href={`/messages/${alumni.id}`}
+                    className="px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-lg transition-colors flex items-center gap-2"
+                  >
+                    <MessageSquare className="w-5 h-5" />
+                    Mesaj Gönder
+                  </Link>
                 )}
               </div>
             </div>
@@ -230,162 +236,174 @@ export default function AlumniProfile({ params }: { params: { id: string } }) {
           {/* Sol Kolon - Ana Bilgiler */}
           <div className="lg:col-span-2 space-y-6">
             {/* Hakkında */}
-            <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
-              <h2 className="text-2xl font-semibold text-foreground mb-4 flex items-center gap-2">
-                <svg
-                  className="w-6 h-6 text-primary"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                  />
-                </svg>
-                Hakkında
-              </h2>
-              <p className="text-foreground leading-relaxed whitespace-pre-line">
-                {alumni.bio}
-              </p>
-            </div>
+            {alumni.bio && (
+              <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
+                <h2 className="text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
+                  <Users className="w-5 h-5 text-primary" />
+                  Hakkında
+                </h2>
+                <p className="text-foreground leading-relaxed whitespace-pre-line">
+                  {alumni.bio}
+                </p>
+              </div>
+            )}
 
             {/* Deneyim */}
-            <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
-              <h2 className="text-2xl font-semibold text-foreground mb-4 flex items-center gap-2">
-                <svg
-                  className="w-6 h-6 text-primary"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                  />
-                </svg>
-                Deneyim
-              </h2>
-              <div className="space-y-6">
-                {alumni.experience.map((exp, index) => (
-                  <div key={index} className="border-l-2 border-primary pl-4">
-                    <h3 className="text-lg font-semibold text-foreground">
-                      {exp.position}
-                    </h3>
-                    <p className="text-primary font-medium">{exp.company}</p>
-                    <p className="text-sm text-muted mb-2">{exp.period}</p>
-                    <p className="text-foreground">{exp.description}</p>
-                  </div>
-                ))}
+            {alumni.experience.length > 0 && (
+              <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
+                <h2 className="text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
+                  <Briefcase className="w-5 h-5 text-primary" />
+                  Deneyim
+                </h2>
+                <div className="space-y-6">
+                  {alumni.experience.map((exp) => (
+                    <div key={exp.id} className="border-l-2 border-primary pl-4">
+                      <h3 className="text-lg font-semibold text-foreground">
+                        {exp.position}
+                      </h3>
+                      <p className="text-primary font-medium">{exp.company}</p>
+                      <p className="text-sm text-muted mb-2">{exp.period}</p>
+                      {exp.description && (
+                        <p className="text-foreground">{exp.description}</p>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
+
+            {/* Eğitim */}
+            {alumni.education.length > 0 && (
+              <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
+                <h2 className="text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
+                  <BookOpen className="w-5 h-5 text-primary" />
+                  Eğitim
+                </h2>
+                <div className="space-y-4">
+                  {alumni.education.map((edu) => (
+                    <div key={edu.id} className="border-l-2 border-primary pl-4">
+                      <h3 className="font-semibold text-foreground">
+                        {edu.school}
+                      </h3>
+                      <p className="text-primary">{edu.degree} - {edu.field}</p>
+                      <p className="text-sm text-muted">{edu.period}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Mentorluk Alanları */}
+            {alumni.mentorshipTopics.length > 0 && (
+              <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
+                <h2 className="text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
+                  <Users className="w-5 h-5 text-primary" />
+                  Mentorluk Alanları
+                </h2>
+                <div className="flex flex-wrap gap-2">
+                  {alumni.mentorshipTopics.map((topic) => (
+                    <span
+                      key={topic}
+                      className="px-3 py-1.5 bg-green-500/10 text-green-600 rounded-full text-sm font-medium"
+                    >
+                      {topic}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Sağ Kolon - Yan Bilgiler */}
           <div className="space-y-6">
             {/* İletişim */}
             <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
-              <h3 className="text-xl font-semibold text-foreground mb-4">
+              <h3 className="text-lg font-semibold text-foreground mb-4">
                 İletişim
               </h3>
               <div className="space-y-3">
-                <a
-                  href={`mailto:${alumni.email}`}
-                  className="flex items-center gap-3 text-foreground hover:text-primary transition-colors"
-                >
-                  <svg
-                    className="w-5 h-5 flex-shrink-0"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+                {alumni.email && (
+                  <a
+                    href={`mailto:${alumni.email}`}
+                    className="flex items-center gap-3 text-foreground hover:text-primary transition-colors"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                    />
-                  </svg>
-                  <span className="text-sm break-all">{alumni.email}</span>
-                </a>
-                <a
-                  href={`tel:${alumni.phone}`}
-                  className="flex items-center gap-3 text-foreground hover:text-primary transition-colors"
-                >
-                  <svg
-                    className="w-5 h-5 flex-shrink-0"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+                    <Mail className="w-5 h-5 flex-shrink-0" />
+                    <span className="text-sm break-all">{alumni.email}</span>
+                  </a>
+                )}
+                {alumni.phone && (
+                  <a
+                    href={`tel:${alumni.phone}`}
+                    className="flex items-center gap-3 text-foreground hover:text-primary transition-colors"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                    />
-                  </svg>
-                  <span className="text-sm">{alumni.phone}</span>
-                </a>
+                    <Phone className="w-5 h-5 flex-shrink-0" />
+                    <span className="text-sm">{alumni.phone}</span>
+                  </a>
+                )}
+                {alumni.city && alumni.city !== "Bilinmiyor" && (
+                  <div className="flex items-center gap-3 text-muted">
+                    <MapPin className="w-5 h-5 flex-shrink-0" />
+                    <span className="text-sm">{alumni.city}</span>
+                  </div>
+                )}
               </div>
             </div>
 
             {/* Yetenekler */}
-            <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
-              <h3 className="text-xl font-semibold text-foreground mb-4">
-                Yetenekler
-              </h3>
-              <div className="flex flex-wrap gap-2">
-                {alumni.skills.map((skill) => (
-                  <span
-                    key={skill}
-                    className="px-3 py-1.5 bg-primary-light text-primary rounded-full text-sm font-medium"
-                  >
-                    {skill}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            {/* Diller */}
-            <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
-              <h3 className="text-xl font-semibold text-foreground mb-4">
-                Diller
-              </h3>
-              <div className="space-y-3">
-                {alumni.languages.map((lang) => (
-                  <div
-                    key={lang.name}
-                    className="flex justify-between items-center"
-                  >
-                    <span className="text-foreground font-medium">
-                      {lang.name}
+            {alumni.skills.length > 0 && (
+              <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
+                <h3 className="text-lg font-semibold text-foreground mb-4">
+                  Yetenekler
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {alumni.skills.map((skill) => (
+                    <span
+                      key={skill}
+                      className="px-3 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-medium"
+                    >
+                      {skill}
                     </span>
-                    <span className="text-sm text-muted">{lang.level}</span>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
-            {/* Eğitim */}
-            <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
-              <h3 className="text-xl font-semibold text-foreground mb-4">
-                Eğitim
-              </h3>
-              <div>
-                <h4 className="font-semibold text-foreground">
-                  {alumni.department}
-                </h4>
-                <p className="text-muted text-sm">{alumni.faculty}</p>
-                <p className="text-muted text-sm">
-                  Mezuniyet: {alumni.graduationYear}
-                </p>
+            {/* Yetkinlikler */}
+            {alumni.competencies.length > 0 && (
+              <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
+                <h3 className="text-lg font-semibold text-foreground mb-4">
+                  Yetkinlikler
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {alumni.competencies.map((comp) => (
+                    <span
+                      key={comp}
+                      className="px-3 py-1.5 bg-blue-500/10 text-blue-600 rounded-full text-sm font-medium"
+                    >
+                      {comp}
+                    </span>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
+
+            {/* Firma Bilgisi */}
+            {alumni.company && (
+              <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
+                <h3 className="text-lg font-semibold text-foreground mb-4">
+                  Mevcut Pozisyon
+                </h3>
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                    <Building2 className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <p className="font-medium">{alumni.jobTitle}</p>
+                    <p className="text-sm text-muted">{alumni.company}</p>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

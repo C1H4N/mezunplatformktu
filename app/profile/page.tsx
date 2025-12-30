@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { buttonVariants } from "../components/ui/Button";
+import { X, Plus, Eye, EyeOff, Users, Building2, Lock, FileText, Upload } from "lucide-react";
 
 interface Experience {
   id: string;
@@ -29,6 +30,20 @@ interface Education {
   description?: string;
 }
 
+interface Skill {
+  id: string;
+  name: string;
+}
+
+type ProfileVisibility = "PUBLIC" | "REGISTERED" | "EMPLOYERS" | "PRIVATE";
+
+const visibilityOptions: { value: ProfileVisibility; label: string; description: string; icon: React.ReactNode }[] = [
+  { value: "PUBLIC", label: "Herkese Açık", description: "Herkes profilinizi görebilir", icon: <Eye className="w-4 h-4" /> },
+  { value: "REGISTERED", label: "Kayıtlı Kullanıcılar", description: "Sadece giriş yapmış kullanıcılar", icon: <Users className="w-4 h-4" /> },
+  { value: "EMPLOYERS", label: "Sadece İşverenler", description: "Sadece işverenler görebilir", icon: <Building2 className="w-4 h-4" /> },
+  { value: "PRIVATE", label: "Gizli", description: "Sadece siz görebilirsiniz", icon: <Lock className="w-4 h-4" /> },
+];
+
 export default function ProfilePage() {
   const { data: session, update } = useSession();
   const router = useRouter();
@@ -36,11 +51,20 @@ export default function ProfilePage() {
   // State for sections
   const [experiences, setExperiences] = useState<Experience[]>([]);
   const [educations, setEducations] = useState<Education[]>([]);
+  const [skills, setSkills] = useState<Skill[]>([]);
+  const [newSkill, setNewSkill] = useState("");
+  
+  // Profile fields
+  const [bio, setBio] = useState("");
+  const [profileVisibility, setProfileVisibility] = useState<ProfileVisibility>("PUBLIC");
+  const [cvUrl, setCvUrl] = useState<string | null>(null);
   
   // Modals state
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
   const [isAddExperienceOpen, setIsAddExperienceOpen] = useState(false);
   const [isAddEducationOpen, setIsAddEducationOpen] = useState(false);
+  const [isEditBioOpen, setIsEditBioOpen] = useState(false);
+  const [isEditVisibilityOpen, setIsEditVisibilityOpen] = useState(false);
   
   // Profile Form Data
   const [profileData, setProfileData] = useState({
@@ -82,6 +106,8 @@ export default function ProfilePage() {
       });
       fetchExperiences();
       fetchEducations();
+      fetchSkills();
+      fetchProfileDetails();
     }
   }, [session]);
 
@@ -102,6 +128,141 @@ export default function ProfilePage() {
       setEducations(data);
     } catch (error) {
       console.error("Failed to fetch educations", error);
+    }
+  };
+
+  const fetchSkills = async () => {
+    try {
+      const res = await fetch("/api/profile/skills");
+      const data = await res.json();
+      if (Array.isArray(data)) {
+        setSkills(data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch skills", error);
+    }
+  };
+
+  const fetchProfileDetails = async () => {
+    try {
+      const res = await fetch("/api/user/update");
+      const data = await res.json();
+      if (data.bio) setBio(data.bio);
+      if (data.profileVisibility) setProfileVisibility(data.profileVisibility);
+      if (data.cvUrl) setCvUrl(data.cvUrl);
+    } catch (error) {
+      console.error("Failed to fetch profile details", error);
+    }
+  };
+
+  const handleAddSkill = async () => {
+    if (!newSkill.trim()) return;
+    
+    try {
+      const res = await fetch("/api/profile/skills", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: newSkill.trim() }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        toast.error(data.error || "Yetenek eklenemedi");
+        return;
+      }
+
+      toast.success("Yetenek eklendi!");
+      setNewSkill("");
+      fetchSkills();
+    } catch (error) {
+      toast.error("Bir hata oluştu");
+    }
+  };
+
+  const handleDeleteSkill = async (id: string) => {
+    try {
+      await fetch(`/api/profile/skills?id=${id}`, { method: "DELETE" });
+      toast.success("Yetenek silindi");
+      fetchSkills();
+    } catch (error) {
+      toast.error("Bir hata oluştu");
+    }
+  };
+
+  const handleUpdateBio = async () => {
+    try {
+      const res = await fetch("/api/user/update", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ bio }),
+      });
+
+      if (!res.ok) throw new Error("Güncelleme başarısız");
+      
+      toast.success("Biyografi güncellendi!");
+      setIsEditBioOpen(false);
+    } catch (error) {
+      toast.error("Bir hata oluştu");
+    }
+  };
+
+  const handleUpdateVisibility = async (newVisibility: ProfileVisibility) => {
+    try {
+      const res = await fetch("/api/user/update", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ profileVisibility: newVisibility }),
+      });
+
+      if (!res.ok) throw new Error("Güncelleme başarısız");
+      
+      setProfileVisibility(newVisibility);
+      toast.success("Görünürlük ayarı güncellendi!");
+      setIsEditVisibilityOpen(false);
+    } catch (error) {
+      toast.error("Bir hata oluştu");
+    }
+  };
+
+  const handleCvUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.type !== "application/pdf") {
+      toast.error("Sadece PDF dosyası yükleyebilirsiniz");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) { // 5MB
+      toast.error("Dosya boyutu 5MB'dan küçük olmalı");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const uploadRes = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!uploadRes.ok) throw new Error("Yükleme başarısız");
+      
+      const { url } = await uploadRes.json();
+
+      const updateRes = await fetch("/api/user/update", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ cvUrl: url }),
+      });
+
+      if (!updateRes.ok) throw new Error("Güncelleme başarısız");
+
+      setCvUrl(url);
+      toast.success("CV yüklendi!");
+    } catch (error) {
+      toast.error("CV yüklenirken hata oluştu");
     }
   };
 
@@ -452,7 +613,233 @@ export default function ProfilePage() {
             )}
           </div>
         </div>
+
+        {/* Skills Section */}
+        <div className="bg-card border border-border rounded-xl p-8 shadow-sm">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-xl font-bold text-foreground">Yetenekler</h2>
+          </div>
+
+          <div className="flex flex-wrap gap-2 mb-4">
+            {skills.length === 0 ? (
+              <p className="text-muted-foreground text-sm">Henüz yetenek eklenmemiş.</p>
+            ) : (
+              skills.map((skill) => (
+                <span
+                  key={skill.id}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-medium group"
+                >
+                  {skill.name}
+                  <button
+                    onClick={() => handleDeleteSkill(skill.id)}
+                    className="opacity-0 group-hover:opacity-100 hover:text-destructive transition-opacity"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </span>
+              ))
+            )}
+          </div>
+
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={newSkill}
+              onChange={(e) => setNewSkill(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleAddSkill())}
+              placeholder="Yeni yetenek ekle..."
+              className="flex-1 px-3 py-2 bg-background border border-border rounded-lg text-sm focus:ring-2 focus:ring-primary outline-none"
+              maxLength={50}
+            />
+            <button
+              onClick={handleAddSkill}
+              disabled={!newSkill.trim()}
+              className={buttonVariants({ variant: "default", size: "sm" })}
+            >
+              <Plus className="w-4 h-4 mr-1" />
+              Ekle
+            </button>
+          </div>
+        </div>
+
+        {/* About Section */}
+        <div className="bg-card border border-border rounded-xl p-8 shadow-sm">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-xl font-bold text-foreground">Hakkımda</h2>
+            <button
+              onClick={() => setIsEditBioOpen(true)}
+              className={buttonVariants({ variant: "ghost", size: "icon" })}
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+              </svg>
+            </button>
+          </div>
+          
+          {bio ? (
+            <p className="text-foreground/80 whitespace-pre-wrap">{bio}</p>
+          ) : (
+            <p className="text-muted-foreground text-sm">Henüz biyografi eklenmemiş. Kendinizi tanıtan bir metin ekleyin.</p>
+          )}
+        </div>
+
+        {/* CV & Visibility Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* CV */}
+          <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                <FileText className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-foreground">Özgeçmiş (CV)</h3>
+                <p className="text-xs text-muted">PDF formatında</p>
+              </div>
+            </div>
+            
+            {cvUrl ? (
+              <div className="flex items-center justify-between p-3 bg-muted-bg rounded-lg">
+                <span className="text-sm truncate">CV yüklendi</span>
+                <div className="flex gap-2">
+                  <a
+                    href={cvUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={buttonVariants({ variant: "ghost", size: "sm" })}
+                  >
+                    Görüntüle
+                  </a>
+                  <label className={buttonVariants({ variant: "outline", size: "sm" }) + " cursor-pointer"}>
+                    <input
+                      type="file"
+                      className="hidden"
+                      accept=".pdf"
+                      onChange={handleCvUpload}
+                    />
+                    Değiştir
+                  </label>
+                </div>
+              </div>
+            ) : (
+              <label className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-border rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
+                <input
+                  type="file"
+                  className="hidden"
+                  accept=".pdf"
+                  onChange={handleCvUpload}
+                />
+                <Upload className="w-8 h-8 text-muted mb-2" />
+                <span className="text-sm text-muted">CV yüklemek için tıklayın</span>
+                <span className="text-xs text-muted mt-1">Maksimum 5MB, PDF</span>
+              </label>
+            )}
+          </div>
+
+          {/* Visibility */}
+          <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                  {visibilityOptions.find(v => v.value === profileVisibility)?.icon}
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground">Profil Görünürlüğü</h3>
+                  <p className="text-xs text-muted">
+                    {visibilityOptions.find(v => v.value === profileVisibility)?.description}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsEditVisibilityOpen(true)}
+                className={buttonVariants({ variant: "outline", size: "sm" })}
+              >
+                Değiştir
+              </button>
+            </div>
+            
+            <div className="p-3 bg-muted-bg rounded-lg">
+              <span className="text-sm font-medium">
+                {visibilityOptions.find(v => v.value === profileVisibility)?.label}
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
+
+      {/* Edit Bio Modal */}
+      {isEditBioOpen && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-card border border-border rounded-xl p-6 w-full max-w-lg shadow-2xl animate-fade-in-up">
+            <h2 className="text-xl font-bold mb-4">Hakkımda</h2>
+            <textarea
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
+              rows={6}
+              maxLength={1000}
+              placeholder="Kendinizi tanıtın..."
+              className="w-full px-3 py-2 bg-background border border-border rounded-lg resize-none focus:ring-2 focus:ring-primary outline-none"
+            />
+            <p className="text-xs text-muted mt-1">{bio.length}/1000 karakter</p>
+            <div className="flex justify-end gap-2 mt-4">
+              <button
+                type="button"
+                onClick={() => setIsEditBioOpen(false)}
+                className={buttonVariants({ variant: "ghost" })}
+              >
+                İptal
+              </button>
+              <button
+                onClick={handleUpdateBio}
+                className={buttonVariants({ variant: "default" })}
+              >
+                Kaydet
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Visibility Modal */}
+      {isEditVisibilityOpen && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-card border border-border rounded-xl p-6 w-full max-w-md shadow-2xl animate-fade-in-up">
+            <h2 className="text-xl font-bold mb-4">Profil Görünürlüğü</h2>
+            <div className="space-y-2">
+              {visibilityOptions.map((option) => (
+                <button
+                  key={option.value}
+                  onClick={() => handleUpdateVisibility(option.value)}
+                  className={`w-full p-4 rounded-lg border text-left transition-all ${
+                    profileVisibility === option.value
+                      ? "border-primary bg-primary/5"
+                      : "border-border hover:border-primary/50"
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                      profileVisibility === option.value ? "bg-primary text-white" : "bg-muted-bg text-muted"
+                    }`}>
+                      {option.icon}
+                    </div>
+                    <div>
+                      <p className="font-medium">{option.label}</p>
+                      <p className="text-xs text-muted">{option.description}</p>
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+            <div className="flex justify-end mt-4">
+              <button
+                onClick={() => setIsEditVisibilityOpen(false)}
+                className={buttonVariants({ variant: "ghost" })}
+              >
+                Kapat
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Edit Profile Modal */}
       {isEditProfileOpen && (

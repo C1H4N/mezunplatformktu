@@ -8,10 +8,17 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const type = searchParams.get("type") as JobType | null;
     const search = searchParams.get("search");
+    const status = searchParams.get("status"); // Belirli status için filtre
+    const all = searchParams.get("all"); // Admin için tüm ilanları getir
 
-    const where: any = {
-      status: "OPEN",
-    };
+    const where: Record<string, unknown> = {};
+
+    // Admin modunda değilse sadece OPEN olanları göster
+    if (!all) {
+      where.status = status || "OPEN";
+    } else if (status) {
+      where.status = status;
+    }
 
     if (type) {
       where.type = type;
@@ -28,14 +35,27 @@ export async function GET(req: Request) {
     const jobs = await prisma.jobAdvertisement.findMany({
       where,
       include: {
-        publisher: true,
+        publisher: {
+          include: {
+            user: {
+              select: {
+                firstName: true,
+                lastName: true,
+                email: true,
+              },
+            },
+          },
+        },
+        _count: {
+          select: { applications: true },
+        },
       },
       orderBy: {
-        id: "desc", // Using ID as a proxy for creation time since createdAt is missing, or add createdAt
+        createdAt: "desc",
       },
     });
 
-    return NextResponse.json(jobs);
+    return NextResponse.json({ jobs });
   } catch (error) {
     console.error("Error fetching jobs:", error);
     return NextResponse.json(

@@ -6,6 +6,7 @@ import { createPortal } from "react-dom";
 import { useSession, signOut } from "next-auth/react";
 import Image from "next/image";
 import { Button, buttonVariants } from "./ui/Button";
+import NotificationBell from "./NotificationBell";
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -79,6 +80,12 @@ export default function Navbar() {
             >
               İlanlar
             </Link>
+            <Link
+              href="/events"
+              className={buttonVariants({ variant: "ghost" })}
+            >
+              Etkinlikler
+            </Link>
 
             {!isAuthenticated ? (
               <>
@@ -97,6 +104,21 @@ export default function Navbar() {
               </>
             ) : (
               <>
+                {user?.role === "STUDENT" && (
+                  <Link
+                    href="/applications"
+                    className={buttonVariants({ variant: "ghost" })}
+                  >
+                    Başvurularım
+                  </Link>
+                )}
+                <Link
+                  href="/messages"
+                  className={buttonVariants({ variant: "ghost" })}
+                >
+                  Mesajlar
+                </Link>
+                <NotificationBell />
                 <Link
                   href="/profile"
                   className="flex items-center gap-2 px-3 py-2 rounded-lg bg-muted-bg text-sm hover:bg-muted-bg/80 transition-colors"
@@ -219,6 +241,16 @@ export default function Navbar() {
                 </svg>
                 İlanlar
               </Link>
+              <Link
+                href="/events"
+                className="px-4 py-3 rounded-lg text-foreground hover:bg-muted-bg hover:text-primary transition-colors font-medium flex items-center gap-3 text-lg"
+                onClick={handleCloseMenu}
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                Etkinlikler
+              </Link>
 
               <div className="h-px bg-border my-2"></div>
 
@@ -273,6 +305,18 @@ export default function Navbar() {
                     </svg>
                     Profilim
                   </Link>
+                  {user?.role === "STUDENT" && (
+                    <Link
+                      href="/applications"
+                      className={buttonVariants({ variant: "ghost", className: "w-full justify-start text-lg" })}
+                      onClick={handleCloseMenu}
+                    >
+                      <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                      </svg>
+                      Başvurularım
+                    </Link>
+                  )}
                   <Button
                     onClick={() => {
                       signOut({ callbackUrl: "/" });

@@ -35,7 +35,7 @@ export default function JobsPage() {
 
         const res = await fetch(`/api/jobs?${params.toString()}`);
         const data = await res.json();
-        setJobs(data);
+        setJobs(data.jobs || []);
       } catch (error) {
         console.error("Failed to fetch jobs:", error);
       } finally {

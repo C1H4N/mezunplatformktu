@@ -47,6 +47,14 @@ enum JobStatus {
   CLOSED
 }
 
+// Profil görünürlük ayarları (Belge 4.2.3)
+enum ProfileVisibility {
+  PUBLIC        // Herkese açık
+  REGISTERED    // Sadece kayıtlı kullanıcılar
+  EMPLOYERS     // Sadece işverenler
+  PRIVATE       // Gizli
+}
+
 model User {
   id            String    @id @default(cuid())
   firstName     String
@@ -59,6 +67,11 @@ model User {
   coverImage    String?
   phoneNumber   String?   @unique
 
+  // Profil alanları (Belge 4.2)
+  bio               String?   // Kısa biyografi
+  cvUrl             String?   // CV dosya yolu (PDF)
+  profileVisibility ProfileVisibility @default(PUBLIC)
+  
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   lastLogin DateTime?
@@ -82,6 +95,7 @@ model User {
   
   experiences Experience[]
   educations  Education[]
+  skills      Skill[]
 }
 
 model Experience {
@@ -116,6 +130,18 @@ model Education {
   
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
+}
+
+// Yetenekler modeli (Belge 4.2.1)
+model Skill {
+  id     String @id @default(cuid())
+  name   String
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+  
+  @@unique([userId, name]) // Aynı kullanıcı aynı yeteneği bir kez ekleyebilir
 }
 
 model Student {
@@ -209,13 +235,57 @@ model MentorshipRequest {
   alumni   Alumni @relation(fields: [alumniId], references: [id])
 }
 
+// Etkinlik türleri
+enum EventType {
+  CAREER_FAIR    // Kariyer Fuarı
+  NETWORKING     // Networking Etkinliği
+  WORKSHOP       // Atölye
+  SEMINAR        // Seminer
+  CONFERENCE     // Konferans
+  MEETUP         // Buluşma
+  OTHER          // Diğer
+}
+
+// Etkinlik durumları
+enum EventStatus {
+  UPCOMING       // Yaklaşan
+  ONGOING        // Devam Eden
+  COMPLETED      // Tamamlandı
+  CANCELLED      // İptal Edildi
+}
+
 model Event {
-  id          String   @id @default(cuid())
+  id          String      @id @default(cuid())
   title       String
+  description String
   date        DateTime
+  endDate     DateTime?   // Opsiyonel bitiş tarihi
   location    String
+  type        EventType   @default(OTHER)
+  status      EventStatus @default(UPCOMING)
+  capacity    Int?        // Maksimum katılımcı sayısı
+  image       String?     // Etkinlik görseli
+  
   organizerId String
   organizer   User     @relation(fields: [organizerId], references: [id])
+  
+  participants EventParticipant[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Etkinlik katılımcıları
+model EventParticipant {
+  id        String   @id @default(cuid())
+  eventId   String
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  userId    String
+  status    String   @default("REGISTERED") // REGISTERED, ATTENDED, CANCELLED
+  
+  createdAt DateTime @default(now())
+  
+  @@unique([eventId, userId]) // Aynı kullanıcı aynı etkinliğe bir kez kayıt olabilir
 }
 
 model EducationRecommendation {
@@ -310,4 +380,29 @@ model PasswordResetToken {
   createdAt DateTime @default(now())
 
   @@index([email])
+}
+
+// Bildirim türleri
+enum NotificationType {
+  MESSAGE           // Yeni mesaj
+  JOB_APPLICATION   // İş başvurusu durumu
+  EVENT             // Etkinlik hatırlatması
+  MENTORSHIP        // Mentorluk talebi
+  SYSTEM            // Sistem bildirimi
+}
+
+// Bildirimler modeli (Belge 4.4)
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  type      NotificationType
+  title     String
+  message   String
+  link      String?          // Tıklandığında gidilecek sayfa
+  isRead    Boolean          @default(false)
+  
+  createdAt DateTime         @default(now())
+  
+  @@index([userId, isRead])
+  @@index([userId, createdAt])
 }

@@ -4,12 +4,12 @@ import { prisma } from "@/lib/db";
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const search = searchParams.get("search") || "";
-  const city = searchParams.get("city") || "Seçin";
-  const department = searchParams.get("department") || "Seçin";
-  const jobField = searchParams.get("jobField") || "Seçin";
+  const city = searchParams.get("city");
+  const department = searchParams.get("department");
+  const year = searchParams.get("year");
 
   try {
-    const whereClause: any = {
+    const whereClause: Record<string, unknown> = {
       role: "ALUMNI",
     };
 
@@ -24,56 +24,26 @@ export async function GET(request: Request) {
     }
 
     // City filter
-    if (city !== "Seçin" && city !== "Tümü") {
+    if (city && city !== "Tümü") {
       whereClause.moreinfo = {
-        ...whereClause.moreinfo,
-        location: city,
+        location: { contains: city, mode: "insensitive" },
       };
     }
 
-    // Department filter (Assuming department is stored in Student model or we need to add it to Alumni/Info)
-    // For now, let's assume we filter by department in the Student model if connected, 
-    // BUT our seed data put department in 'Student' model? 
-    // Wait, the seed script didn't put department in Student model, it just created Alumni.
-    // The seed script put department in... nowhere explicitly in the DB schema for Alumni?
-    // Ah, the UML had 'department' in Student. Alumni has 'graduationYear'.
-    // Let's check the seed script again.
-    // The seed script has `department` in the `alumniData` array but it wasn't used in the `create` call!
-    // This is a gap. I should add `department` to `Alumni` or `Info` or `Student`.
-    // The UML shows `department` in `Student`. `Alumni` extends `User`.
-    // Usually Alumni are former Students.
-    // For simplicity and to match the seed data intent, let's assume we should store department in `Info` or `Alumni`.
-    // The `Info` model has many fields but not department.
-    // Let's check `Student` model in schema. It has `department`.
-    // If a user is ALUMNI, they might not have a STUDENT record if they registered directly as Alumni.
-    // However, for this platform, let's assume we filter by `Student` record if it exists, OR we need to add `department` to `Alumni` or `Info`.
-    // Given the constraints and the seed script, I'll add `department` to `Alumni` model in a follow-up or just ignore it for now and fix the seed?
-    // Actually, looking at the seed script, I missed mapping `department`.
-    // I will add `department` to `Alumni` model in schema to fix this properly, as it's crucial for filtering.
-    
-    // WAIT, I cannot change schema without user approval technically, but I am in execution mode.
-    // I'll stick to what I have. The `Student` model has `department`.
-    // Maybe I should create a `Student` record for Alumni too? 
-    // Or just add `department` to `Alumni`? Adding to `Alumni` makes sense for a "Mezun Platformu".
-    
-    // Let's modify the schema to add `department` to `Alumni` first, then update seed, then API.
-    // This is a deviation but necessary for the feature to work.
-    
-    // For now, I will write the API assuming `department` is on `Alumni` and I will update the schema in the next step.
-    
     // Department filter
-    if (department !== "Seçin" && department !== "Tümü") {
+    if (department && department !== "Tümü") {
       whereClause.alumni = {
-        department: department
+        ...(whereClause.alumni as Record<string, unknown> || {}),
+        department: { contains: department, mode: "insensitive" },
       };
     }
 
-    // Job Field filter
-    if (jobField !== "Seçin" && jobField !== "Tümü") {
-       whereClause.moreinfo = {
-         ...whereClause.moreinfo,
-         position: { contains: jobField, mode: "insensitive" }
-       };
+    // Graduation Year filter
+    if (year && year !== "Tümü") {
+      whereClause.alumni = {
+        ...(whereClause.alumni as Record<string, unknown> || {}),
+        graduationYear: parseInt(year),
+      };
     }
 
     const users = await prisma.user.findMany({
@@ -81,6 +51,9 @@ export async function GET(request: Request) {
       include: {
         alumni: true,
         moreinfo: true,
+      },
+      orderBy: {
+        createdAt: "desc",
       },
     });
 

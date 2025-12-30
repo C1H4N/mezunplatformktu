@@ -6,6 +6,7 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import { buttonVariants } from "../../components/ui/Button";
+import { ArrowLeft, Building2, MapPin, Calendar, Briefcase, CheckCircle, Clock, Send, X } from "lucide-react";
 
 interface JobDetail {
   id: string;
@@ -13,31 +14,58 @@ interface JobDetail {
   description: string;
   location: string;
   type: "JOB" | "INTERNSHIP";
+  status: "OPEN" | "CLOSED";
   createdAt: string;
   publisher: {
     companyName: string;
     sector: string;
-    // Add other publisher fields if needed
   };
 }
+
+interface Application {
+  id: string;
+  status: "PENDING" | "REVIEWED" | "ACCEPTED" | "REJECTED";
+  applicationDate: string;
+  coverLetter?: string;
+}
+
+const statusLabels = {
+  PENDING: { label: "Beklemede", color: "bg-yellow-500/10 text-yellow-600 border-yellow-500/20" },
+  REVIEWED: { label: "İnceleniyor", color: "bg-blue-500/10 text-blue-600 border-blue-500/20" },
+  ACCEPTED: { label: "Kabul Edildi", color: "bg-green-500/10 text-green-600 border-green-500/20" },
+  REJECTED: { label: "Reddedildi", color: "bg-red-500/10 text-red-600 border-red-500/20" },
+};
 
 export default function JobDetailPage() {
   const { data: session } = useSession();
   const params = useParams();
   const router = useRouter();
   const [job, setJob] = useState<JobDetail | null>(null);
+  const [application, setApplication] = useState<Application | null>(null);
   const [loading, setLoading] = useState(true);
   const [applying, setApplying] = useState(false);
+  const [showApplyModal, setShowApplyModal] = useState(false);
+  const [coverLetter, setCoverLetter] = useState("");
 
   useEffect(() => {
-    const fetchJob = async () => {
+    const fetchJobAndApplication = async () => {
       try {
-        const res = await fetch(`/api/jobs/${params.id}`);
-        if (!res.ok) {
-          throw new Error("İlan bulunamadı");
+        // Fetch job details
+        const jobRes = await fetch(`/api/jobs/${params.id}`);
+        if (!jobRes.ok) throw new Error("İlan bulunamadı");
+        const jobData = await jobRes.json();
+        setJob(jobData);
+
+        // Check if already applied (for students)
+        if (session?.user?.role === "STUDENT") {
+          const appRes = await fetch(`/api/jobs/${params.id}/application`);
+          if (appRes.ok) {
+            const appData = await appRes.json();
+            if (appData.application) {
+              setApplication(appData.application);
+            }
+          }
         }
-        const data = await res.json();
-        setJob(data);
       } catch (error) {
         console.error("Failed to fetch job:", error);
         toast.error("İlan yüklenirken bir hata oluştu.");
@@ -48,9 +76,9 @@ export default function JobDetailPage() {
     };
 
     if (params.id) {
-      fetchJob();
+      fetchJobAndApplication();
     }
-  }, [params.id, router]);
+  }, [params.id, router, session]);
 
   const handleApply = async () => {
     if (!session) {
@@ -63,6 +91,8 @@ export default function JobDetailPage() {
     try {
       const res = await fetch(`/api/jobs/${params.id}/apply`, {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ coverLetter: coverLetter.trim() || undefined }),
       });
 
       const data = await res.json();
@@ -71,9 +101,13 @@ export default function JobDetailPage() {
         throw new Error(data.error || "Başvuru başarısız.");
       }
 
+      setApplication(data);
+      setShowApplyModal(false);
+      setCoverLetter("");
       toast.success("Başvurunuz başarıyla alındı!");
-    } catch (error: any) {
-      toast.error(error.message);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Bir hata oluştu";
+      toast.error(message);
     } finally {
       setApplying(false);
     }
@@ -90,6 +124,7 @@ export default function JobDetailPage() {
   if (!job) return null;
 
   const isStudent = session?.user?.role === "STUDENT";
+  const isJobOpen = job.status === "OPEN";
   const formattedDate = new Date(job.createdAt).toLocaleDateString("tr-TR", {
     day: "numeric",
     month: "long",
@@ -103,30 +138,17 @@ export default function JobDetailPage() {
           href="/jobs"
           className="inline-flex items-center text-muted hover:text-primary mb-6 transition-colors"
         >
-          <svg
-            className="w-5 h-5 mr-2"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M10 19l-7-7m0 0l7-7m-7 7h18"
-            />
-          </svg>
+          <ArrowLeft className="w-5 h-5 mr-2" />
           İlanlara Dön
         </Link>
 
         <div className="bg-card/30 backdrop-blur-md border border-border/50 rounded-xl overflow-hidden shadow-lg animate-fade-in-up">
           <div className="p-8">
+            {/* Header */}
             <div className="flex flex-col md:flex-row justify-between items-start gap-6 mb-8">
-              <div>
-                <div className="flex items-center gap-3 mb-2">
-                  <h1 className="text-3xl font-bold text-foreground">
-                    {job.title}
-                  </h1>
+              <div className="flex-1">
+                <div className="flex flex-wrap items-center gap-3 mb-3">
+                  <h1 className="text-3xl font-bold text-foreground">{job.title}</h1>
                   <span
                     className={`px-3 py-1 rounded-full text-xs font-medium border ${
                       job.type === "JOB"
@@ -136,84 +158,88 @@ export default function JobDetailPage() {
                   >
                     {job.type === "JOB" ? "İş İlanı" : "Staj"}
                   </span>
+                  {!isJobOpen && (
+                    <span className="px-3 py-1 rounded-full text-xs font-medium border bg-red-500/10 text-red-500 border-red-500/20">
+                      Başvurular Kapalı
+                    </span>
+                  )}
                 </div>
+                
                 <div className="flex flex-wrap items-center gap-4 text-muted">
-                  <div className="flex items-center gap-1">
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                      />
-                    </svg>
+                  <div className="flex items-center gap-1.5">
+                    <Building2 className="w-4 h-4" />
                     <span className="font-medium">{job.publisher.companyName}</span>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                      />
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                      />
-                    </svg>
+                  <div className="flex items-center gap-1.5">
+                    <MapPin className="w-4 h-4" />
                     <span>{job.location}</span>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                      />
-                    </svg>
+                  <div className="flex items-center gap-1.5">
+                    <Calendar className="w-4 h-4" />
                     <span>{formattedDate}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Briefcase className="w-4 h-4" />
+                    <span>{job.publisher.sector}</span>
                   </div>
                 </div>
               </div>
 
-              {isStudent && (
-                <button
-                  onClick={handleApply}
-                  disabled={applying}
-                  className={buttonVariants({
-                    variant: "default",
-                    size: "lg",
-                    className: "w-full md:w-auto",
-                  })}
-                >
-                  {applying ? "Başvuruluyor..." : "Hemen Başvur"}
-                </button>
-              )}
+              {/* Action Button */}
+              <div className="w-full md:w-auto">
+                {isStudent && isJobOpen && !application && (
+                  <button
+                    onClick={() => setShowApplyModal(true)}
+                    className={buttonVariants({
+                      variant: "default",
+                      size: "lg",
+                      className: "w-full md:w-auto",
+                    })}
+                  >
+                    <Send className="w-4 h-4 mr-2" />
+                    Hemen Başvur
+                  </button>
+                )}
+
+                {application && (
+                  <div className="p-4 bg-card border border-border rounded-lg">
+                    <div className="flex items-center gap-2 mb-2">
+                      <CheckCircle className="w-5 h-5 text-success" />
+                      <span className="font-medium">Başvuru Yapıldı</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-medium border ${
+                          statusLabels[application.status].color
+                        }`}
+                      >
+                        {statusLabels[application.status].label}
+                      </span>
+                      <span className="text-xs text-muted">
+                        {new Date(application.applicationDate).toLocaleDateString("tr-TR")}
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                {!session && isJobOpen && (
+                  <Link
+                    href="/login"
+                    className={buttonVariants({
+                      variant: "default",
+                      size: "lg",
+                      className: "w-full md:w-auto",
+                    })}
+                  >
+                    Başvuru İçin Giriş Yap
+                  </Link>
+                )}
+              </div>
             </div>
 
+            {/* Description */}
             <div className="prose prose-invert max-w-none">
-              <h3 className="text-xl font-semibold text-foreground mb-4">
-                İlan Detayları
-              </h3>
+              <h3 className="text-xl font-semibold text-foreground mb-4">İlan Detayları</h3>
               <div className="whitespace-pre-wrap text-muted-foreground leading-relaxed">
                 {job.description}
               </div>
@@ -221,6 +247,70 @@ export default function JobDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* Apply Modal */}
+      {showApplyModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-card border border-border rounded-xl p-6 w-full max-w-lg shadow-2xl animate-fade-in-up">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold">Başvuru Yap</h2>
+              <button
+                onClick={() => setShowApplyModal(false)}
+                className="p-1 hover:bg-muted-bg rounded-lg transition"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="mb-4 p-3 bg-muted-bg rounded-lg">
+              <p className="text-sm font-medium">{job.title}</p>
+              <p className="text-xs text-muted">{job.publisher.companyName}</p>
+            </div>
+
+            <div className="mb-4">
+              <label className="text-sm font-medium mb-2 block">
+                Ön Yazı (Opsiyonel)
+              </label>
+              <textarea
+                value={coverLetter}
+                onChange={(e) => setCoverLetter(e.target.value)}
+                rows={6}
+                maxLength={2000}
+                placeholder="Kendinizi tanıtın ve neden bu pozisyon için uygun olduğunuzu açıklayın..."
+                className="w-full px-3 py-2 bg-background border border-border rounded-lg resize-none focus:ring-2 focus:ring-primary outline-none"
+              />
+              <p className="text-xs text-muted mt-1">{coverLetter.length}/2000 karakter</p>
+            </div>
+
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setShowApplyModal(false)}
+                className={buttonVariants({ variant: "ghost" })}
+              >
+                İptal
+              </button>
+              <button
+                onClick={handleApply}
+                disabled={applying}
+                className={buttonVariants({ variant: "default" })}
+              >
+                {applying ? (
+                  <>
+                    <Clock className="w-4 h-4 mr-2 animate-spin" />
+                    Gönderiliyor...
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-4 h-4 mr-2" />
+                    Başvuruyu Gönder
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
