@@ -34,7 +34,7 @@ export default function ChatPage() {
   const params = useParams();
   const router = useRouter();
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  
+
   const [partner, setPartner] = useState<Partner | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
@@ -56,8 +56,10 @@ export default function ChatPage() {
   }, [status, params.partnerId, router]);
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+    if (messages.length > 0) {
+      scrollToBottom();
+    }
+  }, [messages.length]);
 
   const fetchMessages = async () => {
     try {
@@ -129,7 +131,7 @@ export default function ChatPage() {
   // Group messages by date
   const groupedMessages: { date: string; messages: Message[] }[] = [];
   let currentDate = "";
-  
+
   for (const msg of messages) {
     const date = formatDate(msg.timestamp);
     if (date !== currentDate) {
@@ -159,7 +161,7 @@ export default function ChatPage() {
           >
             <ArrowLeft className="w-5 h-5" />
           </Link>
-          
+
           {partner && (
             <Link
               href={`/mezunlar/${partner.id}`}
@@ -211,17 +213,15 @@ export default function ChatPage() {
                     className={`flex ${msg.isFromMe ? "justify-end" : "justify-start"}`}
                   >
                     <div
-                      className={`max-w-[75%] md:max-w-[60%] px-4 py-2.5 rounded-2xl ${
-                        msg.isFromMe
+                      className={`max-w-[75%] md:max-w-[60%] px-4 py-2.5 rounded-2xl ${msg.isFromMe
                           ? "bg-primary text-white rounded-br-md"
                           : "bg-card border border-border rounded-bl-md"
-                      }`}
+                        }`}
                     >
                       <p className="whitespace-pre-wrap break-words">{msg.content}</p>
                       <p
-                        className={`text-xs mt-1 ${
-                          msg.isFromMe ? "text-white/70" : "text-muted"
-                        }`}
+                        className={`text-xs mt-1 ${msg.isFromMe ? "text-white/70" : "text-muted"
+                          }`}
                       >
                         {formatTime(msg.timestamp)}
                       </p>

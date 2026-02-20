@@ -1,5 +1,5 @@
 // auth.ts
-import NextAuth from "next-auth";
+import NextAuth, { CredentialsSignin } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import prisma from "@/lib/db";
 import bcrypt from "bcryptjs";
@@ -28,7 +28,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         if (!email || !password) {
           console.log("Missing credentials");
-          throw new Error("Email/telefon ve şifre gerekli.");
+          throw new CredentialsSignin("Email/telefon ve şifre gerekli.");
         }
 
         const user = await prisma.user.findFirst({
@@ -37,18 +37,18 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         if (!user) {
           console.log("User not found for:", email);
-          throw new Error("Kullanıcı bulunamadı.");
+          throw new CredentialsSignin("Kullanıcı bulunamadı.");
         }
-        
+
         if (!user.password) {
-             console.log("User has no password set");
-             throw new Error("Kullanıcı bulunamadı.");
+          console.log("User has no password set");
+          throw new CredentialsSignin("Kullanıcı bulunamadı.");
         }
 
         const isValid = await bcrypt.compare(password, user.password);
         if (!isValid) {
           console.log("Invalid password for:", email);
-          throw new Error("Geçersiz şifre.");
+          throw new CredentialsSignin("Geçersiz şifre.");
         }
 
         await prisma.user.update({
@@ -85,7 +85,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.image = user.image;
         token.coverImage = user.coverImage;
       }
-      
+
       if (trigger === "update" && session?.user) {
         token.firstName = session.user.firstName;
         token.lastName = session.user.lastName;
@@ -94,7 +94,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.image = session.user.image;
         token.coverImage = session.user.coverImage;
       }
-      
+
       return token;
     },
     async session({ session, token }) {
