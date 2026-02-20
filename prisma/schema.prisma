@@ -5,8 +5,8 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
-  output   = "../app/generated/prisma"
+  provider      = "prisma-client-js"
+  output        = "../app/generated/prisma"
   binaryTargets = ["native", "linux-musl-openssl-3.0.x"] // Farklı işletim sistemleri için binary desteği sağlar
 }
 
@@ -49,10 +49,10 @@ enum JobStatus {
 
 // Profil görünürlük ayarları (Belge 4.2.3)
 enum ProfileVisibility {
-  PUBLIC        // Herkese açık
-  REGISTERED    // Sadece kayıtlı kullanıcılar
-  EMPLOYERS     // Sadece işverenler
-  PRIVATE       // Gizli
+  PUBLIC // Herkese açık
+  REGISTERED // Sadece kayıtlı kullanıcılar
+  EMPLOYERS // Sadece işverenler
+  PRIVATE // Gizli
 }
 
 model User {
@@ -68,13 +68,15 @@ model User {
   phoneNumber   String?   @unique
 
   // Profil alanları (Belge 4.2)
-  bio               String?   // Kısa biyografi
-  cvUrl             String?   // CV dosya yolu (PDF)
+  bio               String? // Kısa biyografi
+  cvUrl             String? // CV dosya yolu (PDF)
   profileVisibility ProfileVisibility @default(PUBLIC)
-  
+
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   lastLogin DateTime?
+  deletedAt DateTime? // KVKK uyumu için Soft Delete
+  isActive  Boolean   @default(true) // Hesap dondurma özelliği
 
   // Existing relations
   moreinfo Info?
@@ -90,19 +92,23 @@ model User {
 
   sentMessages     Message[] @relation("SentMessages")
   receivedMessages Message[] @relation("ReceivedMessages")
-  
-  organizedEvents  Event[]
-  
+
+  organizedEvents Event[]
+
   experiences Experience[]
   educations  Education[]
   skills      Skill[]
+
+  // Raporlama ve Denetim (Yeni Eklenenler)
+  submittedReports Report[]   @relation("ReportSubmitted")
+  auditLogs        AuditLog[] @relation("UserAuditLogs")
 }
 
 model Experience {
-  id          String   @id @default(cuid())
-  userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   title       String
   company     String
   location    String?
@@ -110,16 +116,16 @@ model Experience {
   endDate     DateTime? // Null if currently working
   current     Boolean   @default(false)
   description String?
-  
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Education {
-  id           String   @id @default(cuid())
-  userId       String
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   school       String
   degree       String
   fieldOfStudy String
@@ -127,9 +133,9 @@ model Education {
   endDate      DateTime?
   current      Boolean   @default(false)
   description  String?
-  
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 // Yetenekler modeli (Belge 4.2.1)
@@ -138,17 +144,17 @@ model Skill {
   name   String
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
   createdAt DateTime @default(now())
-  
+
   @@unique([userId, name]) // Aynı kullanıcı aynı yeteneği bir kez ekleyebilir
 }
 
 model Student {
-  id         String   @id @default(cuid())
-  userId     String   @unique
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   studentNo  String   @unique
   department String
   interests  String[] // Array of strings
@@ -158,23 +164,23 @@ model Student {
 }
 
 model Alumni {
-  id              String   @id @default(cuid())
-  userId          String   @unique
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  graduationYear  Int
-  department      String? // Added for filtering
-  currentPosition String
-  competencies    String[]
+  graduationYear   Int
+  department       String? // Added for filtering
+  currentPosition  String
+  competencies     String[]
   mentorshipTopics String[]
 
   mentorshipRequests MentorshipRequest[]
 }
 
 model Employer {
-  id          String   @id @default(cuid())
-  userId      String   @unique
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   companyName String
   taxNumber   String
@@ -204,8 +210,8 @@ model JobAdvertisement {
   status      JobStatus @default(OPEN)
   publisherId String
   publisher   Employer  @relation(fields: [publisherId], references: [id])
-  
-  createdAt   DateTime  @default(now())
+
+  createdAt DateTime @default(now())
 
   applications JobApplication[]
 }
@@ -237,21 +243,21 @@ model MentorshipRequest {
 
 // Etkinlik türleri
 enum EventType {
-  CAREER_FAIR    // Kariyer Fuarı
-  NETWORKING     // Networking Etkinliği
-  WORKSHOP       // Atölye
-  SEMINAR        // Seminer
-  CONFERENCE     // Konferans
-  MEETUP         // Buluşma
-  OTHER          // Diğer
+  CAREER_FAIR // Kariyer Fuarı
+  NETWORKING // Networking Etkinliği
+  WORKSHOP // Atölye
+  SEMINAR // Seminer
+  CONFERENCE // Konferans
+  MEETUP // Buluşma
+  OTHER // Diğer
 }
 
 // Etkinlik durumları
 enum EventStatus {
-  UPCOMING       // Yaklaşan
-  ONGOING        // Devam Eden
-  COMPLETED      // Tamamlandı
-  CANCELLED      // İptal Edildi
+  UPCOMING // Yaklaşan
+  ONGOING // Devam Eden
+  COMPLETED // Tamamlandı
+  CANCELLED // İptal Edildi
 }
 
 model Event {
@@ -259,32 +265,32 @@ model Event {
   title       String
   description String
   date        DateTime
-  endDate     DateTime?   // Opsiyonel bitiş tarihi
+  endDate     DateTime? // Opsiyonel bitiş tarihi
   location    String
   type        EventType   @default(OTHER)
   status      EventStatus @default(UPCOMING)
-  capacity    Int?        // Maksimum katılımcı sayısı
-  image       String?     // Etkinlik görseli
-  
+  capacity    Int? // Maksimum katılımcı sayısı
+  image       String? // Etkinlik görseli
+
   organizerId String
-  organizer   User     @relation(fields: [organizerId], references: [id])
-  
+  organizer   User   @relation(fields: [organizerId], references: [id])
+
   participants EventParticipant[]
-  
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 // Etkinlik katılımcıları
 model EventParticipant {
-  id        String   @id @default(cuid())
-  eventId   String
-  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  userId    String
-  status    String   @default("REGISTERED") // REGISTERED, ATTENDED, CANCELLED
-  
+  id      String @id @default(cuid())
+  eventId String
+  event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  userId  String
+  status  String @default("REGISTERED") // REGISTERED, ATTENDED, CANCELLED
+
   createdAt DateTime @default(now())
-  
+
   @@unique([eventId, userId]) // Aynı kullanıcı aynı etkinliğe bir kez kayıt olabilir
 }
 
@@ -309,36 +315,36 @@ model Message {
 
 // Existing models preserved
 model Info {
-  id        String   @id @default(cuid())
-  userId    String   @unique
-  firstName String
-  lastName  String
+  id          String @id @default(cuid())
+  userId      String @unique
+  firstName   String
+  lastName    String
   phoneNumber String
-  email String
-  image String
-  company String
-  position String
-  location String
-  about String
-  website String
-  linkedin String
-  github String
-  twitter String
-  instagram String
-  youtube String
-  facebook String
-  telegram String
-  discord String
-  twitch String
-  tiktok String
+  email       String
+  image       String
+  company     String
+  position    String
+  location    String
+  about       String
+  website     String
+  linkedin    String
+  github      String
+  twitter     String
+  instagram   String
+  youtube     String
+  facebook    String
+  telegram    String
+  discord     String
+  twitch      String
+  tiktok      String
 
-  createdAt DateTime  @default(now())
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Account {
   id                String  @id @default(cuid())
-  userId            String  
+  userId            String
   type              String
   provider          String
   providerAccountId String
@@ -384,25 +390,90 @@ model PasswordResetToken {
 
 // Bildirim türleri
 enum NotificationType {
-  MESSAGE           // Yeni mesaj
-  JOB_APPLICATION   // İş başvurusu durumu
-  EVENT             // Etkinlik hatırlatması
-  MENTORSHIP        // Mentorluk talebi
-  SYSTEM            // Sistem bildirimi
+  MESSAGE // Yeni mesaj
+  JOB_APPLICATION // İş başvurusu durumu
+  EVENT // Etkinlik hatırlatması
+  MENTORSHIP // Mentorluk talebi
+  SYSTEM // Sistem bildirimi
 }
 
 // Bildirimler modeli (Belge 4.4)
 model Notification {
-  id        String           @id @default(cuid())
-  userId    String
-  type      NotificationType
-  title     String
-  message   String
-  link      String?          // Tıklandığında gidilecek sayfa
-  isRead    Boolean          @default(false)
-  
-  createdAt DateTime         @default(now())
-  
+  id      String           @id @default(cuid())
+  userId  String
+  type    NotificationType
+  title   String
+  message String
+  link    String? // Tıklandığında gidilecek sayfa
+  isRead  Boolean          @default(false)
+
+  createdAt DateTime @default(now())
+
   @@index([userId, isRead])
   @@index([userId, createdAt])
+}
+
+// Şikâyet / Raporlama modeli (Belge 4.7.4)
+enum ReportType {
+  USER_PROFILE
+  JOB_POSTING
+  MESSAGE
+  EVENT
+  OTHER
+}
+
+enum ReportStatus {
+  PENDING
+  REVIEWED
+  RESOLVED
+  DISMISSED
+}
+
+model Report {
+  id         String @id @default(cuid())
+  reporterId String // Şikâyet eden kullanıcı
+  reporter   User   @relation("ReportSubmitted", fields: [reporterId], references: [id])
+
+  reportedId  String // Şikâyet edilen içerik/kullanıcı ID'si
+  type        ReportType
+  reason      String // Şikâyet nedeni
+  description String? // Ek açıklama
+
+  status      ReportStatus @default(PENDING)
+  actionTaken String? // Moderatörün aldığı aksiyon notu
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([reporterId])
+  @@index([type, status])
+}
+
+// Sistem Denetim İzleri (Audit Logs) (Belge 4.7.6 & 5.9)
+enum AuditAction {
+  CREATE
+  UPDATE
+  DELETE
+  LOGIN
+  LOGOUT
+  ROLE_CHANGE
+  ACCOUNT_SUSPEND
+}
+
+model AuditLog {
+  id     String  @id @default(cuid())
+  userId String? // İşlemi yapan kullanıcı (Anonim işlemler için null olabilir)
+  user   User?   @relation("UserAuditLogs", fields: [userId], references: [id])
+
+  action     AuditAction
+  entityType String // Hangi tablo/modül üzerinde işlem yapıldı (örn: "JOB", "USER")
+  entityId   String? // İlgili kaydın ID'si
+  details    String? // Değişiklik detayları (JSON formatında saklanabilir)
+  ipAddress  String? // İşlemin yapıldığı IP adresi
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([action, entityType])
+  @@index([createdAt])
 }

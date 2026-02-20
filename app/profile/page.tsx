@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { buttonVariants } from "../components/ui/Button";
-import { X, Plus, Eye, EyeOff, Users, Building2, Lock, FileText, Upload } from "lucide-react";
+import { X, Plus, Eye, EyeOff, Users, Building2, Lock, FileText, Upload, AlertCircle } from "lucide-react";
 
 interface Experience {
   id: string;
@@ -47,25 +47,25 @@ const visibilityOptions: { value: ProfileVisibility; label: string; description:
 export default function ProfilePage() {
   const { data: session, update } = useSession();
   const router = useRouter();
-  
+
   // State for sections
   const [experiences, setExperiences] = useState<Experience[]>([]);
   const [educations, setEducations] = useState<Education[]>([]);
   const [skills, setSkills] = useState<Skill[]>([]);
   const [newSkill, setNewSkill] = useState("");
-  
+
   // Profile fields
   const [bio, setBio] = useState("");
   const [profileVisibility, setProfileVisibility] = useState<ProfileVisibility>("PUBLIC");
   const [cvUrl, setCvUrl] = useState<string | null>(null);
-  
+
   // Modals state
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
   const [isAddExperienceOpen, setIsAddExperienceOpen] = useState(false);
   const [isAddEducationOpen, setIsAddEducationOpen] = useState(false);
   const [isEditBioOpen, setIsEditBioOpen] = useState(false);
   const [isEditVisibilityOpen, setIsEditVisibilityOpen] = useState(false);
-  
+
   // Profile Form Data
   const [profileData, setProfileData] = useState({
     firstName: "",
@@ -155,9 +155,26 @@ export default function ProfilePage() {
     }
   };
 
+  const handleSuspendAccount = async () => {
+    if (!confirm("Hesabınızı dondurmak istediğinize emin misiniz? Bu işlemden sonra giriş yapana kadar profiliniz gizlenecektir ve şu anki oturumunuz kapatılacaktır.")) return;
+    try {
+      const res = await fetch("/api/user/status", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "SUSPEND" }),
+      });
+
+      if (!res.ok) throw new Error("İşlem başarısız");
+      toast.success("Hesabınız donduruldu. Çıkış yapılıyor...");
+      router.push("/api/auth/signout");
+    } catch (error) {
+      toast.error("Bir hata oluştu.");
+    }
+  };
+
   const handleAddSkill = async () => {
     if (!newSkill.trim()) return;
-    
+
     try {
       const res = await fetch("/api/profile/skills", {
         method: "POST",
@@ -198,7 +215,7 @@ export default function ProfilePage() {
       });
 
       if (!res.ok) throw new Error("Güncelleme başarısız");
-      
+
       toast.success("Biyografi güncellendi!");
       setIsEditBioOpen(false);
     } catch (error) {
@@ -215,7 +232,7 @@ export default function ProfilePage() {
       });
 
       if (!res.ok) throw new Error("Güncelleme başarısız");
-      
+
       setProfileVisibility(newVisibility);
       toast.success("Görünürlük ayarı güncellendi!");
       setIsEditVisibilityOpen(false);
@@ -248,7 +265,7 @@ export default function ProfilePage() {
       });
 
       if (!uploadRes.ok) throw new Error("Yükleme başarısız");
-      
+
       const { url } = await uploadRes.json();
 
       const updateRes = await fetch("/api/user/update", {
@@ -413,7 +430,7 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-muted-bg/30 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto space-y-6">
-        
+
         {/* Header Card */}
         <div className="bg-card border border-border rounded-xl overflow-hidden shadow-sm group relative">
           {/* Cover Image */}
@@ -458,7 +475,7 @@ export default function ProfilePage() {
                       {session.user.lastName?.[0]}
                     </span>
                   )}
-                  
+
                   <label className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover/avatar:opacity-100 transition-opacity cursor-pointer">
                     <input
                       type="file"
@@ -483,7 +500,7 @@ export default function ProfilePage() {
                 Profili Düzenle
               </button>
             </div>
-            
+
             <div>
               <h1 className="text-2xl font-bold text-foreground">
                 {session.user.firstName} {session.user.lastName}
@@ -537,7 +554,7 @@ export default function ProfilePage() {
                         <h3 className="font-semibold text-foreground">{exp.title}</h3>
                         <p className="text-sm text-foreground/80">{exp.company}</p>
                         <p className="text-xs text-muted-foreground mt-1">
-                          {new Date(exp.startDate).toLocaleDateString("tr-TR", { month: "short", year: "numeric" })} - 
+                          {new Date(exp.startDate).toLocaleDateString("tr-TR", { month: "short", year: "numeric" })} -
                           {exp.current ? " Devam Ediyor" : exp.endDate ? ` ${new Date(exp.endDate).toLocaleDateString("tr-TR", { month: "short", year: "numeric" })}` : ""}
                         </p>
                         {exp.location && <p className="text-xs text-muted-foreground mt-1">{exp.location}</p>}
@@ -593,7 +610,7 @@ export default function ProfilePage() {
                         <h3 className="font-semibold text-foreground">{edu.school}</h3>
                         <p className="text-sm text-foreground/80">{edu.degree}, {edu.fieldOfStudy}</p>
                         <p className="text-xs text-muted-foreground mt-1">
-                          {new Date(edu.startDate).toLocaleDateString("tr-TR", { year: "numeric" })} - 
+                          {new Date(edu.startDate).toLocaleDateString("tr-TR", { year: "numeric" })} -
                           {edu.current ? " Devam Ediyor" : edu.endDate ? ` ${new Date(edu.endDate).toLocaleDateString("tr-TR", { year: "numeric" })}` : ""}
                         </p>
                       </div>
@@ -675,7 +692,7 @@ export default function ProfilePage() {
               </svg>
             </button>
           </div>
-          
+
           {bio ? (
             <p className="text-foreground/80 whitespace-pre-wrap">{bio}</p>
           ) : (
@@ -696,7 +713,7 @@ export default function ProfilePage() {
                 <p className="text-xs text-muted">PDF formatında</p>
               </div>
             </div>
-            
+
             {cvUrl ? (
               <div className="flex items-center justify-between p-3 bg-muted-bg rounded-lg">
                 <span className="text-sm truncate">CV yüklendi</span>
@@ -756,7 +773,7 @@ export default function ProfilePage() {
                 Değiştir
               </button>
             </div>
-            
+
             <div className="p-3 bg-muted-bg rounded-lg">
               <span className="text-sm font-medium">
                 {visibilityOptions.find(v => v.value === profileVisibility)?.label}
@@ -764,6 +781,29 @@ export default function ProfilePage() {
             </div>
           </div>
         </div>
+
+        {/* Account Settings Section (Soft Delete / Dondurma) */}
+        <div className="bg-card border border-rose-500/20 rounded-xl p-8 shadow-sm">
+          <h2 className="text-xl font-bold text-foreground mb-4 text-rose-600 flex items-center gap-2">
+            <AlertCircle className="w-5 h-5" /> Hesap Ayarları
+          </h2>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 bg-rose-500/5 rounded-lg border border-rose-500/10">
+            <div>
+              <h3 className="font-semibold text-foreground">Hesabımı Dondur</h3>
+              <p className="text-sm text-muted mt-1">
+                Aksi bir işlem yapana kadar profiliniz gizlenecek ve tüm etkileşimleriniz (ilan, başvurular vb.) durdurulacaktır.
+                Bu işlem KVKK / GDPR standartlarına uygun olarak tasarlanmıştır.
+              </p>
+            </div>
+            <button
+              onClick={handleSuspendAccount}
+              className={buttonVariants({ variant: "outline" }) + " text-rose-600 border-rose-500/50 hover:bg-rose-500 hover:text-white transition-colors flex-shrink-0"}
+            >
+              Hesabı Dondur
+            </button>
+          </div>
+        </div>
+
       </div>
 
       {/* Edit Bio Modal */}
@@ -809,16 +849,14 @@ export default function ProfilePage() {
                 <button
                   key={option.value}
                   onClick={() => handleUpdateVisibility(option.value)}
-                  className={`w-full p-4 rounded-lg border text-left transition-all ${
-                    profileVisibility === option.value
+                  className={`w-full p-4 rounded-lg border text-left transition-all ${profileVisibility === option.value
                       ? "border-primary bg-primary/5"
                       : "border-border hover:border-primary/50"
-                  }`}
+                    }`}
                 >
                   <div className="flex items-center gap-3">
-                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                      profileVisibility === option.value ? "bg-primary text-white" : "bg-muted-bg text-muted"
-                    }`}>
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${profileVisibility === option.value ? "bg-primary text-white" : "bg-muted-bg text-muted"
+                      }`}>
                       {option.icon}
                     </div>
                     <div>
@@ -852,7 +890,7 @@ export default function ProfilePage() {
                   <label className="text-sm font-medium mb-1 block">Ad</label>
                   <input
                     value={profileData.firstName}
-                    onChange={(e) => setProfileData({...profileData, firstName: e.target.value})}
+                    onChange={(e) => setProfileData({ ...profileData, firstName: e.target.value })}
                     className="w-full px-3 py-2 bg-background border border-border rounded-lg"
                   />
                 </div>
@@ -860,7 +898,7 @@ export default function ProfilePage() {
                   <label className="text-sm font-medium mb-1 block">Soyad</label>
                   <input
                     value={profileData.lastName}
-                    onChange={(e) => setProfileData({...profileData, lastName: e.target.value})}
+                    onChange={(e) => setProfileData({ ...profileData, lastName: e.target.value })}
                     className="w-full px-3 py-2 bg-background border border-border rounded-lg"
                   />
                 </div>
@@ -869,7 +907,7 @@ export default function ProfilePage() {
                 <label className="text-sm font-medium mb-1 block">Telefon Numarası</label>
                 <input
                   value={profileData.phoneNumber}
-                  onChange={(e) => setProfileData({...profileData, phoneNumber: e.target.value})}
+                  onChange={(e) => setProfileData({ ...profileData, phoneNumber: e.target.value })}
                   className="w-full px-3 py-2 bg-background border border-border rounded-lg"
                 />
               </div>
@@ -878,7 +916,7 @@ export default function ProfilePage() {
                 <input
                   type="email"
                   value={profileData.email}
-                  onChange={(e) => setProfileData({...profileData, email: e.target.value})}
+                  onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
                   className="w-full px-3 py-2 bg-background border border-border rounded-lg"
                 />
               </div>
@@ -910,7 +948,7 @@ export default function ProfilePage() {
                 <input
                   required
                   value={experienceData.title}
-                  onChange={(e) => setExperienceData({...experienceData, title: e.target.value})}
+                  onChange={(e) => setExperienceData({ ...experienceData, title: e.target.value })}
                   className="w-full px-3 py-2 bg-background border border-border rounded-lg"
                   placeholder="Örn: Yazılım Mühendisi"
                 />
@@ -920,7 +958,7 @@ export default function ProfilePage() {
                 <input
                   required
                   value={experienceData.company}
-                  onChange={(e) => setExperienceData({...experienceData, company: e.target.value})}
+                  onChange={(e) => setExperienceData({ ...experienceData, company: e.target.value })}
                   className="w-full px-3 py-2 bg-background border border-border rounded-lg"
                   placeholder="Örn: Google"
                 />
@@ -929,7 +967,7 @@ export default function ProfilePage() {
                 <label className="text-sm font-medium mb-1 block">Konum</label>
                 <input
                   value={experienceData.location}
-                  onChange={(e) => setExperienceData({...experienceData, location: e.target.value})}
+                  onChange={(e) => setExperienceData({ ...experienceData, location: e.target.value })}
                   className="w-full px-3 py-2 bg-background border border-border rounded-lg"
                   placeholder="Örn: İstanbul"
                 />
@@ -941,7 +979,7 @@ export default function ProfilePage() {
                     type="date"
                     required
                     value={experienceData.startDate}
-                    onChange={(e) => setExperienceData({...experienceData, startDate: e.target.value})}
+                    onChange={(e) => setExperienceData({ ...experienceData, startDate: e.target.value })}
                     className="w-full px-3 py-2 bg-background border border-border rounded-lg"
                   />
                 </div>
@@ -951,7 +989,7 @@ export default function ProfilePage() {
                     type="date"
                     disabled={experienceData.current}
                     value={experienceData.endDate}
-                    onChange={(e) => setExperienceData({...experienceData, endDate: e.target.value})}
+                    onChange={(e) => setExperienceData({ ...experienceData, endDate: e.target.value })}
                     className="w-full px-3 py-2 bg-background border border-border rounded-lg disabled:opacity-50"
                   />
                 </div>
@@ -961,7 +999,7 @@ export default function ProfilePage() {
                   type="checkbox"
                   id="currentExp"
                   checked={experienceData.current}
-                  onChange={(e) => setExperienceData({...experienceData, current: e.target.checked})}
+                  onChange={(e) => setExperienceData({ ...experienceData, current: e.target.checked })}
                   className="rounded border-border"
                 />
                 <label htmlFor="currentExp" className="text-sm">Hala burada çalışıyorum</label>
@@ -971,7 +1009,7 @@ export default function ProfilePage() {
                 <textarea
                   rows={3}
                   value={experienceData.description}
-                  onChange={(e) => setExperienceData({...experienceData, description: e.target.value})}
+                  onChange={(e) => setExperienceData({ ...experienceData, description: e.target.value })}
                   className="w-full px-3 py-2 bg-background border border-border rounded-lg resize-none"
                 />
               </div>
@@ -1003,7 +1041,7 @@ export default function ProfilePage() {
                 <input
                   required
                   value={educationData.school}
-                  onChange={(e) => setEducationData({...educationData, school: e.target.value})}
+                  onChange={(e) => setEducationData({ ...educationData, school: e.target.value })}
                   className="w-full px-3 py-2 bg-background border border-border rounded-lg"
                   placeholder="Örn: Karadeniz Teknik Üniversitesi"
                 />
@@ -1013,7 +1051,7 @@ export default function ProfilePage() {
                 <input
                   required
                   value={educationData.degree}
-                  onChange={(e) => setEducationData({...educationData, degree: e.target.value})}
+                  onChange={(e) => setEducationData({ ...educationData, degree: e.target.value })}
                   className="w-full px-3 py-2 bg-background border border-border rounded-lg"
                   placeholder="Örn: Lisans"
                 />
@@ -1023,7 +1061,7 @@ export default function ProfilePage() {
                 <input
                   required
                   value={educationData.fieldOfStudy}
-                  onChange={(e) => setEducationData({...educationData, fieldOfStudy: e.target.value})}
+                  onChange={(e) => setEducationData({ ...educationData, fieldOfStudy: e.target.value })}
                   className="w-full px-3 py-2 bg-background border border-border rounded-lg"
                   placeholder="Örn: Bilgisayar Mühendisliği"
                 />
@@ -1035,7 +1073,7 @@ export default function ProfilePage() {
                     type="date"
                     required
                     value={educationData.startDate}
-                    onChange={(e) => setEducationData({...educationData, startDate: e.target.value})}
+                    onChange={(e) => setEducationData({ ...educationData, startDate: e.target.value })}
                     className="w-full px-3 py-2 bg-background border border-border rounded-lg"
                   />
                 </div>
@@ -1045,7 +1083,7 @@ export default function ProfilePage() {
                     type="date"
                     disabled={educationData.current}
                     value={educationData.endDate}
-                    onChange={(e) => setEducationData({...educationData, endDate: e.target.value})}
+                    onChange={(e) => setEducationData({ ...educationData, endDate: e.target.value })}
                     className="w-full px-3 py-2 bg-background border border-border rounded-lg disabled:opacity-50"
                   />
                 </div>
@@ -1055,7 +1093,7 @@ export default function ProfilePage() {
                   type="checkbox"
                   id="currentEdu"
                   checked={educationData.current}
-                  onChange={(e) => setEducationData({...educationData, current: e.target.checked})}
+                  onChange={(e) => setEducationData({ ...educationData, current: e.target.checked })}
                   className="rounded border-border"
                 />
                 <label htmlFor="currentEdu" className="text-sm">Hala devam ediyorum</label>
@@ -1065,7 +1103,7 @@ export default function ProfilePage() {
                 <textarea
                   rows={3}
                   value={educationData.description}
-                  onChange={(e) => setEducationData({...educationData, description: e.target.value})}
+                  onChange={(e) => setEducationData({ ...educationData, description: e.target.value })}
                   className="w-full px-3 py-2 bg-background border border-border rounded-lg resize-none"
                 />
               </div>

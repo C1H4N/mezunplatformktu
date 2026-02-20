@@ -19,7 +19,9 @@ import {
   Users,
   Award,
   BookOpen,
+  AlertCircle
 } from "lucide-react";
+import { ReportModal } from "@/app/components/ui/ReportModal";
 
 interface AlumniProfile {
   id: string;
@@ -67,6 +69,7 @@ export default function AlumniProfilePage({ params }: { params: Promise<{ id: st
   const [alumni, setAlumni] = useState<AlumniProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchAlumni = async () => {
@@ -216,13 +219,22 @@ export default function AlumniProfilePage({ params }: { params: Promise<{ id: st
                   </a>
                 )}
                 {session?.user && session.user.id !== alumni.id && (
-                  <Link
-                    href={`/messages/${alumni.id}`}
-                    className="px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-lg transition-colors flex items-center gap-2"
-                  >
-                    <MessageSquare className="w-5 h-5" />
-                    Mesaj Gönder
-                  </Link>
+                  <>
+                    <Link
+                      href={`/messages/${alumni.id}`}
+                      className="px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-lg transition-colors flex items-center gap-2"
+                    >
+                      <MessageSquare className="w-5 h-5" />
+                      Mesaj Gönder
+                    </Link>
+                    <button
+                      onClick={() => setIsReportModalOpen(true)}
+                      className="px-4 py-2 bg-rose-500/20 hover:bg-rose-500/30 text-rose-100 backdrop-blur-sm rounded-lg transition-colors flex items-center gap-2"
+                    >
+                      <AlertCircle className="w-5 h-5" />
+                      Şikayet Et
+                    </button>
+                  </>
                 )}
               </div>
             </div>
@@ -407,6 +419,16 @@ export default function AlumniProfilePage({ params }: { params: Promise<{ id: st
           </div>
         </div>
       </div>
+
+      {session?.user && (
+        <ReportModal
+          isOpen={isReportModalOpen}
+          onClose={() => setIsReportModalOpen(false)}
+          reportedId={alumni.id}
+          type="USER_PROFILE"
+          title={alumni.name}
+        />
+      )}
     </div>
   );
 }

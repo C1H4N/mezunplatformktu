@@ -26,7 +26,9 @@ import {
   Presentation,
   Coffee,
   MoreHorizontal,
+  AlertCircle
 } from "lucide-react";
+import { ReportModal } from "../../components/ui/ReportModal";
 
 interface Event {
   id: string;
@@ -69,6 +71,7 @@ export default function EventDetailPage() {
   const [loading, setLoading] = useState(true);
   const [isParticipating, setIsParticipating] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
 
   const isOrganizer = session?.user?.id === event?.organizer.id;
   const isAdmin = session?.user?.role === "ADMIN";
@@ -205,7 +208,7 @@ export default function EventDetailPage() {
               </div>
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-            
+
             {/* Type Badge */}
             <div className="absolute top-4 left-4">
               <span className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border ${typeInfo.color}`}>
@@ -289,41 +292,53 @@ export default function EventDetailPage() {
             </div>
 
             {/* Action Button */}
-            {isUpcoming && !isOrganizer && (
-              <div className="mb-8">
-                {isParticipating ? (
-                  <button
-                    onClick={handleParticipate}
-                    disabled={actionLoading}
-                    className="w-full md:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-red-500/10 hover:bg-red-500/20 text-red-600 rounded-lg font-medium transition disabled:opacity-50"
-                  >
-                    {actionLoading ? (
-                      <Clock className="w-5 h-5 animate-spin" />
-                    ) : (
-                      <XCircle className="w-5 h-5" />
-                    )}
-                    Katılımı İptal Et
-                  </button>
-                ) : (
-                  <button
-                    onClick={handleParticipate}
-                    disabled={actionLoading || !!isFull}
-                    className={buttonVariants({
-                      variant: "default",
-                      size: "lg",
-                      className: "w-full md:w-auto",
-                    })}
-                  >
-                    {actionLoading ? (
-                      <Clock className="w-5 h-5 animate-spin mr-2" />
-                    ) : (
-                      <CheckCircle className="w-5 h-5 mr-2" />
-                    )}
-                    {isFull ? "Kapasite Doldu" : "Etkinliğe Katıl"}
-                  </button>
-                )}
-              </div>
-            )}
+            <div className="mb-8 flex flex-col md:flex-row gap-3">
+              {isUpcoming && !isOrganizer && (
+                <>
+                  {isParticipating ? (
+                    <button
+                      onClick={handleParticipate}
+                      disabled={actionLoading}
+                      className="w-full md:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-red-500/10 hover:bg-red-500/20 text-red-600 rounded-lg font-medium transition disabled:opacity-50"
+                    >
+                      {actionLoading ? (
+                        <Clock className="w-5 h-5 animate-spin" />
+                      ) : (
+                        <XCircle className="w-5 h-5" />
+                      )}
+                      Katılımı İptal Et
+                    </button>
+                  ) : (
+                    <button
+                      onClick={handleParticipate}
+                      disabled={actionLoading || !!isFull}
+                      className={buttonVariants({
+                        variant: "default",
+                        size: "lg",
+                        className: "w-full md:w-auto",
+                      })}
+                    >
+                      {actionLoading ? (
+                        <Clock className="w-5 h-5 animate-spin mr-2" />
+                      ) : (
+                        <CheckCircle className="w-5 h-5 mr-2" />
+                      )}
+                      {isFull ? "Kapasite Doldu" : "Etkinliğe Katıl"}
+                    </button>
+                  )}
+                </>
+              )}
+
+              {session?.user && !isOrganizer && (
+                <button
+                  onClick={() => setIsReportModalOpen(true)}
+                  className="w-full md:w-auto flex items-center justify-center gap-2 px-6 py-3 border border-rose-500/20 text-rose-500 hover:bg-rose-500/10 rounded-lg font-medium transition"
+                >
+                  <AlertCircle className="w-5 h-5" />
+                  Şikayet Et
+                </button>
+              )}
+            </div>
 
             {/* Description */}
             <div className="prose prose-invert max-w-none">
@@ -337,6 +352,16 @@ export default function EventDetailPage() {
           </div>
         </div>
       </div>
+
+      {session?.user && (
+        <ReportModal
+          isOpen={isReportModalOpen}
+          onClose={() => setIsReportModalOpen(false)}
+          reportedId={event.id}
+          type="EVENT"
+          title={event.title}
+        />
+      )}
     </div>
   );
 }

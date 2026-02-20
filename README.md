@@ -65,6 +65,27 @@ npx prisma studio    # Veritabanı GUI
 
 ---
 
+## 👥 Test Kullanıcıları
+
+Uygulamayı lokal ortamda test edebilmeniz için aşağıdaki hesaplar `npx prisma db seed` komutu çalıştırıldığında otomatik olarak oluşturulur. **Tüm hesapların şifresi:** `Test123!`
+
+| Rol | E-posta | İsim |
+| :--- | :--- | :--- |
+| **👑 Admin** | `admin@ktu.edu.tr` | Admin KTÜ |
+| **🛡️ Moderatör** | `moderator@ktu.edu.tr` | Moderatör KTÜ |
+| **🏢 İşveren 1** | `hr@techcorp.com` | Ayşe Yılmaz (Tech Corp) |
+| **🏢 İşveren 2** | `kariyer@finansbank.com` | Mehmet Kaya (Finans Bank) |
+| **🎓 Öğrenci 1** | `ogrenci1@ktu.edu.tr` | Ali Demir |
+| **🎓 Öğrenci 2** | `ogrenci2@ktu.edu.tr` | Zeynep Şahin |
+| **👨‍🎓 Mezun 1** | `ahmet.yilmaz@gmail.com` | Ahmet Yılmaz (Google) |
+| **👨‍🎓 Mezun 2** | `elif.ozturk@outlook.com` | Elif Öztürk (Microsoft) |
+| **👨‍🎓 Mezun 3** | `can.arslan@yahoo.com` | Can Arslan (Ford Otosan) |
+| **👨‍🎓 Mezun 4** | `selin.kaya@gmail.com` | Selin Kaya (Garanti BBVA) |
+
+*Not: İlanlar, etkinlikler ve bildirimler de mock veri olarak bu hesaplara entegre şekilde yüklenmektedir.*
+
+---
+
 ## 📂 Proje Yapısı
 
 ```

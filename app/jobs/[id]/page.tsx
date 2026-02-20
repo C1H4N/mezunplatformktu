@@ -6,7 +6,8 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import { buttonVariants } from "../../components/ui/Button";
-import { ArrowLeft, Building2, MapPin, Calendar, Briefcase, CheckCircle, Clock, Send, X } from "lucide-react";
+import { ArrowLeft, Building2, MapPin, Calendar, Briefcase, CheckCircle, Clock, Send, X, AlertCircle } from "lucide-react";
+import { ReportModal } from "../../components/ui/ReportModal";
 
 interface JobDetail {
   id: string;
@@ -46,6 +47,7 @@ export default function JobDetailPage() {
   const [applying, setApplying] = useState(false);
   const [showApplyModal, setShowApplyModal] = useState(false);
   const [coverLetter, setCoverLetter] = useState("");
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchJobAndApplication = async () => {
@@ -150,11 +152,10 @@ export default function JobDetailPage() {
                 <div className="flex flex-wrap items-center gap-3 mb-3">
                   <h1 className="text-3xl font-bold text-foreground">{job.title}</h1>
                   <span
-                    className={`px-3 py-1 rounded-full text-xs font-medium border ${
-                      job.type === "JOB"
+                    className={`px-3 py-1 rounded-full text-xs font-medium border ${job.type === "JOB"
                         ? "bg-blue-500/10 text-blue-500 border-blue-500/20"
                         : "bg-purple-500/10 text-purple-500 border-purple-500/20"
-                    }`}
+                      }`}
                   >
                     {job.type === "JOB" ? "İş İlanı" : "Staj"}
                   </span>
@@ -164,7 +165,7 @@ export default function JobDetailPage() {
                     </span>
                   )}
                 </div>
-                
+
                 <div className="flex flex-wrap items-center gap-4 text-muted">
                   <div className="flex items-center gap-1.5">
                     <Building2 className="w-4 h-4" />
@@ -186,7 +187,21 @@ export default function JobDetailPage() {
               </div>
 
               {/* Action Button */}
-              <div className="w-full md:w-auto">
+              <div className="w-full md:w-auto flex flex-col md:flex-row items-stretch md:items-center gap-3">
+                {session?.user && session.user.role !== "EMPLOYER" && (
+                  <button
+                    onClick={() => setIsReportModalOpen(true)}
+                    className={buttonVariants({
+                      variant: "outline",
+                      size: "lg",
+                      className: "border-rose-500/20 text-rose-500 hover:bg-rose-500/10",
+                    })}
+                  >
+                    <AlertCircle className="w-4 h-4 mr-2" />
+                    Şikayet Et
+                  </button>
+                )}
+
                 {isStudent && isJobOpen && !application && (
                   <button
                     onClick={() => setShowApplyModal(true)}
@@ -209,9 +224,8 @@ export default function JobDetailPage() {
                     </div>
                     <div className="flex items-center gap-2">
                       <span
-                        className={`px-2 py-1 rounded-full text-xs font-medium border ${
-                          statusLabels[application.status].color
-                        }`}
+                        className={`px-2 py-1 rounded-full text-xs font-medium border ${statusLabels[application.status].color
+                          }`}
                       >
                         {statusLabels[application.status].label}
                       </span>
@@ -310,6 +324,17 @@ export default function JobDetailPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Report Modal */}
+      {session?.user && (
+        <ReportModal
+          isOpen={isReportModalOpen}
+          onClose={() => setIsReportModalOpen(false)}
+          reportedId={job.id}
+          type="JOB_POSTING"
+          title={job.title}
+        />
       )}
     </div>
   );
