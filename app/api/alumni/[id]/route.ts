@@ -48,7 +48,7 @@ export async function GET(
       experience: user.experiences.map((exp) => ({
         id: exp.id,
         company: exp.company,
-        position: exp.position,
+        position: exp.title,
         period: `${exp.startDate.getFullYear()} - ${exp.endDate ? exp.endDate.getFullYear() : "Günümüz"}`,
         description: exp.description || "",
       })),
@@ -56,7 +56,7 @@ export async function GET(
         id: edu.id,
         school: edu.school,
         degree: edu.degree,
-        field: edu.field,
+        field: edu.fieldOfStudy,
         period: `${edu.startDate.getFullYear()} - ${edu.endDate ? edu.endDate.getFullYear() : "Devam Ediyor"}`,
       })),
       socialLinks: {
