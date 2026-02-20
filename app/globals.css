@@ -135,7 +135,7 @@
   a {
     color: var(--primary);
     text-decoration: none;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: color 0.15s ease-out;
   }
 
   a:hover {
@@ -161,7 +161,7 @@
     background-color: var(--card);
     color: var(--foreground);
     border-radius: 0.5rem;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.15s ease-out;
     box-shadow: var(--shadow-sm);
   }
 
@@ -175,12 +175,9 @@
   }
 }
 
-/* Genel Transitions & Antialiasing */
-* {
-  transition-property: background-color, border-color, color, fill, stroke, box-shadow, transform, opacity;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 250ms;
-}
+/* Genel Transitions & Antialiasing Kaldırıldı 
+   Çünkü her elemente 250ms geçiş eklemek tıklama hissini ağırlaştırır.
+*/
 
 /* Smooth Scrollbars */
 ::-webkit-scrollbar {
@@ -225,23 +222,24 @@
 }
 
 .animate-fade-in-up {
-  animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: fadeInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.4s ease-out forwards;
+  animation: fadeIn 0.2s ease-out forwards;
 }
 
+/* Animasyon Gecikmelerini de daha hızlı ve atlatılabilir kılıyoruz */
 .animation-delay-100 {
-  animation-delay: 100ms;
+  animation-delay: 50ms;
 }
 
 .animation-delay-200 {
-  animation-delay: 200ms;
+  animation-delay: 100ms;
 }
 
 .animation-delay-300 {
-  animation-delay: 300ms;
+  animation-delay: 150ms;
 }
 
 @keyframes fadeOut {

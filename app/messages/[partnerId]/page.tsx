@@ -33,7 +33,7 @@ export default function ChatPage() {
   const { data: session, status } = useSession();
   const params = useParams();
   const router = useRouter();
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
 
   const [partner, setPartner] = useState<Partner | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -80,7 +80,9 @@ export default function ChatPage() {
   };
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    }
   };
 
   const handleSend = async (e: React.FormEvent) => {
@@ -192,7 +194,7 @@ export default function ChatPage() {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-4 py-6">
+      <div ref={messagesContainerRef} className="flex-1 overflow-y-auto px-4 py-6 scroll-smooth">
         <div className="max-w-4xl mx-auto space-y-6">
           {groupedMessages.map((group) => (
             <div key={group.date}>
@@ -214,8 +216,8 @@ export default function ChatPage() {
                   >
                     <div
                       className={`max-w-[75%] md:max-w-[60%] px-4 py-2.5 rounded-2xl ${msg.isFromMe
-                          ? "bg-primary text-white rounded-br-md"
-                          : "bg-card border border-border rounded-bl-md"
+                        ? "bg-primary text-white rounded-br-md"
+                        : "bg-card border border-border rounded-bl-md"
                         }`}
                     >
                       <p className="whitespace-pre-wrap break-words">{msg.content}</p>
@@ -231,7 +233,7 @@ export default function ChatPage() {
               </div>
             </div>
           ))}
-          <div ref={messagesEndRef} />
+          <div className="h-4" />
         </div>
       </div>
 
