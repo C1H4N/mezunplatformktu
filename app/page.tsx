@@ -117,18 +117,18 @@ export default function Home() {
 
       {/* Ana İçerik */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pb-16 relative z-20 -mt-12">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div className="flex flex-col gap-8 items-stretch">
 
-          {/* Sidebar - Filtreler */}
-          <div className="lg:col-span-3 lg:sticky lg:top-24 space-y-6 animate-fade-in-up animation-delay-300">
+          {/* Üst Kısım - Yatay Filtreler */}
+          <div className="animate-fade-in-up animation-delay-300 w-full z-10">
             <div className="bg-[#ffffff] rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-border/60 p-2 relative overflow-hidden">
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#125b96] to-[#0ea5e9]"></div>
               <SearchFilters onFilterChange={handleFilterChange} />
             </div>
           </div>
 
-          {/* Main Content */}
-          <div className="lg:col-span-9 space-y-8 animate-fade-in-up animation-delay-400">
+          {/* Harita ve Sonuçlar Alanı */}
+          <div className="space-y-8 animate-fade-in-up animation-delay-400 w-full">
 
             {/* Harita */}
             <div className="bg-[#ffffff] rounded-3xl overflow-hidden shadow-[0_12px_40px_rgb(0,0,0,0.06)] border border-border/60">
