@@ -241,6 +241,7 @@ export default function NewEventPage() {
               <button
                 type="submit"
                 disabled={loading}
+                style={{ color: '#ffffff' }}
                 className={buttonVariants({ variant: "default" })}
               >
                 {loading ? "Oluşturuluyor..." : "Etkinlik Oluştur"}

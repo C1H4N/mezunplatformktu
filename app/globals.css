@@ -57,7 +57,11 @@
   --shadow-lg: 0 20px 30px -5px rgba(15, 23, 42, 0.08), 0 10px 15px -6px rgba(15, 23, 42, 0.04);
 }
 
-@theme inline {
+@theme {
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-transparent: transparent;
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -102,68 +106,73 @@
   --shadow-lg: var(--shadow-lg);
 }
 
-/* Base Body Styles */
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  line-height: 1.6;
+@layer base {
+
+  /* Base Body Styles */
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.6;
+  }
+
+  /* Base Typographic Resets for Premium Feel */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: var(--foreground);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    /* Sıkı, modern kurumsal başlık spacing'i */
+  }
+
+  /* Linkler ve Etkileşimler */
+  a {
+    color: var(--primary);
+    text-decoration: none;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  a:hover {
+    color: var(--primary-hover);
+  }
 }
 
-/* Base Typographic Resets for Premium Feel */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  color: var(--foreground);
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  /* Sıkı, modern kurumsal başlık spacing'i */
-}
+@layer base {
+  ::selection {
+    background-color: var(--primary-light);
+    color: var(--primary);
+  }
 
-/* Linkler ve Etkileşimler */
-a {
-  color: var(--primary);
-  text-decoration: none;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
+  /* Zarif Form Elemanları (Genel CSS Injection) */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="tel"],
+  textarea,
+  select {
+    border: 1px solid var(--border);
+    background-color: var(--card);
+    color: var(--foreground);
+    border-radius: 0.5rem;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-sm);
+  }
 
-a:hover {
-  color: var(--primary-hover);
-}
-
-::selection {
-  background-color: var(--primary-light);
-  color: var(--primary);
-}
-
-/* Zarif Form Elemanları (Genel CSS Injection) */
-input[type="text"],
-input[type="email"],
-input[type="password"],
-input[type="number"],
-input[type="tel"],
-textarea,
-select {
-  border: 1px solid var(--border);
-  background-color: var(--card);
-  color: var(--foreground);
-  border-radius: 0.5rem;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: var(--shadow-sm);
-}
-
-input:focus,
-textarea:focus,
-select:focus {
-  outline: none;
-  border-color: var(--ring);
-  box-shadow: 0 0 0 4px rgba(18, 91, 150, 0.12);
-  /* Modern focus glow efekti */
+  input:focus,
+  textarea:focus,
+  select:focus {
+    outline: none;
+    border-color: var(--ring);
+    box-shadow: 0 0 0 4px rgba(18, 91, 150, 0.12);
+    /* Modern focus glow efekti */
+  }
 }
 
 /* Genel Transitions & Antialiasing */

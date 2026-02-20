@@ -120,11 +120,12 @@ export default function AlumniProfilePage({ params }: { params: Promise<{ id: st
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-gradient-to-br from-primary via-primary-hover to-accent text-white">
+      <div className="bg-gradient-to-br from-primary to-primary-hover text-[#ffffff]">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <Link
             href="/mezunlar"
-            className="inline-flex items-center gap-2 text-blue-100 hover:text-white mb-6 transition-colors"
+            style={{ color: "#ffffff" }}
+            className="inline-flex items-center gap-2 mb-6 transition-colors"
           >
             <ArrowLeft className="w-5 h-5" />
             Mezunlara Dön
@@ -159,12 +160,12 @@ export default function AlumniProfilePage({ params }: { params: Promise<{ id: st
                 {alumni.name}
               </h1>
               {(alumni.jobTitle || alumni.company) && (
-                <p className="text-xl text-blue-100 mb-2">
+                <p style={{ color: "#e6f0f9" }} className="text-xl mb-2">
                   {alumni.jobTitle}
                   {alumni.company && ` • ${alumni.company}`}
                 </p>
               )}
-              <div className="flex flex-wrap gap-4 text-blue-100">
+              <div style={{ color: "#e6f0f9" }} className="flex flex-wrap gap-4">
                 <div className="flex items-center gap-2">
                   <GraduationCap className="w-5 h-5" />
                   {alumni.department}
