@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { cities } from "../lib/constants";
 
 interface TurkeyMapProps {
   selectedCity: string;
@@ -8,13 +9,29 @@ interface TurkeyMapProps {
   alumniCounts?: Record<string, number>;
 }
 
-// Şehir isimlerini normalize ederek filtre dropdown ile eşleşmeyi kolaylaştırır
 function normalizeCityName(name: string): string {
-  return name
-    .replace(/\s+\(.*?\)/g, "") // parantez içini kaldır (İstanbul (Avrupa))
-    .replace(/-\s*\d+.*/, "") // sonundaki sayısal ekleri kaldır (Trabzon - 100)
-    .replace(/\s+/g, " ")
+  let cleaned = name
+    .replace(/\s*\(.*?\)/g, "") // parantez içini kaldır (İstanbul (Avrupa) veya İstanbul(Avrupa))
+    .replace(/[0-9]/g, "") // plaka veya diğer rakamları tümden sil (örn: 01, 34)
+    .replace(/[-_]/g, " ") // tire ve alt tireleri boşluğa çevir
+    .replace(/\s+/g, " ") // fazla boşlukları teke indir
     .trim();
+
+  const lowerCleaned = cleaned.toLocaleLowerCase("tr");
+
+  // Özel isimlendirme eşleştirmeleri
+  if (lowerCleaned === "hakkari") return "Hakkâri";
+  if (lowerCleaned === "k.maraş" || lowerCleaned === "kahramanmaras") return "Kahramanmaraş";
+  if (lowerCleaned === "afyon") return "Afyonkarahisar";
+
+  // constants.ts içerisindeki tam adıyla eşleşme bulmaya çalış (büyük/küçük harf duyarsız)
+  const matchedCity = cities.find(c => c.toLocaleLowerCase("tr") === lowerCleaned);
+  if (matchedCity) return matchedCity;
+
+  // Bulunamazsa baş harfi büyük yapıp döndür
+  return cleaned.split(" ").map(word =>
+    word.charAt(0).toLocaleUpperCase("tr") + word.slice(1).toLocaleLowerCase("tr")
+  ).join(" ");
 }
 
 function normalizeRegion(name: string): string {

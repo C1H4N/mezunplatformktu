@@ -101,7 +101,7 @@ export default function Home() {
           <div className="absolute top-[20%] right-[20%] w-[300px] h-[300px] rounded-full bg-[#3b82f6] blur-[120px] opacity-20"></div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col items-center text-center">
+        <div className="w-full px-4 sm:px-[4%] relative z-10 flex flex-col items-center text-center">
           <span className="inline-block py-1.5 px-5 rounded-full bg-white/10 text-[#ffffff] text-xs sm:text-sm font-bold tracking-widest mb-8 border border-white/20 backdrop-blur-md animate-fade-in shadow-[0_0_15px_rgba(255,255,255,0.1)]">
             KTÜ MEZUN AĞI
           </span>
@@ -116,7 +116,7 @@ export default function Home() {
       </div>
 
       {/* Ana İçerik */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pb-16 relative z-20 -mt-12">
+      <main className="flex-1 w-full px-4 sm:px-[4%] pb-16 relative z-20 -mt-12">
         <div className="flex flex-col gap-8 items-stretch">
 
           {/* Üst Kısım - Yatay Filtreler */}

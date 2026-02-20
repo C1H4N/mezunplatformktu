@@ -257,3 +257,394 @@
 .animate-fade-out {
   animation: fadeOut 0.3s ease-in forwards;
 }
+
+/* ===== DENEYAP STYLE NAVBAR ===== */
+
+.navbar-deneyap {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background-color: #ffffff;
+  border-bottom: 4px solid var(--primary);
+  /* Mavi çizgi yapıldı */
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.navbar-deneyap-inner {
+  width: 100%;
+  padding: 0 4%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 90px;
+  /* Navbar aşağıya doğru daha geniş olsun diye yüksekliği artırdık */
+}
+
+/* Logo */
+.navbar-deneyap-logo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  /* Boşluk artırıldı */
+  text-decoration: none;
+  color: inherit;
+  flex-shrink: 0;
+}
+
+.navbar-deneyap-logo:hover {
+  opacity: 0.85;
+  color: inherit;
+}
+
+.navbar-deneyap-logo-icon {
+  width: 52px;
+  /* Logo kabı boyutu artırıldı */
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.navbar-deneyap-logo-img {
+  width: 52px;
+  /* Logo boyutu artırıldı */
+  height: 52px;
+  border-radius: 8px;
+  object-fit: contain;
+}
+
+.navbar-deneyap-logo-text {
+  display: block;
+}
+
+.navbar-deneyap-logo-title {
+  font-size: 1.25rem;
+  /* Başlık fontu büyütüldü */
+  font-weight: 700;
+  color: #1a1a2e;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+.navbar-deneyap-logo-subtitle {
+  font-size: 0.85rem;
+  /* Alt başlık fontu büyütüldü */
+  color: #7b8ca3;
+  font-weight: 400;
+  line-height: 1.3;
+  margin-top: 2px;
+}
+
+/* Desktop Menü */
+.navbar-deneyap-menu {
+  display: none;
+  align-items: center;
+}
+
+@media (min-width: 768px) {
+  .navbar-deneyap-menu {
+    display: flex;
+    flex: 1;
+    /* Sağdaki ögeleri sağa itmek için kalan kısmı doldurmasını sağladık */
+  }
+}
+
+.navbar-deneyap-links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  /* Linkler arası boşluk */
+  margin: 0 auto;
+  /* Ögeleri tamamen ortaya hizalıyoruz */
+}
+
+.navbar-deneyap-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 18px;
+  /* Tıklama alanı/padding büyütüldü */
+  font-size: 1.1rem;
+  /* Link metin boyutu büyütüldü */
+  font-weight: 500;
+  color: #374151;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.navbar-deneyap-link:hover {
+  color: var(--primary);
+  background-color: var(--primary-light);
+}
+
+/* Actions (sağ taraf) */
+.navbar-deneyap-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+  /* Kayıt/Giriş kısmını en sağa yapıştırması için */
+}
+
+/* Kayıt Ol Butonu - Teal/Mavi-Yeşil */
+.navbar-deneyap-btn-register {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 28px;
+  /* Padding artırıldı */
+  font-size: 1.05rem;
+  /* Font büyütüldü */
+  font-weight: 600;
+  color: #ffffff;
+  background-color: #0e7490;
+  border: none;
+  border-radius: 50px;
+  /* Giriş yap butonu ile tasarımı birebir aynı (pill şeklinde) olsun */
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.navbar-deneyap-btn-register:hover {
+  background-color: #0c5e75;
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(14, 116, 144, 0.25);
+}
+
+/* Giriş Yap Butonu - Kırmızı Pill */
+.navbar-deneyap-btn-login {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 28px;
+  /* Padding artırıldı */
+  font-size: 1.05rem;
+  /* Font büyütüldü */
+  font-weight: 600;
+  color: #ffffff;
+  background-color: #d32f2f;
+  border: none;
+  border-radius: 50px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.navbar-deneyap-btn-login:hover {
+  background-color: #b71c1c;
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(211, 47, 47, 0.3);
+}
+
+.navbar-deneyap-btn-login svg {
+  transition: transform 0.2s ease;
+}
+
+.navbar-deneyap-btn-login:hover svg {
+  transform: translateX(4px);
+}
+
+/* Çıkış Butonu */
+.navbar-deneyap-btn-logout {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 24px;
+  /* Padding artırıldı */
+  font-size: 1rem;
+  /* Font büyütüldü */
+  font-weight: 600;
+  color: #ffffff;
+  background-color: #ef4444;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-left: 4px;
+}
+
+.navbar-deneyap-btn-logout:hover {
+  background-color: #dc2626;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+}
+
+/* Profile Link */
+.navbar-deneyap-profile-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  /* Padding artırıldı */
+  border-radius: 8px;
+  background-color: #f8fafc;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.navbar-deneyap-profile-link:hover {
+  background-color: #f1f5f9;
+}
+
+.navbar-deneyap-profile-avatar {
+  width: 40px;
+  /* Avatar büyütüldü */
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.navbar-deneyap-profile-avatar-placeholder {
+  width: 40px;
+  /* Avatar büyütüldü */
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  /* Font büyütüldü */
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.navbar-deneyap-profile-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.navbar-deneyap-profile-name {
+  font-size: 1rem;
+  /* Font büyütüldü */
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.navbar-deneyap-profile-email {
+  font-size: 0.85rem;
+  /* Font büyütüldü */
+  color: #94a3b8;
+}
+
+/* Mobile Toggle */
+.navbar-deneyap-mobile-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: #374151;
+  transition: all 0.2s ease;
+}
+
+.navbar-deneyap-mobile-toggle:hover {
+  background-color: #f3f4f6;
+}
+
+@media (min-width: 768px) {
+  .navbar-deneyap-mobile-toggle {
+    display: none;
+  }
+}
+
+/* Mobile Menu Links */
+.navbar-mobile-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: #374151;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.navbar-mobile-link:hover {
+  background-color: #fef2f2;
+  color: #d32f2f;
+}
+
+.navbar-mobile-btn-register {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 24px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: #0e7490;
+  border: none;
+  border-radius: 8px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.navbar-mobile-btn-register:hover {
+  background-color: #0c5e75;
+  color: #ffffff;
+}
+
+.navbar-mobile-btn-login {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 24px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: #d32f2f;
+  border: none;
+  border-radius: 50px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.navbar-mobile-btn-login:hover {
+  background-color: #b71c1c;
+  color: #ffffff;
+}
+
+.navbar-mobile-btn-logout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 24px;
+  width: 100%;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: #ef4444;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.navbar-mobile-btn-logout:hover {
+  background-color: #dc2626;
+}
+
+/* Responsive Logo Text */
+@media (max-width: 639px) {
+  .navbar-deneyap-logo-text {
+    display: none;
+  }
+}
