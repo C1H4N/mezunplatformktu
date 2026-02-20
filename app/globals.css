@@ -97,8 +97,8 @@
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
 
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: "Lucide", sans-serif;
+  --font-mono: "Lucide", monospace;
 
   --shadow-sm: var(--shadow-sm);
   --shadow: var(--shadow);
@@ -112,7 +112,7 @@
   body {
     background: var(--background);
     color: var(--foreground);
-    font-family: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, sans-serif;
+    font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     line-height: 1.6;
@@ -256,9 +256,9 @@
   animation: fadeOut 0.3s ease-in forwards;
 }
 
-/* ===== DENEYAP STYLE NAVBAR ===== */
+/* ===== MAIN NAVBAR ===== */
 
-.navbar-deneyap {
+.navbar-main {
   position: sticky;
   top: 0;
   z-index: 50;
@@ -268,7 +268,7 @@
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
 }
 
-.navbar-deneyap-inner {
+.navbar-main-inner {
   width: 100%;
   padding: 0 4%;
   display: flex;
@@ -279,7 +279,7 @@
 }
 
 /* Logo */
-.navbar-deneyap-logo {
+.navbar-main-logo {
   display: flex;
   align-items: center;
   gap: 16px;
@@ -289,42 +289,44 @@
   flex-shrink: 0;
 }
 
-.navbar-deneyap-logo:hover {
+.navbar-main-logo:hover {
   opacity: 0.85;
   color: inherit;
 }
 
-.navbar-deneyap-logo-icon {
-  width: 52px;
-  /* Logo kabı boyutu artırıldı */
-  height: 52px;
+.navbar-main-logo-icon {
+  width: auto;
+  height: 60px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.navbar-deneyap-logo-img {
-  width: 52px;
-  /* Logo boyutu artırıldı */
-  height: 52px;
+.navbar-main-logo-img {
+  width: auto;
+  height: 100%;
   border-radius: 8px;
   object-fit: contain;
 }
 
-.navbar-deneyap-logo-text {
+.navbar-main-logo-text {
   display: block;
 }
 
-.navbar-deneyap-logo-title {
-  font-size: 1.25rem;
-  /* Başlık fontu büyütüldü */
-  font-weight: 700;
-  color: #1a1a2e;
+.navbar-main-logo-title {
+  font-size: 0.95rem;
+  /* Başlık küçültüldü */
+  font-weight: 600;
+  color: #64748b;
+  /* Daha geri planda bir gri tonu */
   line-height: 1.2;
   letter-spacing: -0.01em;
+  padding-left: 8px;
+  border-left: 1px solid #e2e8f0;
+  /* Logodan metne görsel bir ayrım eklendi (isteğe bağlı) */
 }
 
-.navbar-deneyap-logo-subtitle {
+.navbar-main-logo-subtitle {
   font-size: 0.85rem;
   /* Alt başlık fontu büyütüldü */
   color: #7b8ca3;
@@ -334,20 +336,20 @@
 }
 
 /* Desktop Menü */
-.navbar-deneyap-menu {
+.navbar-main-menu {
   display: none;
   align-items: center;
 }
 
 @media (min-width: 768px) {
-  .navbar-deneyap-menu {
+  .navbar-main-menu {
     display: flex;
     flex: 1;
     /* Sağdaki ögeleri sağa itmek için kalan kısmı doldurmasını sağladık */
   }
 }
 
-.navbar-deneyap-links {
+.navbar-main-links {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -356,7 +358,7 @@
   /* Ögeleri tamamen ortaya hizalıyoruz */
 }
 
-.navbar-deneyap-link {
+.navbar-main-link {
   display: inline-flex;
   align-items: center;
   padding: 10px 18px;
@@ -371,13 +373,13 @@
   white-space: nowrap;
 }
 
-.navbar-deneyap-link:hover {
+.navbar-main-link:hover {
   color: var(--primary);
   background-color: var(--primary-light);
 }
 
 /* Actions (sağ taraf) */
-.navbar-deneyap-actions {
+.navbar-main-actions {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -386,7 +388,7 @@
 }
 
 /* Kayıt Ol Butonu - Teal/Mavi-Yeşil */
-.navbar-deneyap-btn-register {
+.navbar-main-btn-register {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -406,7 +408,7 @@
   white-space: nowrap;
 }
 
-.navbar-deneyap-btn-register:hover {
+.navbar-main-btn-register:hover {
   background-color: #0c5e75;
   color: #ffffff;
   transform: translateY(-1px);
@@ -414,7 +416,7 @@
 }
 
 /* Giriş Yap Butonu - Kırmızı Pill */
-.navbar-deneyap-btn-login {
+.navbar-main-btn-login {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -434,23 +436,23 @@
   white-space: nowrap;
 }
 
-.navbar-deneyap-btn-login:hover {
+.navbar-main-btn-login:hover {
   background-color: #b71c1c;
   color: #ffffff;
   transform: translateY(-1px);
   box-shadow: 0 4px 14px rgba(211, 47, 47, 0.3);
 }
 
-.navbar-deneyap-btn-login svg {
+.navbar-main-btn-login svg {
   transition: transform 0.2s ease;
 }
 
-.navbar-deneyap-btn-login:hover svg {
+.navbar-main-btn-login:hover svg {
   transform: translateX(4px);
 }
 
 /* Çıkış Butonu */
-.navbar-deneyap-btn-logout {
+.navbar-main-btn-logout {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -468,14 +470,14 @@
   margin-left: 4px;
 }
 
-.navbar-deneyap-btn-logout:hover {
+.navbar-main-btn-logout:hover {
   background-color: #dc2626;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
 }
 
 /* Profile Link */
-.navbar-deneyap-profile-link {
+.navbar-main-profile-link {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -487,11 +489,11 @@
   transition: all 0.2s ease;
 }
 
-.navbar-deneyap-profile-link:hover {
+.navbar-main-profile-link:hover {
   background-color: #f1f5f9;
 }
 
-.navbar-deneyap-profile-avatar {
+.navbar-main-profile-avatar {
   width: 40px;
   /* Avatar büyütüldü */
   height: 40px;
@@ -499,7 +501,7 @@
   object-fit: cover;
 }
 
-.navbar-deneyap-profile-avatar-placeholder {
+.navbar-main-profile-avatar-placeholder {
   width: 40px;
   /* Avatar büyütüldü */
   height: 40px;
@@ -514,27 +516,27 @@
   color: #ffffff;
 }
 
-.navbar-deneyap-profile-info {
+.navbar-main-profile-info {
   display: flex;
   flex-direction: column;
   line-height: 1.2;
 }
 
-.navbar-deneyap-profile-name {
+.navbar-main-profile-name {
   font-size: 1rem;
   /* Font büyütüldü */
   font-weight: 600;
   color: #1e293b;
 }
 
-.navbar-deneyap-profile-email {
+.navbar-main-profile-email {
   font-size: 0.85rem;
   /* Font büyütüldü */
   color: #94a3b8;
 }
 
 /* Mobile Toggle */
-.navbar-deneyap-mobile-toggle {
+.navbar-main-mobile-toggle {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -548,12 +550,12 @@
   transition: all 0.2s ease;
 }
 
-.navbar-deneyap-mobile-toggle:hover {
+.navbar-main-mobile-toggle:hover {
   background-color: #f3f4f6;
 }
 
 @media (min-width: 768px) {
-  .navbar-deneyap-mobile-toggle {
+  .navbar-main-mobile-toggle {
     display: none;
   }
 }
@@ -642,7 +644,7 @@
 
 /* Responsive Logo Text */
 @media (max-width: 639px) {
-  .navbar-deneyap-logo-text {
+  .navbar-main-logo-text {
     display: none;
   }
 }

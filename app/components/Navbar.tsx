@@ -32,53 +32,50 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="navbar-deneyap">
-      <div className="navbar-deneyap-inner">
+    <nav className="navbar-main">
+      <div className="navbar-main-inner">
         {/* Logo */}
-        <Link href="/" className="navbar-deneyap-logo">
-          <div className="navbar-deneyap-logo-icon">
+        <Link href="/" className="navbar-main-logo">
+          <div className="navbar-main-logo-icon">
             <img
-              src="/favicon.ico?v=2"
-              alt="KTÜ Logo"
-              width={52}
-              height={52}
-              className="navbar-deneyap-logo-img"
+              src="/aacomyoLogo.png"
+              alt="Platform Logo"
+              width={220}
+              height={70}
+              className="navbar-main-logo-img"
             />
           </div>
-          <div className="navbar-deneyap-logo-text">
-            <h1 className="navbar-deneyap-logo-title">Mezun Platformu</h1>
-            <p className="navbar-deneyap-logo-subtitle">
-              Karadeniz Teknik Üniversitesi
-            </p>
+          <div className="navbar-main-logo-text">
+            <h1 className="navbar-main-logo-title">Mezun Platformu</h1>
           </div>
         </Link>
 
         {/* Desktop Menü */}
-        <div className="navbar-deneyap-menu">
-          <div className="navbar-deneyap-links">
-            <Link href="/" className="navbar-deneyap-link">
+        <div className="navbar-main-menu">
+          <div className="navbar-main-links">
+            <Link href="/" className="navbar-main-link">
               Ana Sayfa
             </Link>
-            <Link href="/mezunlar" className="navbar-deneyap-link">
+            <Link href="/mezunlar" className="navbar-main-link">
               Mezunlar
             </Link>
-            <Link href="/jobs" className="navbar-deneyap-link">
+            <Link href="/jobs" className="navbar-main-link">
               İlanlar
             </Link>
-            <Link href="/events" className="navbar-deneyap-link">
+            <Link href="/events" className="navbar-main-link">
               Etkinlikler
             </Link>
           </div>
 
           {!isAuthenticated ? (
-            <div className="navbar-deneyap-actions">
-              <Link href="/login" className="navbar-deneyap-link">
+            <div className="navbar-main-actions">
+              <Link href="/login" className="navbar-main-link">
                 Giriş
               </Link>
-              <Link href="/register" className="navbar-deneyap-btn-register">
+              <Link href="/register" className="navbar-main-btn-register">
                 Kayıt Ol
               </Link>
-              <Link href="/login" className="navbar-deneyap-btn-login">
+              <Link href="/login" className="navbar-main-btn-login">
                 Giriş Yap
                 <svg
                   width="20"
@@ -96,36 +93,36 @@ export default function Navbar() {
               </Link>
             </div>
           ) : (
-            <div className="navbar-deneyap-actions">
+            <div className="navbar-main-actions">
               {user?.role === "STUDENT" && (
-                <Link href="/applications" className="navbar-deneyap-link">
+                <Link href="/applications" className="navbar-main-link">
                   Başvurularım
                 </Link>
               )}
-              <Link href="/messages" className="navbar-deneyap-link">
+              <Link href="/messages" className="navbar-main-link">
                 Mesajlar
               </Link>
               <NotificationBell />
-              <Link href="/profile" className="navbar-deneyap-profile-link">
+              <Link href="/profile" className="navbar-main-profile-link">
                 {user?.image ? (
                   <Image
                     src={user.image}
                     alt="profil"
                     width={40}
                     height={40}
-                    className="navbar-deneyap-profile-avatar"
+                    className="navbar-main-profile-avatar"
                   />
                 ) : (
-                  <div className="navbar-deneyap-profile-avatar-placeholder">
+                  <div className="navbar-main-profile-avatar-placeholder">
                     {user?.firstName?.[0]?.toUpperCase() ?? "?"}
                   </div>
                 )}
-                <div className="navbar-deneyap-profile-info">
-                  <span className="navbar-deneyap-profile-name">
+                <div className="navbar-main-profile-info">
+                  <span className="navbar-main-profile-name">
                     {user?.firstName || "Kullanıcı"}
                     {user?.lastName && ` ${user?.lastName}`}
                   </span>
-                  <span className="navbar-deneyap-profile-email">
+                  <span className="navbar-main-profile-email">
                     {user?.email}
                   </span>
                 </div>
@@ -133,7 +130,7 @@ export default function Navbar() {
 
               <button
                 onClick={() => signOut({ callbackUrl: "/" })}
-                className="navbar-deneyap-btn-logout"
+                className="navbar-main-btn-logout"
               >
                 Çıkış
               </button>
@@ -144,7 +141,7 @@ export default function Navbar() {
         {/* Mobile Menü Butonu */}
         <button
           type="button"
-          className="navbar-deneyap-mobile-toggle"
+          className="navbar-main-mobile-toggle"
           onClick={toggleMenu}
           aria-label="Menü"
         >
