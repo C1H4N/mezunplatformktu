@@ -43,42 +43,37 @@ function normalizeRegion(name: string): string {
 }
 
 function applyRegionStyles(root: HTMLElement) {
-  // Bölge sınırlarını belirginleştir (renkleri koru, çizgileri kalınlaştır)
   const regionGroups = root.querySelectorAll<SVGGElement>("g[data-bolge]");
   regionGroups.forEach((rg) => {
     const shapes = rg.querySelectorAll<SVGElement>(
       "path, polygon, rect, circle, polyline"
     );
     shapes.forEach((sh) => {
-      // Bölge içi şekiller için stroke kalın ve tema uyumlu
-      sh.setAttribute("stroke", "var(--border-dark)");
+      // Bölge içi şekiller için ince ve zarif bir kurumsal sınır
+      sh.setAttribute("stroke", "var(--border)");
       sh.setAttribute("stroke-width", "1.25");
       sh.setAttribute("vector-effect", "non-scaling-stroke");
     });
 
-    // Bölge dış hat konturu için: şekilleri klonla ve arkaya koy
+    // Bölge dış hat konturu (Sadece arka plan derinliği için)
     const regionOutlineLayer = document.createElementNS(
       "http://www.w3.org/2000/svg",
       "g"
     );
     regionOutlineLayer.setAttribute("aria-hidden", "true");
     regionOutlineLayer.setAttribute("pointer-events", "none");
-    // Kontur rengi ve görünümü: foreground'un yarı saydamı
-    regionOutlineLayer.setAttribute(
-      "style",
-      "mix-blend-mode:multiply; opacity:0.6"
-    );
+    regionOutlineLayer.setAttribute("style", "opacity: 0.15");
 
     shapes.forEach((sh) => {
       const clone = sh.cloneNode(true) as SVGElement;
       clone.setAttribute("fill", "none");
       clone.setAttribute("stroke", "var(--foreground)");
-      clone.setAttribute("stroke-width", "2");
+      clone.setAttribute("stroke-width", "3");
       clone.setAttribute("vector-effect", "non-scaling-stroke");
       regionOutlineLayer.appendChild(clone);
     });
 
-    // Bölge grubunun başına ekle (arkada dursun)
+    // Arkada dursun diye insertBefore
     rg.insertBefore(regionOutlineLayer, rg.firstChild);
   });
 
@@ -100,22 +95,29 @@ export default function TurkeyMap({
 }: TurkeyMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [hoveredCity, setHoveredCity] = useState<string | null>(null);
+  const [svgLoaded, setSvgLoaded] = useState(false);
 
-  // Heatmap renk skalası (Maviden Yeşile)
+  // Heatmap renk skalası (Premium Mavi & Slate tonları)
   const getColor = (count: number) => {
-    if (count === 0) return "var(--card)"; // Veri yoksa kart rengi
-    if (count < 5) return "#e3f2fd"; // Çok açık mavi
-    if (count < 10) return "#90caf9"; // Açık mavi
-    if (count < 20) return "#42a5f5"; // Mavi
-    if (count < 50) return "#26a69a"; // Teal/Yeşilimsi
-    if (count < 100) return "#66bb6a"; // Yeşil
-    return "#2e7d32"; // Koyu Yeşil
+    if (count === 0) return "var(--card)"; // Veri yoksa saf arka plan rengi
+    if (count < 5) return "var(--primary-light)";
+    if (count < 10) return "#94a3b8"; // Slate-400
+    if (count < 20) return "#64748b"; // Slate-500
+    if (count < 50) return "#475569"; // Slate-600
+    if (count < 100) return "var(--primary-hover)"; // Koyu Mavi
+    return "var(--primary)"; // Ana Kurumsal Mavi
   };
 
+  // 1. AŞAMA: SVG'yi SADECE İLK RENDERDA BİR KERE YÜKLE
   useEffect(() => {
     let isMounted = true;
 
     async function loadSvg() {
+      if (containerRef.current?.querySelector("#svg-turkiye-haritasi")) {
+        if (!svgLoaded && isMounted) setSvgLoaded(true);
+        return;
+      }
+
       const res = await fetch("/api/turkey-map");
       if (!res.ok) return;
       const svgText = await res.text();
@@ -125,116 +127,130 @@ export default function TurkeyMap({
       const root = containerRef.current.querySelector("#svg-turkiye-haritasi");
       if (!root) return;
 
-      // Stil: tema renklerine uyumlu
       (root as SVGElement).style.width = "100%";
       (root as SVGElement).style.height = "100%";
       (root as SVGElement).style.display = "block";
       (root as SVGGraphicsElement).style.transformOrigin = "center";
 
-      // SVG çevresindeki boş alanı kırpmak için viewBox'ı içerik bbox'una ayarla
       try {
         const svgEl = root as unknown as SVGSVGElement;
         const bbox = svgEl.getBBox();
-        if (
-          bbox &&
-          isFinite(bbox.width) &&
-          isFinite(bbox.height) &&
-          bbox.width > 0 &&
-          bbox.height > 0
-        ) {
-          svgEl.setAttribute(
-            "viewBox",
-            `${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}`
-          );
+        if (bbox && isFinite(bbox.width) && isFinite(bbox.height) && bbox.width > 0 && bbox.height > 0) {
+          svgEl.setAttribute("viewBox", `${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}`);
           svgEl.removeAttribute("width");
           svgEl.removeAttribute("height");
           svgEl.setAttribute("preserveAspectRatio", "xMidYMid meet");
         }
-      } catch (_) {
-        // getBBox desteklenmiyorsa default viewBox kullanılmaya devam eder
-      }
+      } catch (_) { }
 
-      // Bölge bazlı renkler
       applyRegionStyles(containerRef.current);
 
-      const provinceGroups =
-        containerRef.current.querySelectorAll<SVGGElement>("g[data-iladi]");
-
-      provinceGroups.forEach((g) => {
-        const cityAttr =
-          g.getAttribute("data-iladi") || g.getAttribute("data-province") || "";
-        const city = normalizeCityName(cityAttr);
-
-        // Heatmap renklendirmesi
-        const count = alumniCounts[city] || 0;
-        const baseColor = getColor(count);
-        
-        // Şekilleri renklendir
-        const shapes = g.querySelectorAll<SVGElement>(
-          "path, polygon, rect, circle, polyline"
-        );
-        shapes.forEach((sh) => {
-          if (selectedCity && city === selectedCity) {
-             sh.setAttribute("fill", "var(--color-gold, var(--primary))");
-          } else {
-             sh.setAttribute("fill", baseColor);
-          }
-        });
-
-        // Hover ve seçili stilleri
-        g.style.cursor = "pointer";
-        g.style.transition = "transform 120ms ease, filter 120ms ease";
-        
-        g.addEventListener("mouseenter", () => {
-          g.style.filter = "brightness(0.9)";
-          setHoveredCity(city);
-        });
-        
-        g.addEventListener("mouseleave", () => {
-          g.style.filter = "";
-          setHoveredCity(null);
-        });
-        
-        g.addEventListener("mousedown", () => {
-          g.style.transform = "scale(0.985)"; // basılma hissi
-        });
-        const clearPress = () => {
-          g.style.transform = "";
-        };
-        g.addEventListener("mouseup", clearPress);
-        g.addEventListener("mouseout", clearPress);
-
-        // Erişilebilirlik: klavye ile seçim
-        g.setAttribute("tabindex", "0");
-        g.addEventListener("keydown", (ev: KeyboardEvent) => {
-          if (ev.key === "Enter" || ev.key === " ") {
-            ev.preventDefault();
-            onCitySelect(city);
-          }
-        });
-        g.addEventListener("click", () => onCitySelect(city));
-
-        // İlk render'da seçili şehri highlight et
-        if (selectedCity && city === selectedCity) {
-          g.style.filter =
-            "drop-shadow(0 0 0.5rem var(--color-gold, var(--primary))) brightness(1.08)";
-          shapes.forEach((sh) => {
-            sh.setAttribute("stroke", "var(--color-gold, var(--primary))");
-            sh.setAttribute("stroke-width", "1.25");
-            sh.setAttribute("fill", "var(--primary)"); // Seçili ise primary renk
-            if (sh.tagName === 'path') {
-               sh.style.fill = "var(--primary)";
-            }
-          });
-        }
-      });
+      // Montaj bitti
+      if (isMounted) setSvgLoaded(true);
     }
 
     loadSvg();
     return () => {
       isMounted = false;
     };
-  }, [selectedCity, onCitySelect, alumniCounts]);
+  }, []); // Asla selectedCity veya alumniCounts'a depend etme!
+
+  // 2. AŞAMA: EKRANDAKİ SVG ÜZERİNDE RENKLENDİRME VE ETKİLEŞİM UYGULAMA
+  useEffect(() => {
+    if (!svgLoaded || !containerRef.current) return;
+
+    const root = containerRef.current.querySelector("#svg-turkiye-haritasi");
+    if (!root) return;
+
+    const provinceGroups = containerRef.current.querySelectorAll<SVGGElement>("g[data-iladi]");
+
+    // Olası event karmaşasını engellemek için sinyalleyici
+    const abortController = new AbortController();
+    const { signal } = abortController;
+
+    provinceGroups.forEach((g) => {
+      const cityAttr = g.getAttribute("data-iladi") || g.getAttribute("data-province") || "";
+      const city = normalizeCityName(cityAttr);
+
+      const count = alumniCounts[city] || 0;
+      const baseColor = getColor(count);
+      const isSelected = selectedCity && city === selectedCity;
+
+      const shapes = g.querySelectorAll<SVGElement>("path, polygon, rect, circle, polyline");
+
+      // Temel ve Seçili Stil
+      shapes.forEach((sh) => {
+        sh.setAttribute("stroke", isSelected ? "var(--primary)" : "var(--border)");
+        sh.setAttribute("stroke-width", isSelected ? "2" : "1.25");
+
+        if (isSelected) {
+          sh.setAttribute("fill", "var(--primary)");
+          sh.style.fill = "var(--primary)";
+        } else {
+          sh.setAttribute("fill", baseColor);
+          sh.style.fill = baseColor;
+        }
+      });
+
+      if (isSelected) {
+        g.style.filter = "drop-shadow(0 4px 6px rgba(18, 91, 150, 0.4))"; // Seçili şehre zengin kurumsal mavi highlight
+      } else {
+        g.style.filter = "";
+      }
+
+      g.style.cursor = "pointer";
+      g.style.transition = "transform 150ms cubic-bezier(0.16, 1, 0.3, 1)";
+
+      // Hover Olayları
+      g.addEventListener("mouseenter", () => {
+        if (!isSelected) {
+          shapes.forEach(sh => {
+            sh.setAttribute("fill", "var(--primary-light)");
+            sh.style.fill = "var(--primary-light)";
+          });
+        }
+        setHoveredCity(city);
+      }, { signal });
+
+      g.addEventListener("mouseleave", () => {
+        if (!isSelected) {
+          shapes.forEach(sh => {
+            sh.setAttribute("fill", baseColor);
+            sh.style.fill = baseColor;
+          });
+        }
+        setHoveredCity(null);
+      }, { signal });
+
+      // Basılma Olayları
+      g.addEventListener("mousedown", () => {
+        g.style.transform = "scale(0.985)";
+      }, { signal });
+
+      const clearPress = () => {
+        g.style.transform = "";
+      };
+
+      g.addEventListener("mouseup", clearPress, { signal });
+      g.addEventListener("mouseout", clearPress, { signal });
+
+      // Seçim Olayları ve Erişilebilirlik
+      g.setAttribute("tabindex", "0");
+      g.style.outline = "none"; // Tarayıcının kare şeklindeki siyah focus outline'ını gizle
+      g.addEventListener("keydown", (ev: KeyboardEvent) => {
+        if (ev.key === "Enter" || ev.key === " ") {
+          ev.preventDefault();
+          onCitySelect(city);
+        }
+      }, { signal });
+
+      g.addEventListener("click", () => onCitySelect(city), { signal });
+    });
+
+    return () => {
+      abortController.abort(); // effect yeniden renderlandığında eski event'leri kaldır
+    };
+  }, [svgLoaded, selectedCity, onCitySelect, alumniCounts]);
 
   return (
     //* Sadece Desktop'ta map gösterimi
