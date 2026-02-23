@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 // Kullanıcı rolleri (Belge 3.2)
-export const UserRoleEnum = z.enum(["STUDENT", "ALUMNI"]);
+export const UserRoleEnum = z.enum(["STUDENT", "ALUMNI", "ACADEMICIAN", "HEAD_OF_DEPARTMENT"]);
 export type UserRoleType = z.infer<typeof UserRoleEnum>;
 
 // Şifre validasyonu - Belge 4.1.1 Validasyon Kuralları
@@ -66,6 +66,19 @@ export const alumniFieldsSchema = z.object({
     .optional(),
 });
 
+// Akademisyen ek alanları
+export const academicianFieldsSchema = z.object({
+  department: z
+    .string()
+    .min(2, "Bölüm adı en az 2 karakter olmalı.")
+    .max(100, "Bölüm adı en fazla 100 karakter olabilir."),
+  title: z
+    .string()
+    .min(2, "Unvan en az 2 karakter olmalı.")
+    .max(50, "Unvan en fazla 50 karakter olabilir."),
+});
+
+
 
 // Ana kayıt şeması - Şifre eşleşme kontrolü ile
 export const registerSchema = baseSchema.refine(
@@ -92,6 +105,22 @@ export const alumniRegisterSchema = baseSchema
     path: ["confirmPassword"],
   });
 
+// Akademisyen kayıt şeması
+export const academicianRegisterSchema = baseSchema
+  .merge(academicianFieldsSchema)
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Şifreler eşleşmiyor.",
+    path: ["confirmPassword"],
+  });
+
+// Bölüm Başkanı kayıt şeması
+export const headOfDepartmentRegisterSchema = baseSchema
+  .merge(academicianFieldsSchema)
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Şifreler eşleşmiyor.",
+    path: ["confirmPassword"],
+  });
+
 
 
 // Tüm kayıt tiplerini birleştir
@@ -101,6 +130,8 @@ export type RegisterFormData = z.infer<typeof baseSchema> & {
   // Mezun alanları
   graduationYear?: number;
   currentPosition?: string;
+  // Akademisyen alanları
+  title?: string;
   // Ortak
   department?: string;
 };
@@ -112,6 +143,10 @@ export function validateRegisterByRole(data: RegisterFormData) {
       return studentRegisterSchema.safeParse(data);
     case "ALUMNI":
       return alumniRegisterSchema.safeParse(data);
+    case "ACADEMICIAN":
+      return academicianRegisterSchema.safeParse(data);
+    case "HEAD_OF_DEPARTMENT":
+      return headOfDepartmentRegisterSchema.safeParse(data);
     default:
       return registerSchema.safeParse(data);
   }

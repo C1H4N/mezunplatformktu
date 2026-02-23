@@ -40,6 +40,8 @@ export async function POST(req: Request) {
       // Mezun
       graduationYear,
       currentPosition,
+      // Akademisyen
+      title,
     } = body;
 
     // Email benzersizlik kontrolü
@@ -134,6 +136,27 @@ export async function POST(req: Request) {
           },
         });
       }
+
+      if (role === "ACADEMICIAN" && department && title) {
+        await tx.academician.create({
+          data: {
+            userId: newUser.id,
+            department,
+            title,
+          },
+        });
+      }
+
+      if (role === "HEAD_OF_DEPARTMENT" && department && title) {
+        await tx.headOfDepartment.create({
+          data: {
+            userId: newUser.id,
+            department,
+            title,
+          },
+        });
+      }
+
 
 
 

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import Link from "next/link";
-import { Eye, EyeOff, GraduationCap, Briefcase, ArrowLeft, ArrowRight, Check } from "lucide-react";
+import { Eye, EyeOff, GraduationCap, Briefcase, ArrowLeft, ArrowRight, Check, BookOpen, UserCog } from "lucide-react";
 import {
   type RegisterFormData,
   type UserRoleType,
@@ -26,6 +26,18 @@ const roles: { value: UserRoleType; label: string; description: string; icon: Re
     label: "Mezun",
     description: "Üniversite mezunu",
     icon: <Briefcase className="w-8 h-8" />,
+  },
+  {
+    value: "ACADEMICIAN",
+    label: "Akademisyen",
+    description: "Üniversite akademisyeni",
+    icon: <BookOpen className="w-8 h-8" />,
+  },
+  {
+    value: "HEAD_OF_DEPARTMENT",
+    label: "Bölüm Başkanı",
+    description: "Bölüm yönetim yetkilisi",
+    icon: <UserCog className="w-8 h-8" />,
   },
 ];
 
@@ -71,6 +83,8 @@ export default function RegisterPage() {
     // Mezun
     graduationYear: new Date().getFullYear(),
     currentPosition: "",
+    // Akademisyen
+    title: "",
   });
 
   const [errors, setErrors] = useState<Partial<Record<keyof RegisterFormData | "confirmPassword", string>>>({});
@@ -154,7 +168,7 @@ export default function RegisterPage() {
             <p className="text-muted">Hesap türünüzü seçin</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {roles.map((role) => (
               <button
                 key={role.value}
@@ -199,6 +213,8 @@ export default function RegisterPage() {
             <h1 className="text-2xl font-bold">
               {formData.role === "STUDENT" && "Öğrenci Kaydı"}
               {formData.role === "ALUMNI" && "Mezun Kaydı"}
+              {formData.role === "ACADEMICIAN" && "Akademisyen Kaydı"}
+              {formData.role === "HEAD_OF_DEPARTMENT" && "Bölüm Başkanı Kaydı"}
             </h1>
             <p className="text-sm text-muted">Bilgilerinizi doldurun</p>
           </div>
@@ -332,6 +348,70 @@ export default function RegisterPage() {
                   className={inputClass("currentPosition")}
                   placeholder="Örn: Yazılım Mühendisi"
                 />
+              </div>
+            </>
+          )}
+
+          {formData.role === "ACADEMICIAN" && (
+            <>
+              <div>
+                <label className="text-sm font-medium mb-1 block">Unvan</label>
+                <input
+                  type="text"
+                  value={formData.title}
+                  onChange={(e) => handleChange("title", e.target.value)}
+                  className={inputClass("title" as any)}
+                  placeholder="Örn: Prof. Dr., Doç. Dr., Öğr. Gör."
+                />
+                {/* @ts-ignore */}
+                {errors.title && <p className="text-xs text-red-400 mt-1">{errors.title}</p>}
+              </div>
+              <div>
+                <label className="text-sm font-medium mb-1 block">Bölüm</label>
+                <select
+                  value={formData.department}
+                  onChange={(e) => handleChange("department", e.target.value)}
+                  className={selectClass("department" as any)}
+                >
+                  <option value="">Bölüm seçin</option>
+                  {departments.map((dept) => (
+                    <option key={dept} value={dept}>{dept}</option>
+                  ))}
+                </select>
+                {/* @ts-ignore */}
+                {errors.department && <p className="text-xs text-red-400 mt-1">{errors.department}</p>}
+              </div>
+            </>
+          )}
+
+          {formData.role === "HEAD_OF_DEPARTMENT" && (
+            <>
+              <div>
+                <label className="text-sm font-medium mb-1 block">Unvan</label>
+                <input
+                  type="text"
+                  value={formData.title}
+                  onChange={(e) => handleChange("title", e.target.value)}
+                  className={inputClass("title" as any)}
+                  placeholder="Örn: Prof. Dr., Doç. Dr."
+                />
+                {/* @ts-ignore */}
+                {errors.title && <p className="text-xs text-red-400 mt-1">{errors.title}</p>}
+              </div>
+              <div>
+                <label className="text-sm font-medium mb-1 block">Bölüm</label>
+                <select
+                  value={formData.department}
+                  onChange={(e) => handleChange("department", e.target.value)}
+                  className={selectClass("department" as any)}
+                >
+                  <option value="">Bölüm seçin</option>
+                  {departments.map((dept) => (
+                    <option key={dept} value={dept}>{dept}</option>
+                  ))}
+                </select>
+                {/* @ts-ignore */}
+                {errors.department && <p className="text-xs text-red-400 mt-1">{errors.department}</p>}
               </div>
             </>
           )}

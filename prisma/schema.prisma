@@ -21,6 +21,8 @@ enum UserRole {
   MODERATOR
   ADMIN
   USER // Default fallback
+  ACADEMICIAN
+  HEAD_OF_DEPARTMENT
 }
 
 enum JobType {
@@ -82,10 +84,12 @@ model User {
   sessions Session[]
 
   // New relations from UML
-  student   Student?
-  alumni    Alumni?
-  admin     Admin?
-  moderator Moderator?
+  student          Student?
+  alumni           Alumni?
+  academician      Academician?
+  headOfDepartment HeadOfDepartment?
+  admin            Admin?
+  moderator        Moderator?
 
   sentMessages     Message[] @relation("SentMessages")
   receivedMessages Message[] @relation("ReceivedMessages")
@@ -162,6 +166,15 @@ model Student {
   mentorshipRequests MentorshipRequest[]
 }
 
+model HeadOfDepartment {
+  id         String @id @default(cuid())
+  userId     String @unique
+  user       User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  department String
+  title      String
+}
+
 model Alumni {
   id     String @id @default(cuid())
   userId String @unique
@@ -175,6 +188,16 @@ model Alumni {
 
   mentorshipRequests MentorshipRequest[]
 }
+
+model Academician {
+  id         String @id @default(cuid())
+  userId     String @unique
+  user       User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  department String
+  title      String
+}
+
 
 model Admin {
   id     String @id @default(cuid())
