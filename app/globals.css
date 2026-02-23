@@ -97,8 +97,9 @@
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
 
-  --font-sans: "Lucide", sans-serif;
-  --font-mono: "Lucide", monospace;
+  --font-sans: "Inter", "Lucide", system-ui, sans-serif;
+  --font-mono: "Inter", "Lucide", monospace;
+  --font-lucide: var(--font-sans);
 
   --shadow-sm: var(--shadow-sm);
   --shadow: var(--shadow);
@@ -264,8 +265,8 @@
   z-index: 50;
   background-color: #ffffff;
   border-bottom: 4px solid var(--primary);
-  /* Mavi çizgi yapıldı */
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  font-family: var(--font-sans);
 }
 
 .navbar-main-inner {

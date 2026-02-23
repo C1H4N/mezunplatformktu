@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import Image from "next/image";
+import TurkeyMap from "@/app/components/TurkeyMap";
 import {
   Search,
   MapPin,
@@ -92,6 +93,13 @@ export default function MezunlarPage() {
     const timeoutId = setTimeout(fetchAlumni, 300);
     return () => clearTimeout(timeoutId);
   }, [search, departmentFilter, cityFilter, yearFilter]);
+
+  const alumniCounts = alumni.reduce((acc, person) => {
+    if (person.city && person.city !== "Bilinmiyor") {
+      acc[person.city] = (acc[person.city] || 0) + 1;
+    }
+    return acc;
+  }, {} as Record<string, number>);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted-bg/20">
@@ -210,6 +218,21 @@ export default function MezunlarPage() {
               </select>
             </div>
           )}
+        </div>
+
+        {/* Harita */}
+        <div className="bg-card border border-border rounded-xl mb-8 overflow-hidden shadow-sm">
+          <div className="px-6 pt-6 pb-2">
+            <h3 className="text-xl font-bold text-foreground">Mezun Dağılım Haritası</h3>
+            <p className="text-sm text-muted mt-1">İllere göre mezun yoğunluğunu inceleyin, şehrinizi seçerek filtreleyin.</p>
+          </div>
+          <div className="p-4">
+            <TurkeyMap
+              selectedCity={cityFilter}
+              onCitySelect={(city) => setCityFilter(city)}
+              alumniCounts={alumniCounts}
+            />
+          </div>
         </div>
 
         {/* Alumni Grid */}

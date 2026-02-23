@@ -1,101 +1,21 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import SearchFilters, { type FilterState } from "./components/SearchFilters";
-import AlumniCard from "./components/AlumniCard";
-import TurkeyMap from "./components/TurkeyMap";
-
-// Interface for Alumni data from API
-interface Alumni {
-  id: string;
-  name: string;
-  department: string;
-  city: string;
-  jobTitle?: string;
-  company?: string;
-  graduationYear?: number;
-  linkedinUrl?: string;
-  profileImage?: string;
-}
+import Link from "next/link";
+import { Users, Briefcase, Map, MapPin, Building2, MessageSquare } from "lucide-react";
 
 export default function Home() {
-  const [filteredAlumni, setFilteredAlumni] = useState<Alumni[]>([]);
-  const [stats, setStats] = useState({ totalAlumni: 0, totalCities: 0 });
-  const [loading, setLoading] = useState(true);
-
-  const [selectedMapCity, setSelectedMapCity] = useState<string>("Seçin");
-  const [currentFilters, setCurrentFilters] = useState<FilterState>({
-    search: "",
-    city: "Seçin",
-    department: "Seçin",
-    jobField: "Seçin",
-  });
-
-  // Fetch Stats
-  useEffect(() => {
-    fetch("/api/stats")
-      .then((res) => res.json())
-      .then((data) => setStats(data))
-      .catch((err) => console.error("Failed to fetch stats", err));
-  }, []);
-
-  // Fetch Alumni based on filters
-  useEffect(() => {
-    const fetchAlumni = async () => {
-      setLoading(true);
-      const params = new URLSearchParams();
-      if (currentFilters.search) params.append("search", currentFilters.search);
-
-      const effectiveCity = selectedMapCity !== "Seçin" ? selectedMapCity : currentFilters.city;
-      if (effectiveCity !== "Seçin" && effectiveCity !== "Tümü") params.append("city", effectiveCity);
-
-      if (currentFilters.department !== "Seçin" && currentFilters.department !== "Tümü") {
-        params.append("department", currentFilters.department);
-      }
-
-      if (currentFilters.jobField !== "Seçin" && currentFilters.jobField !== "Tümü") {
-        params.append("jobField", currentFilters.jobField);
-      }
-
-      try {
-        const res = await fetch(`/api/alumni?${params.toString()}`);
-        const data = await res.json();
-        setFilteredAlumni(data);
-      } catch (error) {
-        console.error("Failed to fetch alumni", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAlumni();
-  }, [currentFilters, selectedMapCity]);
-
-  const handleFilterChange = (
-    filters: FilterState,
-    mapCityOverride?: string
-  ) => {
-    setCurrentFilters(filters);
-    // The useEffect will trigger fetch
-  };
-
-  const handleMapCitySelect = (city: string) => {
-    setSelectedMapCity(city);
-    const updated = { ...currentFilters, city } as FilterState;
-    handleFilterChange(updated, city);
-  };
-
-  const alumniCounts = filteredAlumni.reduce((acc, alumni) => {
-    acc[alumni.city] = (acc[alumni.city] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
-
   return (
     <div className="min-h-screen flex flex-col bg-[#f8fafc]">
-      {/* Hero Section - Multi-color Modern Corporate Gradient */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-[#125b96] via-[#0d4675] to-[#0f172a] pb-20 pt-28 shadow-2xl">
+      {/* Hero Section */}
+      <div
+        className="relative overflow-hidden pb-32 pt-32 shadow-2xl flex-1 flex flex-col justify-center bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: 'url("/aacomyobg.jpg")' }}
+      >
+        {/* Dark overlay to make white text readable */}
+        <div className="absolute inset-0 bg-[#0f172a]/70 backdrop-blur-[2px]"></div>
+
         {/* Subtle layer effects for modern mesh feel */}
-        <div className="absolute top-0 left-0 w-full h-full opacity-40 pointer-events-none">
+        <div className="absolute top-0 left-0 w-full h-full opacity-40 pointer-events-none mix-blend-overlay">
           <div className="absolute -top-32 -left-32 w-[500px] h-[500px] rounded-full bg-[#ffffff] blur-[140px] opacity-20"></div>
           <div className="absolute bottom-[-100px] right-[-100px] w-[600px] h-[600px] rounded-full bg-[#0ea5e9] blur-[150px] opacity-20"></div>
           <div className="absolute top-[20%] right-[20%] w-[300px] h-[300px] rounded-full bg-[#3b82f6] blur-[120px] opacity-20"></div>
@@ -112,85 +32,64 @@ export default function Home() {
             Türkiye'nin dört bir yanındaki KTÜ Araklı Ali Cevat Özyurt Meslek Yüksekokulu mezunları ile bağlantı kurun, kariyer fırsatlarını yakalayın.
           </p>
 
+          <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto mt-4 animate-fade-in-up animation-delay-300">
+            <Link
+              href="/mezunlar"
+              className="px-8 py-4 bg-white text-[#0f172a] hover:bg-gray-100 rounded-xl font-bold text-lg shadow-[0_0_30px_rgba(255,255,255,0.3)] transition-all hover:scale-105 flex items-center justify-center gap-2"
+            >
+              <Users className="w-5 h-5" />
+              Mezunları Keşfet
+            </Link>
+            <Link
+              href="/jobs"
+              className="px-8 py-4 bg-white/10 hover:bg-white/20 text-white border border-white/20 rounded-xl font-bold text-lg backdrop-blur-md transition-all hover:scale-105 flex items-center justify-center gap-2"
+            >
+              <Briefcase className="w-5 h-5" />
+              İlanlara Göz At
+            </Link>
+          </div>
         </div>
       </div>
 
-      {/* Ana İçerik */}
-      <main className="flex-1 w-full px-4 sm:px-[4%] pb-16 relative z-20 -mt-12">
-        <div className="flex flex-col gap-8 items-stretch">
-
-          {/* Üst Kısım - Yatay Filtreler */}
-          <div className="animate-fade-in-up animation-delay-300 w-full z-10">
-            <div className="bg-[#ffffff] rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-border/60 p-2 relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#125b96] to-[#0ea5e9]"></div>
-              <SearchFilters onFilterChange={handleFilterChange} />
-            </div>
+      {/* Info Section */}
+      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-white relative z-20">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Platformda Neler Var?</h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">AACOMYO Mezun Platformu, kariyerinize yön vermeniz ve gelişiminizi desteklemeniz için tasarlandı.</p>
           </div>
 
-          {/* Harita ve Sonuçlar Alanı */}
-          <div className="space-y-8 animate-fade-in-up animation-delay-400 w-full">
-
-            {/* Harita */}
-            <div className="bg-[#ffffff] rounded-3xl overflow-hidden shadow-[0_12px_40px_rgb(0,0,0,0.06)] border border-border/60">
-              <div className="px-8 pt-8 pb-2">
-                <h3 className="text-2xl font-extrabold text-foreground">Mezun Dağılım Haritası</h3>
-                <p className="text-sm font-medium text-muted mt-1">İllere göre mezun yoğunluğunu inceleyin, şehrinizi seçerek filtreleyin.</p>
-              </div>
-              <div className="p-4">
-                <TurkeyMap
-                  selectedCity={selectedMapCity}
-                  onCitySelect={handleMapCitySelect}
-                  alumniCounts={alumniCounts}
-                />
-              </div>
-            </div>
-
-            {/* Sonuçlar */}
-            <div className="bg-[#ffffff] rounded-3xl shadow-[0_12px_40px_rgb(0,0,0,0.06)] border border-border/60 p-6 md:p-8">
-              <div className="flex flex-col sm:flex-row items-center justify-between mb-8 pb-6 border-b border-border/60">
-                <h2 className="text-2xl font-extrabold text-foreground">
-                  Mezun Listesi
-                </h2>
-                <span className="mt-4 sm:mt-0 text-sm font-bold text-primary bg-primary-light/50 px-5 py-2 rounded-full border border-primary/20">
-                  {filteredAlumni.length} mezun listeleniyor
-                </span>
-              </div>
-
-              {filteredAlumni.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {filteredAlumni.map((alumni) => (
-                    <AlumniCard key={alumni.id} {...alumni} />
-                  ))}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <Link href="/mezunlar" className="block group">
+              <div className="h-full bg-[#f8fafc] p-8 rounded-3xl border border-gray-100 shadow-sm group-hover:shadow-md group-hover:-translate-y-1 transition-all">
+                <div className="w-14 h-14 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mb-6">
+                  <MapPin className="w-7 h-7" />
                 </div>
-              ) : (
-                <div className="text-center py-20">
-                  <div className="w-24 h-24 mx-auto mb-6 bg-muted-bg/50 rounded-full flex items-center justify-center shadow-inner">
-                    <svg
-                      className="w-12 h-12 text-muted"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={1.5}
-                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                      />
-                    </svg>
-                  </div>
-                  <h3 className="text-2xl font-bold text-foreground mb-3">
-                    Sonuç bulunamadı
-                  </h3>
-                  <p className="text-muted text-base max-w-sm mx-auto">
-                    Arama kriterlerinizi değiştirerek veya haritadan farklı bir şehir seçerek tekrar deneyebilirsiniz.
-                  </p>
+                <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">Geniş Mezun Ağı & Harita</h3>
+                <p className="text-gray-600 leading-relaxed">Farklı sektörlerdeki ve şehirlerdeki mezunlarımızla iletişim kurun, interaktif harita üzerinden mezun dağılımını inceleyin.</p>
+              </div>
+            </Link>
+
+            <Link href="/jobs" className="block group">
+              <div className="h-full bg-[#f8fafc] p-8 rounded-3xl border border-gray-100 shadow-sm group-hover:shadow-md group-hover:-translate-y-1 transition-all">
+                <div className="w-14 h-14 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center mb-6">
+                  <Briefcase className="w-7 h-7" />
                 </div>
-              )}
+                <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-indigo-600 transition-colors">Kariyer Fırsatları</h3>
+                <p className="text-gray-600 leading-relaxed">Sadece mezunlarımıza özel iş ve staj ilanlarına ulaşın, kariyerinizde bir adım öne çıkın.</p>
+              </div>
+            </Link>
+
+            <div className="h-full bg-[#f8fafc] p-8 rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+              <div className="w-14 h-14 bg-purple-100 text-purple-600 rounded-2xl flex items-center justify-center mb-6">
+                <MessageSquare className="w-7 h-7" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Anlık İletişim</h3>
+              <p className="text-gray-600 leading-relaxed">Yeni nesil mesajlaşma altyapımızla diğer mezunlarla bağlantı kurun ve anında fikir alışverişinde bulunun.</p>
             </div>
           </div>
         </div>
-      </main>
+      </section>
     </div>
   );
 }

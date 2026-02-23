@@ -57,7 +57,7 @@ export default function Navbar() {
               Ana Sayfa
             </Link>
             <Link href="/mezunlar" className="navbar-main-link">
-              Mezunlar
+              Mezunlarımız
             </Link>
             <Link href="/jobs" className="navbar-main-link">
               İlanlar
@@ -179,7 +179,7 @@ export default function Navbar() {
         typeof document !== "undefined" &&
         createPortal(
           <div
-            className={`fixed inset-0 z-[999] md:hidden bg-white flex flex-col ${isClosing ? "animate-fade-out" : "animate-fade-in"
+            className={`fixed inset-0 z-[999] md:hidden bg-white flex flex-col font-lucide ${isClosing ? "animate-fade-out" : "animate-fade-in"
               }`}
           >
             <div className="flex justify-between items-center h-16 px-4 sm:px-6 border-b border-gray-100">
@@ -243,7 +243,7 @@ export default function Navbar() {
                     d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
                   />
                 </svg>
-                Mezunlar
+                Mezunlarımız
               </Link>
               <Link
                 href="/jobs"
