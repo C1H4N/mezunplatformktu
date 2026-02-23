@@ -14,7 +14,8 @@ interface Job {
   type: "JOB" | "INTERNSHIP";
   createdAt: string;
   publisher: {
-    companyName: string;
+    firstName: string;
+    lastName: string;
   };
 }
 
@@ -50,8 +51,8 @@ export default function JobsPage() {
     return () => clearTimeout(timeoutId);
   }, [search, typeFilter]);
 
-  const isEmployerOrAdmin =
-    session?.user?.role === "EMPLOYER" || session?.user?.role === "ADMIN";
+  const canPostJob =
+    session?.user?.role === "ALUMNI" || session?.user?.role === "ADMIN" || session?.user?.role === "MODERATOR";
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-background to-muted-bg/20">
@@ -68,7 +69,7 @@ export default function JobsPage() {
                 Hayalindeki işi veya stajı bul, kariyerine yön ver.
               </p>
             </div>
-            {isEmployerOrAdmin && (
+            {canPostJob && (
               <Link
                 href="/jobs/new"
                 className={`${buttonVariants({
@@ -125,31 +126,28 @@ export default function JobsPage() {
           <div className="flex gap-2 w-full md:w-auto overflow-x-auto pb-2 md:pb-0">
             <button
               onClick={() => setTypeFilter("ALL")}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${
-                typeFilter === "ALL"
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${typeFilter === "ALL"
                   ? "bg-primary text-primary-foreground"
                   : "bg-card/50 text-muted hover:bg-card hover:text-foreground"
-              }`}
+                }`}
             >
               Tümü
             </button>
             <button
               onClick={() => setTypeFilter("JOB")}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${
-                typeFilter === "JOB"
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${typeFilter === "JOB"
                   ? "bg-primary text-primary-foreground"
                   : "bg-card/50 text-muted hover:bg-card hover:text-foreground"
-              }`}
+                }`}
             >
               İş İlanları
             </button>
             <button
               onClick={() => setTypeFilter("INTERNSHIP")}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${
-                typeFilter === "INTERNSHIP"
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${typeFilter === "INTERNSHIP"
                   ? "bg-primary text-primary-foreground"
                   : "bg-card/50 text-muted hover:bg-card hover:text-foreground"
-              }`}
+                }`}
             >
               Staj İlanları
             </button>
@@ -173,7 +171,7 @@ export default function JobsPage() {
                 key={job.id}
                 id={job.id}
                 title={job.title}
-                companyName={job.publisher.companyName}
+                publisherName={`${job.publisher.firstName} ${job.publisher.lastName}`}
                 location={job.location}
                 type={job.type}
                 createdAt={job.createdAt}

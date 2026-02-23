@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 // Kullanıcı rolleri (Belge 3.2)
-export const UserRoleEnum = z.enum(["STUDENT", "ALUMNI", "EMPLOYER"]);
+export const UserRoleEnum = z.enum(["STUDENT", "ALUMNI"]);
 export type UserRoleType = z.infer<typeof UserRoleEnum>;
 
 // Şifre validasyonu - Belge 4.1.1 Validasyon Kuralları
@@ -66,22 +66,6 @@ export const alumniFieldsSchema = z.object({
     .optional(),
 });
 
-// İşveren ek alanları (Belge 3.5)
-export const employerFieldsSchema = z.object({
-  companyName: z
-    .string()
-    .min(2, "Firma adı en az 2 karakter olmalı.")
-    .max(100, "Firma adı en fazla 100 karakter olabilir."),
-  taxNumber: z
-    .string()
-    .min(10, "Vergi numarası 10 karakter olmalı.")
-    .max(11, "Vergi numarası en fazla 11 karakter olabilir.")
-    .regex(/^\d+$/, "Vergi numarası yalnızca rakamlardan oluşmalıdır."),
-  sector: z
-    .string()
-    .min(2, "Sektör en az 2 karakter olmalı.")
-    .max(100, "Sektör en fazla 100 karakter olabilir."),
-});
 
 // Ana kayıt şeması - Şifre eşleşme kontrolü ile
 export const registerSchema = baseSchema.refine(
@@ -108,13 +92,7 @@ export const alumniRegisterSchema = baseSchema
     path: ["confirmPassword"],
   });
 
-// İşveren kayıt şeması
-export const employerRegisterSchema = baseSchema
-  .merge(employerFieldsSchema)
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Şifreler eşleşmiyor.",
-    path: ["confirmPassword"],
-  });
+
 
 // Tüm kayıt tiplerini birleştir
 export type RegisterFormData = z.infer<typeof baseSchema> & {
@@ -125,10 +103,6 @@ export type RegisterFormData = z.infer<typeof baseSchema> & {
   currentPosition?: string;
   // Ortak
   department?: string;
-  // İşveren alanları
-  companyName?: string;
-  taxNumber?: string;
-  sector?: string;
 };
 
 // Rol bazlı validasyon fonksiyonu
@@ -138,8 +112,6 @@ export function validateRegisterByRole(data: RegisterFormData) {
       return studentRegisterSchema.safeParse(data);
     case "ALUMNI":
       return alumniRegisterSchema.safeParse(data);
-    case "EMPLOYER":
-      return employerRegisterSchema.safeParse(data);
     default:
       return registerSchema.safeParse(data);
   }

@@ -17,6 +17,8 @@ export default function NewJobPage() {
     type: "JOB",
   });
 
+  const canPostJob = session && (session.user.role === "ALUMNI" || session.user.role === "ADMIN" || session.user.role === "MODERATOR");
+
   if (status === "loading") {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -25,10 +27,7 @@ export default function NewJobPage() {
     );
   }
 
-  if (
-    !session ||
-    (session.user.role !== "EMPLOYER" && session.user.role !== "ADMIN")
-  ) {
+  if (!canPostJob) {
     router.push("/jobs");
     return null;
   }

@@ -35,12 +35,11 @@ interface Skill {
   name: string;
 }
 
-type ProfileVisibility = "PUBLIC" | "REGISTERED" | "EMPLOYERS" | "PRIVATE";
+type ProfileVisibility = "PUBLIC" | "REGISTERED" | "PRIVATE";
 
 const visibilityOptions: { value: ProfileVisibility; label: string; description: string; icon: React.ReactNode }[] = [
   { value: "PUBLIC", label: "Herkese Açık", description: "Herkes profilinizi görebilir", icon: <Eye className="w-4 h-4" /> },
   { value: "REGISTERED", label: "Kayıtlı Kullanıcılar", description: "Sadece giriş yapmış kullanıcılar", icon: <Users className="w-4 h-4" /> },
-  { value: "EMPLOYERS", label: "Sadece İşverenler", description: "Sadece işverenler görebilir", icon: <Building2 className="w-4 h-4" /> },
   { value: "PRIVATE", label: "Gizli", description: "Sadece siz görebilirsiniz", icon: <Lock className="w-4 h-4" /> },
 ];
 

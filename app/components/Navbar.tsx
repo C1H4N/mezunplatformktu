@@ -69,9 +69,6 @@ export default function Navbar() {
 
           {!isAuthenticated ? (
             <div className="navbar-main-actions">
-              <Link href="/login" className="navbar-main-link">
-                Giriş
-              </Link>
               <Link href="/register" className="navbar-main-btn-register">
                 Kayıt Ol
               </Link>
@@ -293,13 +290,6 @@ export default function Navbar() {
 
               {!isAuthenticated ? (
                 <div className="flex flex-col gap-3 mt-2">
-                  <Link
-                    href="/login"
-                    className="navbar-mobile-link"
-                    onClick={handleCloseMenu}
-                  >
-                    Giriş Yap
-                  </Link>
                   <Link
                     href="/register"
                     className="navbar-mobile-btn-register"

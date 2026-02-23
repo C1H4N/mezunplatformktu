@@ -11,12 +11,12 @@ export async function PUT(req: Request) {
     }
 
     const data = await req.json();
-    const { 
-      firstName, 
-      lastName, 
-      phoneNumber, 
-      image, 
-      coverImage, 
+    const {
+      firstName,
+      lastName,
+      phoneNumber,
+      image,
+      coverImage,
       email,
       bio,
       cvUrl,
@@ -39,7 +39,7 @@ export async function PUT(req: Request) {
 
     // Prepare update data - only include defined fields
     const updateData: Record<string, unknown> = {};
-    
+
     if (firstName !== undefined) updateData.firstName = firstName;
     if (lastName !== undefined) updateData.lastName = lastName;
     if (phoneNumber !== undefined) updateData.phoneNumber = phoneNumber;
@@ -100,7 +100,6 @@ export async function GET() {
         },
         student: true,
         alumni: true,
-        employer: true,
       },
     });
 

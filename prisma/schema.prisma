@@ -18,7 +18,6 @@ datasource db {
 enum UserRole {
   STUDENT
   ALUMNI
-  EMPLOYER
   MODERATOR
   ADMIN
   USER // Default fallback
@@ -51,7 +50,6 @@ enum JobStatus {
 enum ProfileVisibility {
   PUBLIC // Herkese açık
   REGISTERED // Sadece kayıtlı kullanıcılar
-  EMPLOYERS // Sadece işverenler
   PRIVATE // Gizli
 }
 
@@ -86,7 +84,6 @@ model User {
   // New relations from UML
   student   Student?
   alumni    Alumni?
-  employer  Employer?
   admin     Admin?
   moderator Moderator?
 
@@ -98,6 +95,8 @@ model User {
   experiences Experience[]
   educations  Education[]
   skills      Skill[]
+
+  jobAdvertisements JobAdvertisement[]
 
   // Raporlama ve Denetim (Yeni Eklenenler)
   submittedReports Report[]   @relation("ReportSubmitted")
@@ -177,18 +176,6 @@ model Alumni {
   mentorshipRequests MentorshipRequest[]
 }
 
-model Employer {
-  id     String @id @default(cuid())
-  userId String @unique
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  companyName String
-  taxNumber   String
-  sector      String
-
-  jobAdvertisements JobAdvertisement[]
-}
-
 model Admin {
   id     String @id @default(cuid())
   userId String @unique
@@ -209,7 +196,7 @@ model JobAdvertisement {
   type        JobType
   status      JobStatus @default(OPEN)
   publisherId String
-  publisher   Employer  @relation(fields: [publisherId], references: [id])
+  publisher   User  @relation(fields: [publisherId], references: [id])
 
   createdAt DateTime @default(now())
 

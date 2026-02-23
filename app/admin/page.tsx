@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { 
-  Users, 
-  Briefcase, 
-  Calendar, 
+import {
+  Users,
+  Briefcase,
+  Calendar,
   MessageSquare,
   TrendingUp,
   UserCheck,
@@ -15,7 +15,6 @@ interface Stats {
   totalUsers: number;
   totalAlumni: number;
   totalStudents: number;
-  totalEmployers: number;
   totalJobs: number;
   activeJobs: number;
   totalEvents: number;
@@ -63,7 +62,6 @@ export default function AdminDashboard() {
       subStats: [
         { label: "Mezun", value: stats?.totalAlumni || 0 },
         { label: "Öğrenci", value: stats?.totalStudents || 0 },
-        { label: "İşveren", value: stats?.totalEmployers || 0 },
       ],
     },
     {

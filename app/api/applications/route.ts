@@ -27,8 +27,8 @@ export async function GET() {
           include: {
             publisher: {
               select: {
-                companyName: true,
-                sector: true,
+                firstName: true,
+                lastName: true,
               },
             },
           },

@@ -18,8 +18,9 @@ interface JobDetail {
   status: "OPEN" | "CLOSED";
   createdAt: string;
   publisher: {
-    companyName: string;
-    sector: string;
+    firstName: string;
+    lastName: string;
+    email: string;
   };
 }
 
@@ -153,8 +154,8 @@ export default function JobDetailPage() {
                   <h1 className="text-3xl font-bold text-foreground">{job.title}</h1>
                   <span
                     className={`px-3 py-1 rounded-full text-xs font-medium border ${job.type === "JOB"
-                        ? "bg-blue-500/10 text-blue-500 border-blue-500/20"
-                        : "bg-purple-500/10 text-purple-500 border-purple-500/20"
+                      ? "bg-blue-500/10 text-blue-500 border-blue-500/20"
+                      : "bg-purple-500/10 text-purple-500 border-purple-500/20"
                       }`}
                   >
                     {job.type === "JOB" ? "İş İlanı" : "Staj"}
@@ -168,8 +169,7 @@ export default function JobDetailPage() {
 
                 <div className="flex flex-wrap items-center gap-4 text-muted">
                   <div className="flex items-center gap-1.5">
-                    <Building2 className="w-4 h-4" />
-                    <span className="font-medium">{job.publisher.companyName}</span>
+                    <span className="font-medium">{`${job.publisher.firstName} ${job.publisher.lastName}`}</span>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <MapPin className="w-4 h-4" />
@@ -179,16 +179,13 @@ export default function JobDetailPage() {
                     <Calendar className="w-4 h-4" />
                     <span>{formattedDate}</span>
                   </div>
-                  <div className="flex items-center gap-1.5">
-                    <Briefcase className="w-4 h-4" />
-                    <span>{job.publisher.sector}</span>
-                  </div>
+
                 </div>
               </div>
 
               {/* Action Button */}
               <div className="w-full md:w-auto flex flex-col md:flex-row items-stretch md:items-center gap-3">
-                {session?.user && session.user.role !== "EMPLOYER" && (
+                {session?.user && (
                   <button
                     onClick={() => setIsReportModalOpen(true)}
                     className={buttonVariants({
@@ -278,7 +275,7 @@ export default function JobDetailPage() {
 
             <div className="mb-4 p-3 bg-muted-bg rounded-lg">
               <p className="text-sm font-medium">{job.title}</p>
-              <p className="text-xs text-muted">{job.publisher.companyName}</p>
+              <p className="text-xs text-muted">{job.publisher.firstName} {job.publisher.lastName}</p>
             </div>
 
             <div className="mb-4">

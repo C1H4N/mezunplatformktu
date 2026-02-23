@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import Link from "next/link";
-import { Eye, EyeOff, GraduationCap, Briefcase, Building2, ArrowLeft, ArrowRight, Check } from "lucide-react";
+import { Eye, EyeOff, GraduationCap, Briefcase, ArrowLeft, ArrowRight, Check } from "lucide-react";
 import {
   type RegisterFormData,
   type UserRoleType,
@@ -26,12 +26,6 @@ const roles: { value: UserRoleType; label: string; description: string; icon: Re
     label: "Mezun",
     description: "Üniversite mezunu",
     icon: <Briefcase className="w-8 h-8" />,
-  },
-  {
-    value: "EMPLOYER",
-    label: "İşveren",
-    description: "Firma / Kurum temsilcisi",
-    icon: <Building2 className="w-8 h-8" />,
   },
 ];
 
@@ -77,10 +71,6 @@ export default function RegisterPage() {
     // Mezun
     graduationYear: new Date().getFullYear(),
     currentPosition: "",
-    // İşveren
-    companyName: "",
-    taxNumber: "",
-    sector: "",
   });
 
   const [errors, setErrors] = useState<Partial<Record<keyof RegisterFormData | "confirmPassword", string>>>({});
@@ -100,9 +90,9 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const result = validateRegisterByRole(formData);
-    
+
     if (!result.success) {
       setErrors(getZodFieldErrors(result.error));
       toast.error("Lütfen formdaki hataları düzeltin.");
@@ -143,17 +133,15 @@ export default function RegisterPage() {
   };
 
   const inputClass = (field: keyof RegisterFormData | "confirmPassword") =>
-    `w-full bg-white/10 border ${
-      errors[field]
-        ? "border-red-500 focus:ring-red-500"
-        : "border-zinc-700 focus:ring-primary"
+    `w-full bg-white/10 border ${errors[field]
+      ? "border-red-500 focus:ring-red-500"
+      : "border-zinc-700 focus:ring-primary"
     } p-3 rounded-lg focus:ring-2 outline-none transition`;
 
   const selectClass = (field: keyof RegisterFormData) =>
-    `w-full bg-white/10 border ${
-      errors[field]
-        ? "border-red-500 focus:ring-red-500"
-        : "border-zinc-700 focus:ring-primary"
+    `w-full bg-white/10 border ${errors[field]
+      ? "border-red-500 focus:ring-red-500"
+      : "border-zinc-700 focus:ring-primary"
     } p-3 rounded-lg focus:ring-2 outline-none transition appearance-none cursor-pointer`;
 
   // Rol seçim adımı
@@ -211,7 +199,6 @@ export default function RegisterPage() {
             <h1 className="text-2xl font-bold">
               {formData.role === "STUDENT" && "Öğrenci Kaydı"}
               {formData.role === "ALUMNI" && "Mezun Kaydı"}
-              {formData.role === "EMPLOYER" && "İşveren Kaydı"}
             </h1>
             <p className="text-sm text-muted">Bilgilerinizi doldurun</p>
           </div>
@@ -345,50 +332,6 @@ export default function RegisterPage() {
                   className={inputClass("currentPosition")}
                   placeholder="Örn: Yazılım Mühendisi"
                 />
-              </div>
-            </>
-          )}
-
-          {formData.role === "EMPLOYER" && (
-            <>
-              <div>
-                <label className="text-sm font-medium mb-1 block">Firma Adı</label>
-                <input
-                  type="text"
-                  value={formData.companyName}
-                  onChange={(e) => handleChange("companyName", e.target.value)}
-                  className={inputClass("companyName")}
-                  placeholder="Firma adı"
-                />
-                {errors.companyName && <p className="text-xs text-red-400 mt-1">{errors.companyName}</p>}
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium mb-1 block">Vergi Numarası</label>
-                  <input
-                    type="text"
-                    maxLength={11}
-                    value={formData.taxNumber}
-                    onChange={(e) => handleChange("taxNumber", e.target.value.replace(/\D/g, ""))}
-                    className={inputClass("taxNumber")}
-                    placeholder="10 haneli"
-                  />
-                  {errors.taxNumber && <p className="text-xs text-red-400 mt-1">{errors.taxNumber}</p>}
-                </div>
-                <div>
-                  <label className="text-sm font-medium mb-1 block">Sektör</label>
-                  <select
-                    value={formData.sector}
-                    onChange={(e) => handleChange("sector", e.target.value)}
-                    className={selectClass("sector")}
-                  >
-                    <option value="">Sektör seçin</option>
-                    {sectors.map((s) => (
-                      <option key={s} value={s}>{s}</option>
-                    ))}
-                  </select>
-                  {errors.sector && <p className="text-xs text-red-400 mt-1">{errors.sector}</p>}
-                </div>
               </div>
             </>
           )}

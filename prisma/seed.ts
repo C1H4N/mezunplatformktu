@@ -49,57 +49,7 @@ async function main() {
   });
   console.log(`   ✅ Moderator: ${moderator.email}`);
 
-  // ============================================
-  // 3. İŞVEREN KULLANICILARI
-  // ============================================
-  console.log("🏢 Creating Employer users...");
 
-  const employer1 = await prisma.user.upsert({
-    where: { email: "hr@techcorp.com" },
-    update: {},
-    create: {
-      email: "hr@techcorp.com",
-      firstName: "Ayşe",
-      lastName: "Yılmaz",
-      password,
-      role: UserRole.EMPLOYER,
-      emailVerified: new Date(),
-      phoneNumber: "+905552345678",
-      bio: "Tech Corp İnsan Kaynakları Müdürü",
-      employer: {
-        create: {
-          companyName: "Tech Corp",
-          taxNumber: "1234567890",
-          sector: "Teknoloji / Yazılım",
-        },
-      },
-    },
-    include: { employer: true },
-  });
-  console.log(`   ✅ Employer: ${employer1.email} (Tech Corp)`);
-
-  const employer2 = await prisma.user.upsert({
-    where: { email: "kariyer@finansbank.com" },
-    update: {},
-    create: {
-      email: "kariyer@finansbank.com",
-      firstName: "Mehmet",
-      lastName: "Kaya",
-      password,
-      role: UserRole.EMPLOYER,
-      emailVerified: new Date(),
-      phoneNumber: "+905553456789",
-      employer: {
-        create: {
-          companyName: "Finans Bank",
-          taxNumber: "9876543210",
-          sector: "Finans / Bankacılık",
-        },
-      },
-    },
-    include: { employer: true },
-  });
-  console.log(`   ✅ Employer: ${employer2.email} (Finans Bank)`);
 
   // ============================================
   // 4. ÖĞRENCİ KULLANICILARI
@@ -272,14 +222,14 @@ async function main() {
   // ============================================
   console.log("💼 Creating Job Advertisements...");
 
-  const employerRecord1 = await prisma.employer.findUnique({
-    where: { userId: employer1.id },
+  const alumniUser1 = await prisma.user.findUnique({
+    where: { email: alumniData[0].email },
   });
-  const employerRecord2 = await prisma.employer.findUnique({
-    where: { userId: employer2.id },
+  const adminUser = await prisma.user.findUnique({
+    where: { email: admin.email },
   });
 
-  if (employerRecord1) {
+  if (adminUser) {
     await prisma.jobAdvertisement.create({
       data: {
         title: "Junior Yazılım Geliştirici",
@@ -298,7 +248,7 @@ Sunduğumuz İmkanlar:
 - Eğitim bütçesi`,
         location: "İstanbul / Uzaktan",
         type: JobType.JOB,
-        publisherId: employerRecord1.id,
+        publisherId: adminUser.id,
         status: "OPEN",
       },
     });
@@ -317,18 +267,18 @@ Staj Süresi: 2 ay (Tam zamanlı)
 Ücret: 20.000 TL/ay`,
         location: "İstanbul",
         type: JobType.INTERNSHIP,
-        publisherId: employerRecord1.id,
+        publisherId: adminUser.id,
         status: "OPEN",
       },
     });
-    console.log("   ✅ 2 Job created for Tech Corp");
+    console.log("   ✅ 2 Job created by Admin");
   }
 
-  if (employerRecord2) {
+  if (alumniUser1) {
     await prisma.jobAdvertisement.create({
       data: {
         title: "Veri Analisti",
-        description: `Finans Bank bünyesinde çalışacak Veri Analisti arıyoruz.
+        description: `Bünyemizde çalışacak Veri Analisti arıyoruz.
 
 Aranan Nitelikler:
 - İstatistik, Matematik veya Mühendislik mezunu
@@ -337,11 +287,11 @@ Aranan Nitelikler:
 - Finans sektörü deneyimi tercih sebebi`,
         location: "Ankara",
         type: JobType.JOB,
-        publisherId: employerRecord2.id,
+        publisherId: alumniUser1.id,
         status: "OPEN",
       },
     });
-    console.log("   ✅ 1 Job created for Finans Bank");
+    console.log("   ✅ 1 Job created by Alumni");
   }
 
   // ============================================
@@ -521,8 +471,7 @@ Ali Demir`,
   console.log("\n📋 TEST HESAPLARI (Şifre: Test123!):\n");
   console.log("   👑 Admin:     admin@ktu.edu.tr");
   console.log("   🛡️ Moderator: moderator@ktu.edu.tr");
-  console.log("   🏢 İşveren 1: hr@techcorp.com");
-  console.log("   🏢 İşveren 2: kariyer@finansbank.com");
+
   console.log("   🎓 Öğrenci 1: ogrenci1@ktu.edu.tr");
   console.log("   🎓 Öğrenci 2: ogrenci2@ktu.edu.tr");
   console.log("   👨‍🎓 Mezun 1:   ahmet.yilmaz@gmail.com");

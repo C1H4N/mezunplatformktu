@@ -3,9 +3,9 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import toast from "react-hot-toast";
-import { 
-  Search, 
-  User, 
+import {
+  Search,
+  User,
   MoreVertical,
   Shield,
   Ban,
@@ -32,7 +32,6 @@ const roleColors: Record<string, string> = {
   MODERATOR: "bg-orange-500/10 text-orange-600",
   ALUMNI: "bg-blue-500/10 text-blue-600",
   STUDENT: "bg-green-500/10 text-green-600",
-  EMPLOYER: "bg-purple-500/10 text-purple-600",
   USER: "bg-gray-500/10 text-gray-600",
 };
 
@@ -41,7 +40,6 @@ const roleLabels: Record<string, string> = {
   MODERATOR: "Moderatör",
   ALUMNI: "Mezun",
   STUDENT: "Öğrenci",
-  EMPLOYER: "İşveren",
   USER: "Kullanıcı",
 };
 
@@ -60,7 +58,7 @@ export default function AdminUsersPage() {
     try {
       const params = new URLSearchParams();
       if (roleFilter !== "ALL") params.append("role", roleFilter);
-      
+
       const res = await fetch(`/api/admin/users?${params.toString()}`);
       if (!res.ok) throw new Error("Kullanıcılar getirilemedi");
       const data = await res.json();
@@ -82,7 +80,7 @@ export default function AdminUsersPage() {
       });
 
       if (!res.ok) throw new Error("Rol güncellenemedi");
-      
+
       toast.success("Kullanıcı rolü güncellendi");
       fetchUsers();
       setSelectedUser(null);
@@ -100,7 +98,7 @@ export default function AdminUsersPage() {
       });
 
       if (!res.ok) throw new Error("Kullanıcı silinemedi");
-      
+
       toast.success("Kullanıcı silindi");
       fetchUsers();
     } catch (error) {

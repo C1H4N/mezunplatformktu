@@ -28,7 +28,8 @@ export async function GET(req: Request) {
       where.OR = [
         { title: { contains: search, mode: "insensitive" } },
         { description: { contains: search, mode: "insensitive" } },
-        { publisher: { companyName: { contains: search, mode: "insensitive" } } },
+        { publisher: { firstName: { contains: search, mode: "insensitive" } } },
+        { publisher: { lastName: { contains: search, mode: "insensitive" } } },
       ];
     }
 
@@ -36,14 +37,10 @@ export async function GET(req: Request) {
       where,
       include: {
         publisher: {
-          include: {
-            user: {
-              select: {
-                firstName: true,
-                lastName: true,
-                email: true,
-              },
-            },
+          select: {
+            firstName: true,
+            lastName: true,
+            email: true,
           },
         },
         _count: {
@@ -69,7 +66,7 @@ export async function POST(req: Request) {
   try {
     const session = await auth();
 
-    if (!session || !session.user || (session.user.role !== UserRole.EMPLOYER && session.user.role !== UserRole.ADMIN)) {
+    if (!session || !session.user || (session.user.role !== UserRole.ALUMNI && session.user.role !== UserRole.ADMIN && session.user.role !== UserRole.MODERATOR)) {
       return NextResponse.json({ error: "Yetkisiz işlem." }, { status: 401 });
     }
 
@@ -83,20 +80,9 @@ export async function POST(req: Request) {
       );
     }
 
-    // Find the employer record for the current user
-    const employer = await prisma.employer.findUnique({
-      where: { userId: session.user.id },
-    });
-
-    if (!employer && session.user.role !== UserRole.ADMIN) {
-       return NextResponse.json({ error: "İşveren profili bulunamadı." }, { status: 404 });
-    }
-    
-    // For admin, we might need a way to specify publisher, but for now let's assume only employers post for themselves
-    // Or if admin, they must have an employer profile too? 
-    // Let's stick to Employer posting for now.
-    if (!employer) {
-        return NextResponse.json({ error: "Sadece işverenler ilan açabilir." }, { status: 403 });
+    // For admin or alumni posting, publisher is just their user ID
+    if (!session.user.id) {
+      return NextResponse.json({ error: "Kullanıcı bilgisi bulunamadı." }, { status: 403 });
     }
 
     const job = await prisma.jobAdvertisement.create({
@@ -105,7 +91,7 @@ export async function POST(req: Request) {
         description,
         location,
         type,
-        publisherId: employer.id,
+        publisherId: session.user.id,
         status: "OPEN",
       },
     });

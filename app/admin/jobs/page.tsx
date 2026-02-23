@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { 
-  Briefcase, 
-  Search, 
-  Trash2, 
+import {
+  Briefcase,
+  Search,
+  Trash2,
   Eye,
   CheckCircle,
   XCircle,
@@ -24,12 +24,9 @@ interface Job {
   status: string;
   createdAt: string;
   publisher: {
-    companyName: string;
-    user: {
-      firstName: string;
-      lastName: string;
-      email: string;
-    };
+    firstName: string;
+    lastName: string;
+    email: string;
   };
   _count: {
     applications: number;
@@ -114,8 +111,8 @@ export default function AdminJobsPage() {
 
   const filteredJobs = jobs.filter((job) => {
     const matchesSearch =
-      job.title.toLowerCase().includes(search.toLowerCase()) ||
-      job.publisher.companyName.toLowerCase().includes(search.toLowerCase());
+      job.publisher.firstName.toLowerCase().includes(search.toLowerCase()) ||
+      job.publisher.lastName.toLowerCase().includes(search.toLowerCase());
     const matchesStatus = !statusFilter || job.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
@@ -143,8 +140,7 @@ export default function AdminJobsPage() {
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted" />
             <input
-              type="text"
-              placeholder="İlan veya firma ara..."
+              placeholder="İlan veya kişi ara..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full pl-10 pr-4 py-2.5 bg-muted-bg border border-border rounded-lg focus:ring-2 focus:ring-primary outline-none"
@@ -170,7 +166,7 @@ export default function AdminJobsPage() {
             <thead className="bg-muted-bg border-b border-border">
               <tr>
                 <th className="text-left px-6 py-4 text-sm font-medium text-muted">İlan</th>
-                <th className="text-left px-6 py-4 text-sm font-medium text-muted">Firma</th>
+                <th className="text-left px-6 py-4 text-sm font-medium text-muted">Yayımcı</th>
                 <th className="text-left px-6 py-4 text-sm font-medium text-muted">Tür</th>
                 <th className="text-left px-6 py-4 text-sm font-medium text-muted">Durum</th>
                 <th className="text-left px-6 py-4 text-sm font-medium text-muted">Başvuru</th>
@@ -196,7 +192,7 @@ export default function AdminJobsPage() {
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
                         <Building2 className="w-4 h-4 text-muted" />
-                        <span>{job.publisher.companyName}</span>
+                        <span>{job.publisher.firstName} {job.publisher.lastName}</span>
                       </div>
                     </td>
                     <td className="px-6 py-4">

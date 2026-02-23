@@ -27,12 +27,12 @@ export async function POST(req: Request) {
       );
     }
 
-    const { 
-      firstName, 
-      lastName, 
-      email, 
-      phoneNumber, 
-      password, 
+    const {
+      firstName,
+      lastName,
+      email,
+      phoneNumber,
+      password,
       role,
       // Öğrenci
       studentNo,
@@ -40,10 +40,6 @@ export async function POST(req: Request) {
       // Mezun
       graduationYear,
       currentPosition,
-      // İşveren
-      companyName,
-      taxNumber,
-      sector,
     } = body;
 
     // Email benzersizlik kontrolü
@@ -139,16 +135,7 @@ export async function POST(req: Request) {
         });
       }
 
-      if (role === "EMPLOYER" && companyName && taxNumber && sector) {
-        await tx.employer.create({
-          data: {
-            userId: newUser.id,
-            companyName,
-            taxNumber,
-            sector,
-          },
-        });
-      }
+
 
       return newUser;
     });
@@ -159,7 +146,7 @@ export async function POST(req: Request) {
       if (process.env.RESEND_API_KEY) {
         const verificationToken = await generateVerificationToken(user.email);
         await sendVerificationEmail(user.email, verificationToken.token);
-        
+
         return NextResponse.json(
           {
             message: "Kayıt başarılı! E-posta adresinize doğrulama bağlantısı gönderildi.",
