@@ -850,8 +850,8 @@ export default function ProfilePage() {
                   key={option.value}
                   onClick={() => handleUpdateVisibility(option.value)}
                   className={`w-full p-4 rounded-lg border text-left transition-all ${profileVisibility === option.value
-                      ? "border-primary bg-primary/5"
-                      : "border-border hover:border-primary/50"
+                    ? "border-primary bg-primary/5"
+                    : "border-border hover:border-primary/50"
                     }`}
                 >
                   <div className="flex items-center gap-3">
@@ -1043,7 +1043,7 @@ export default function ProfilePage() {
                   value={educationData.school}
                   onChange={(e) => setEducationData({ ...educationData, school: e.target.value })}
                   className="w-full px-3 py-2 bg-background border border-border rounded-lg"
-                  placeholder="Örn: Karadeniz Teknik Üniversitesi"
+                  placeholder="Örn: KTÜ Araklı Ali Cevat Özyurt Meslek Yüksekokulu"
                 />
               </div>
               <div>

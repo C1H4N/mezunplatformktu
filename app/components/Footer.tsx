@@ -11,11 +11,11 @@ export default function Footer() {
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-xl">KTÜ</span>
+                <span className="text-white font-bold text-[0.8rem]">AACOMYO</span>
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-foreground">Mezun Platformu</h3>
-                <p className="text-sm text-muted">Karadeniz Teknik Üniversitesi</p>
+                <p className="text-sm text-muted">KTÜ Araklı Ali Cevat Özyurt Meslek Yüksekokulu</p>
               </div>
             </div>
             <p className="text-muted text-sm max-w-md leading-relaxed">
@@ -128,7 +128,7 @@ export default function Footer() {
         <div className="mt-8 pt-8 border-t border-border">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-muted text-sm text-center md:text-left">
-              © {currentYear} Karadeniz Teknik Üniversitesi. Tüm hakları saklıdır.
+              © {currentYear} KTÜ Araklı Ali Cevat Özyurt Meslek Yüksekokulu. Tüm hakları saklıdır.
             </p>
             <div className="flex gap-6">
               <Link href="/gizlilik" className="text-muted hover:text-primary text-sm transition-colors">

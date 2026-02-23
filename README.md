@@ -1,6 +1,6 @@
-# 🎓 KTÜ Mezun Platformu
+# 🎓 AACOMYO Mezun Platformu
 
-Karadeniz Teknik Üniversitesi mezunlarını bir araya getiren, kariyer gelişimini destekleyen ve networking fırsatları sunan modern web platformu.
+KTÜ Araklı Ali Cevat Özyurt Meslek Yüksekokulu mezunlarını bir araya getiren, kariyer gelişimini destekleyen ve networking fırsatları sunan modern web platformu.
 
 ![Next.js](https://img.shields.io/badge/Next.js-15.5-black?style=flat-square&logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat-square&logo=typescript)
@@ -71,8 +71,8 @@ Uygulamayı lokal ortamda test edebilmeniz için aşağıdaki hesaplar `npx pris
 
 | Rol | E-posta | İsim |
 | :--- | :--- | :--- |
-| **👑 Admin** | `admin@ktu.edu.tr` | Admin KTÜ |
-| **🛡️ Moderatör** | `moderator@ktu.edu.tr` | Moderatör KTÜ |
+| **👑 Admin** | `admin@ktu.edu.tr` | Admin AACOMYO |
+| **🛡️ Moderatör** | `moderator@ktu.edu.tr` | Moderatör AACOMYO |
 | **🏢 İşveren 1** | `hr@techcorp.com` | Ayşe Yılmaz (Tech Corp) |
 | **🏢 İşveren 2** | `kariyer@finansbank.com` | Mehmet Kaya (Finans Bank) |
 | **🎓 Öğrenci 1** | `ogrenci1@ktu.edu.tr` | Ali Demir |
@@ -359,5 +359,3 @@ async function getProfile(id: string) {
 ---
 
 **Not:** Şu an mock data kullanılıyor. API entegrasyonu için altyapı hazır.
-
-Made with ❤️ for KTÜ Alumni

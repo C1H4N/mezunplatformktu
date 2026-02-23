@@ -9,16 +9,21 @@ import { Session } from "./generated/prisma/index";
 
 
 export const metadata: Metadata = {
-  title: "KTU Mezun Platformu",
+  title: "AACOMYO Mezun Platformu",
   description:
-    "Karadeniz Teknik Üniversitesi Mezun Platformu - Mezunlarımızı bir araya getiren, kariyer gelişimini destekleyen networking platformu",
+    "KTÜ Araklı Ali Cevat Özyurt Meslek Yüksekokulu Mezun Platformu - Mezunlarımızı bir araya getiren, kariyer gelişimini destekleyen networking platformu",
   keywords: [
-    "KTÜ",
-    "Karadeniz Teknik Üniversitesi",
+    "AACOMYO",
+    "KTÜ Araklı Ali Cevat Özyurt Meslek Yüksekokulu",
     "mezun",
     "alumni",
     "network",
     "kariyer",
+    "Karadeniz Teknik Üniversitesi",
+    "KTÜ",
+    "Trabzon",
+    "Araklı",
+    "Meslek Yüksekokulu"
   ],
 };
 

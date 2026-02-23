@@ -1,6 +1,6 @@
-KTÜ Mezun Platformu - Yazılım Gereksinim Analizi
+AACOMYO Mezun Platformu - Yazılım Gereksinim Analizi
 
-Proje Adı: KTÜ Mezun Platformu
+Proje Adı: AACOMYO Mezun Platformu
 
 Versiyon: 2.0
 

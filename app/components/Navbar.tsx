@@ -46,7 +46,7 @@ export default function Navbar() {
             />
           </div>
           <div className="navbar-main-logo-text">
-            <h1 className="navbar-main-logo-title">Mezun Platformu</h1>
+            <h1 className="navbar-main-logo-title">AACOMYO Mezun Platformu</h1>
           </div>
         </Link>
 

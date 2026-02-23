@@ -103,13 +103,13 @@ export default function Home() {
 
         <div className="w-full px-4 sm:px-[4%] relative z-10 flex flex-col items-center text-center">
           <span className="inline-block py-1.5 px-5 rounded-full bg-white/10 text-[#ffffff] text-xs sm:text-sm font-bold tracking-widest mb-8 border border-white/20 backdrop-blur-md animate-fade-in shadow-[0_0_15px_rgba(255,255,255,0.1)]">
-            KTÜ MEZUN AĞI
+            AACOMYO MEZUN AĞI
           </span>
           <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold text-[#ffffff] mb-6 leading-tight tracking-tight animate-fade-in-up drop-shadow-lg">
             Geleceği Birlikte <br className="hidden sm:block" /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ffffff] to-[#e2e8f0]">İnşa Edelim</span>
           </h1>
           <p className="text-lg md:text-2xl text-[#f1f5f9] max-w-3xl mb-12 font-light animate-fade-in opacity-0 animation-delay-100 drop-shadow-md">
-            Türkiye'nin dört bir yanındaki Karadeniz Teknik Üniversitesi mezunları ile bağlantı kurun, kariyer fırsatlarını yakalayın.
+            Türkiye'nin dört bir yanındaki KTÜ Araklı Ali Cevat Özyurt Meslek Yüksekokulu mezunları ile bağlantı kurun, kariyer fırsatlarını yakalayın.
           </p>
 
         </div>

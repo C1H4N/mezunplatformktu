@@ -18,12 +18,12 @@ async function main() {
     create: {
       email: "admin@ktu.edu.tr",
       firstName: "Admin",
-      lastName: "KTÜ",
+      lastName: "AACOMYO",
       password,
       role: UserRole.ADMIN,
       emailVerified: new Date(),
       phoneNumber: "+905551234567",
-      bio: "KTÜ Mezun Platformu Yöneticisi",
+      bio: "AACOMYO Mezun Platformu Yöneticisi",
       admin: { create: {} },
     },
   });
@@ -39,7 +39,7 @@ async function main() {
     create: {
       email: "moderator@ktu.edu.tr",
       firstName: "Moderatör",
-      lastName: "KTÜ",
+      lastName: "AACOMYO",
       password,
       role: UserRole.MODERATOR,
       emailVerified: new Date(),
@@ -53,7 +53,7 @@ async function main() {
   // 3. İŞVEREN KULLANICILARI
   // ============================================
   console.log("🏢 Creating Employer users...");
-  
+
   const employer1 = await prisma.user.upsert({
     where: { email: "hr@techcorp.com" },
     update: {},
@@ -105,7 +105,7 @@ async function main() {
   // 4. ÖĞRENCİ KULLANICILARI
   // ============================================
   console.log("🎓 Creating Student users...");
-  
+
   const student1 = await prisma.user.upsert({
     where: { email: "ogrenci1@ktu.edu.tr" },
     update: {},
@@ -169,7 +169,7 @@ async function main() {
       position: "Kıdemli Yazılım Geliştirici",
       company: "Google",
       graduationYear: 2018,
-      bio: "Google'da Backend Developer olarak çalışıyorum. KTÜ'den mezun olduktan sonra yüksek lisansımı tamamladım.",
+      bio: "Google'da Backend Developer olarak çalışıyorum. AACOMYO'dan mezun olduktan sonra yüksek lisansımı tamamladım.",
       skills: ["Python", "Go", "Kubernetes", "GCP"],
     },
     {
@@ -352,7 +352,7 @@ Aranan Nitelikler:
   // Gelecek tarihli etkinlikler oluştur
   const futureDate1 = new Date();
   futureDate1.setDate(futureDate1.getDate() + 7);
-  
+
   const futureDate2 = new Date();
   futureDate2.setDate(futureDate2.getDate() + 14);
 
@@ -361,8 +361,8 @@ Aranan Nitelikler:
 
   await prisma.event.create({
     data: {
-      title: "KTÜ Kariyer Fuarı 2025",
-      description: `KTÜ Mezun Platformu olarak düzenlediğimiz Kariyer Fuarı'na davetlisiniz!
+      title: "AACOMYO Kariyer Fuarı 2025",
+      description: `AACOMYO Mezun Platformu olarak düzenlediğimiz Kariyer Fuarı'na davetlisiniz!
 
 50+ şirketin katılımıyla gerçekleşecek fuarda:
 - CV değerlendirme standları
@@ -370,10 +370,10 @@ Aranan Nitelikler:
 - Kariyer seminerleri
 - Networking etkinlikleri
 
-Tüm KTÜ öğrenci ve mezunlarına açıktır.`,
+Tüm AACOMYO öğrenci ve mezunlarına açıktır.`,
       date: futureDate1,
       endDate: new Date(futureDate1.getTime() + 8 * 60 * 60 * 1000), // +8 saat
-      location: "KTÜ Kongre ve Kültür Merkezi, Trabzon",
+      location: "AACOMYO Konferans Salonu, Araklı",
       type: EventType.CAREER_FAIR,
       status: "UPCOMING",
       capacity: 500,
@@ -407,7 +407,7 @@ Katılımcılar kendi laptoplarını getirmeli.
   await prisma.event.create({
     data: {
       title: "Mezunlar Buluşması - Trabzon",
-      description: `Trabzon'daki KTÜ mezunları olarak bir araya geliyoruz!
+      description: `Trabzon'daki AACOMYO mezunları olarak bir araya geliyoruz!
 
 Akşam yemeği eşliğinde networking yapacağımız bu etkinlikte eski arkadaşlarınızla buluşabilir, yeni bağlantılar kurabilirsiniz.
 
@@ -446,7 +446,7 @@ Katılım: Ücretsiz (Yemek dahil değil)`,
 
 Tech Corp'un Junior Yazılım Geliştirici pozisyonu için başvuruda bulunmak istiyorum.
 
-KTÜ Bilgisayar Mühendisliği 4. sınıf öğrencisiyim. React ve Node.js ile kişisel projeler geliştirdim. GitHub profilimde çalışmalarımı inceleyebilirsiniz.
+AACOMYO Bilgisayar Programcılığı öğrencisiyim. React ve Node.js ile kişisel projeler geliştirdim. GitHub profilimde çalışmalarımı inceleyebilirsiniz.
 
 Saygılarımla,
 Ali Demir`,
@@ -504,7 +504,7 @@ Ali Demir`,
       userId: student1.id,
       type: "EVENT",
       title: "Yeni Etkinlik",
-      message: "KTÜ Kariyer Fuarı 2025 etkinliği oluşturuldu. Katılmak ister misiniz?",
+      message: "AACOMYO Kariyer Fuarı 2025 etkinliği oluşturuldu. Katılmak ister misiniz?",
       link: "/events",
       isRead: false,
     },

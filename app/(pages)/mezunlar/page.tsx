@@ -30,15 +30,14 @@ interface Alumni {
 
 const departments = [
   "Tümü",
-  "Bilgisayar Mühendisliği",
-  "Elektrik-Elektronik Mühendisliği",
-  "Makine Mühendisliği",
-  "İnşaat Mühendisliği",
-  "Mimarlık",
-  "Tıp Fakültesi",
-  "Hukuk Fakültesi",
-  "İktisat",
-  "İşletme",
+  "Dijital Dönüşüm Elektroniği Programı",
+  "İş Sağlığı ve Güvenliği Programı",
+  "Lojistik Programı",
+  "Yapay Zekâ Operatörlüğü Programı",
+  "Bilgisayar Teknolojileri",
+  "Yönetim ve Organizasyon",
+  "Mülkiyet Koruma ve Güvenlik",
+  "Elektronik ve Otomasyon",
 ];
 
 const cities = [
@@ -104,7 +103,7 @@ export default function MezunlarPage() {
               Mezun Ağı
             </h1>
             <p className="text-lg text-muted">
-              KTÜ mezunlarıyla bağlantı kur, mentorluk al, kariyer fırsatlarını keşfet.
+              AACOMYO mezunlarıyla bağlantı kur, mentorluk al, kariyer fırsatlarını keşfet.
               Binlerce başarılı mezunumuzla tanış.
             </p>
             <div className="flex items-center justify-center gap-4 mt-6">
@@ -265,7 +264,7 @@ export default function MezunlarPage() {
                   <h3 className="font-semibold text-lg text-foreground group-hover:text-primary transition-colors">
                     {person.name}
                   </h3>
-                  
+
                   {person.jobTitle && (
                     <p className="text-sm text-primary font-medium mt-1">
                       {person.jobTitle}

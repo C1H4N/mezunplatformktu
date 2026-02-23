@@ -176,7 +176,7 @@ export default function NewEventPage() {
                 value={formData.location}
                 onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                 className={inputClass}
-                placeholder="Örn: KTÜ Kongre Merkezi, Trabzon"
+                placeholder="Örn: AACOMYO Konferans Salonu, Araklı"
                 required
               />
             </div>
