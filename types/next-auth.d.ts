@@ -13,7 +13,7 @@ declare module 'next-auth' {
     phoneNumber: string
     image?: string | null
     coverImage?: string | null
-    role: 'admin' | 'user' | 'STUDENT' | 'ALUMNI' | 'MODERATOR' | 'ADMIN' | 'USER'
+    role: 'admin' | 'user' | 'STUDENT' | 'ALUMNI' | 'MODERATOR' | 'ADMIN' | 'USER' | 'ACADEMICIAN' | 'HEAD_OF_DEPARTMENT'
   }
 }
 
@@ -23,7 +23,7 @@ declare module 'next-auth/jwt' {
     firstName?: string
     lastName?: string
     email: string
-    role: 'admin' | 'user' | 'STUDENT' | 'ALUMNI' | 'MODERATOR' | 'ADMIN' | 'USER'
+    role: 'admin' | 'user' | 'STUDENT' | 'ALUMNI' | 'MODERATOR' | 'ADMIN' | 'USER' | 'ACADEMICIAN' | 'HEAD_OF_DEPARTMENT'
     phoneNumber: string
     image?: string | null
     coverImage?: string | null
