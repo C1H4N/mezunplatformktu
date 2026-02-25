@@ -11,7 +11,8 @@ const publicRoutes = [
     "/unauthorized",
     "/forgot-password",
     "/reset-password",
-    "/verify-email"
+    "/verify-email",
+    "/duyurular"
 ];
 const apiRoutes = ["/api/upload"]; // Add any public api routes here
 

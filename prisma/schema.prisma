@@ -102,6 +102,9 @@ model User {
 
   jobAdvertisements JobAdvertisement[]
 
+  // Duyurular
+  authoredAnnouncements Announcement[] @relation("AnnouncementsAuthored")
+
   // Raporlama ve Denetim (Yeni Eklenenler)
   submittedReports Report[]   @relation("ReportSubmitted")
   auditLogs        AuditLog[] @relation("UserAuditLogs")
@@ -486,4 +489,22 @@ model AuditLog {
   @@index([userId])
   @@index([action, entityType])
   @@index([createdAt])
+}
+
+// Duyuru / Haberler Modeli
+model Announcement {
+  id        String   @id @default(cuid())
+  title     String
+  content   String   @db.Text
+  imageUrl  String?
+  isPinned  Boolean  @default(false) // Sabitlenmiş duyuru
+
+  authorId  String
+  author    User     @relation("AnnouncementsAuthored", fields: [authorId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([createdAt])
+  @@index([isPinned])
 }

@@ -1,9 +1,48 @@
-"use client";
-
 import Link from "next/link";
-import { Users, Briefcase, Map, MapPin, Building2, MessageSquare } from "lucide-react";
+import { Users, Briefcase, MapPin, MessageSquare, Megaphone, ArrowRight, Calendar, ImageIcon } from "lucide-react";
+import prisma from "@/lib/db";
+import { format } from "date-fns";
+import { tr } from "date-fns/locale";
+import Image from "next/image";
 
-export default function Home() {
+export default async function Home() {
+  const latestAnnouncements = await prisma.announcement.findMany({
+    take: 3,
+    orderBy: [
+      { isPinned: 'desc' },
+      { createdAt: 'desc' },
+    ],
+  });
+
+  const mockAnnouncements = [
+    {
+      id: "mock1",
+      title: "2026 Yılı Mezunlar Buluşması Etkinliği",
+      content: "Değerli mezunlarımız, geleneksel hale getirdiğimiz etkinlikte buluşalım.",
+      imageUrl: "https://images.unsplash.com/photo-1523580494863-6f3031224c94?q=80&w=800&auto=format&fit=crop",
+      isPinned: true,
+      createdAt: new Date(),
+    },
+    {
+      id: "mock2",
+      title: "Kariyer Platformu Rozet Sistemi Yayında!",
+      content: "Profilinize daha yetkinliklerinizi ve elde ettiğiniz başarıları ekleyebilirsiniz.",
+      imageUrl: null,
+      isPinned: false,
+      createdAt: new Date(Date.now() - 86400000 * 2),
+    },
+    {
+      id: "mock3",
+      title: "Yazılımcılar İçin Özel Hackathon",
+      content: "Kodlama yarışmasına başvurular başladı. Büyük ödüller sizi bekliyor!",
+      imageUrl: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=800&auto=format&fit=crop",
+      isPinned: false,
+      createdAt: new Date(Date.now() - 86400000 * 5),
+    }
+  ];
+
+  const announcements = latestAnnouncements.length > 0 ? latestAnnouncements : mockAnnouncements;
+
   return (
     <div className="min-h-screen flex flex-col bg-[#f8fafc]">
       {/* Hero Section */}
@@ -87,6 +126,79 @@ export default function Home() {
               <h3 className="text-xl font-bold text-gray-900 mb-3">Anlık İletişim</h3>
               <p className="text-gray-600 leading-relaxed">Yeni nesil mesajlaşma altyapımızla diğer mezunlarla bağlantı kurun ve anında fikir alışverişinde bulunun.</p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Announcements Section */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50 relative z-20">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col sm:flex-row items-center justify-between mb-12">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">Güncel Duyurular</h2>
+              <p className="text-gray-500">Platform ve okulumuzla ilgili en yeni gelişmeler</p>
+            </div>
+            <Link
+              href="/duyurular"
+              className="mt-4 sm:mt-0 flex items-center gap-2 px-6 py-3 rounded-xl bg-white border border-gray-200 text-sky-600 hover:text-sky-700 hover:border-sky-200 hover:shadow-sm transition-all font-semibold"
+            >
+              Tümünü Gör <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {announcements.map((item) => (
+              <div key={item.id} className="bg-white rounded-3xl shadow-sm border border-gray-100/80 hover:shadow-xl hover:-translate-y-1 hover:border-sky-100 transition-all duration-300 group flex flex-col overflow-hidden">
+
+                {/* Image / Header Graphic */}
+                <div className="relative w-full h-48 bg-slate-50 overflow-hidden flex-shrink-0">
+                  {item.imageUrl ? (
+                    <Image
+                      src={item.imageUrl}
+                      alt={item.title}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-sky-50 to-indigo-50/50">
+                      <ImageIcon className="w-12 h-12 text-sky-200/60" strokeWidth={1.5} />
+                    </div>
+                  )}
+
+                  {/* Pinned Badge Over Image */}
+                  {item.isPinned && (
+                    <div className="absolute top-4 left-4 z-10">
+                      <span className="bg-white/95 backdrop-blur-sm text-sky-600 px-3 py-1.5 rounded-xl flex items-center gap-1.5 font-bold text-xs shadow-sm shadow-black/5 ring-1 ring-black/5">
+                        <Megaphone className="w-3.5 h-3.5 fill-sky-100" /> Öne Çıkan
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Content */}
+                <div className="p-6 sm:p-7 flex flex-col justify-between flex-1">
+                  <div>
+                    <div className="flex items-center gap-2 mb-3.5 text-xs font-semibold text-slate-400">
+                      <span className="flex items-center gap-1.5 bg-slate-50 px-2.5 py-1 rounded-lg">
+                        <Calendar className="w-3.5 h-3.5" />
+                        {format(new Date(item.createdAt), "d MMM yyyy", { locale: tr })}
+                      </span>
+                    </div>
+
+                    <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-sky-700 transition-colors line-clamp-2 leading-tight">
+                      {item.title}
+                    </h3>
+                    <p className="text-slate-500 text-[0.95rem] line-clamp-3 leading-relaxed mb-8">
+                      {item.content}
+                    </p>
+                  </div>
+
+                  <Link href="/duyurular" className="w-full text-center py-3 bg-slate-50 text-slate-700 group-hover:bg-primary group-hover:text-white font-semibold text-sm rounded-xl transition-all duration-300 flex items-center justify-center gap-2 mt-auto">
+                    Detayları Görüntüle <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </Link>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>

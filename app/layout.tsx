@@ -1,10 +1,17 @@
 import type { Metadata } from "next";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import { SessionProvider } from "next-auth/react";
 import { Toaster } from "react-hot-toast";
-import { Session } from "./generated/prisma/index";
+
+const fontSans = Plus_Jakarta_Sans({
+  subsets: ["latin", "latin-ext"],
+  variable: "--font-sans-primary",
+  display: "swap",
+  weight: ["400", "500", "600", "700", "800"],
+});
 
 
 
@@ -39,7 +46,7 @@ export default async function RootLayout({
   return (
     <html lang="tr">
       <body
-        className="antialiased flex flex-col min-h-screen font-lucide"
+        className={`${fontSans.variable} font-sans antialiased flex flex-col min-h-screen text-slate-800`}
       >
         <SessionProvider session={session}>
           <Navbar />

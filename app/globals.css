@@ -97,9 +97,8 @@
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
 
-  --font-sans: "Inter", "Lucide", system-ui, sans-serif;
-  --font-mono: "Inter", "Lucide", monospace;
-  --font-lucide: var(--font-sans);
+  --font-sans: var(--font-sans-primary), system-ui, sans-serif;
+  --font-mono: ui-monospace, monospace;
 
   --shadow-sm: var(--shadow-sm);
   --shadow: var(--shadow);
@@ -127,15 +126,20 @@
   h5,
   h6 {
     color: var(--foreground);
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    /* Sıkı, modern kurumsal başlık spacing'i */
+    font-weight: 700;
+    letter-spacing: -0.025em;
+  }
+
+  p {
+    font-weight: 500;
+    color: #334155;
   }
 
   /* Linkler ve Etkileşimler */
   a {
     color: var(--primary);
     text-decoration: none;
+    font-weight: 500;
     transition: color 0.15s ease-out;
   }
 
