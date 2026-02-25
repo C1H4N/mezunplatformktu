@@ -71,7 +71,7 @@ async function main() {
       student: {
         create: {
           studentNo: "2020001",
-          department: "Bilgisayar Mühendisliği",
+          department: "Bilgisayar Teknolojileri Bölümü",
           interests: ["Yazılım", "Yapay Zeka", "Web Geliştirme"],
         },
       },
@@ -94,7 +94,7 @@ async function main() {
       student: {
         create: {
           studentNo: "2021002",
-          department: "Elektrik-Elektronik Mühendisliği",
+          department: "Elektronik ve Otomasyon Bölümü",
           interests: ["Elektronik", "Otomasyon"],
         },
       },
@@ -115,7 +115,7 @@ async function main() {
       lastName: "Yılmaz",
       phone: "+905556789012",
       city: "İstanbul",
-      department: "Bilgisayar Mühendisliği",
+      department: "Bilgisayar Teknolojileri Bölümü",
       position: "Kıdemli Yazılım Geliştirici",
       company: "Google",
       graduationYear: 2018,
@@ -128,7 +128,7 @@ async function main() {
       lastName: "Öztürk",
       phone: "+905557890123",
       city: "Ankara",
-      department: "Bilgisayar Mühendisliği",
+      department: "Bilgisayar Teknolojileri Bölümü",
       position: "Veri Bilimci",
       company: "Microsoft",
       graduationYear: 2019,
@@ -141,7 +141,7 @@ async function main() {
       lastName: "Arslan",
       phone: "+905558901234",
       city: "Trabzon",
-      department: "Makine Mühendisliği",
+      department: "Elektronik ve Otomasyon Bölümü",
       position: "Üretim Mühendisi",
       company: "Ford Otosan",
       graduationYear: 2017,
@@ -154,7 +154,7 @@ async function main() {
       lastName: "Kaya",
       phone: "+905559012345",
       city: "İzmir",
-      department: "İşletme",
+      department: "Yönetim ve Organizasyon Bölümü",
       position: "Finans Müdürü",
       company: "Garanti BBVA",
       graduationYear: 2016,

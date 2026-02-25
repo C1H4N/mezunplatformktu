@@ -4,14 +4,10 @@ export const cities = [
 
 export const departmentGroups = {
     "ARAKLI ALİ CEVAT ÖZYURT MESLEK YÜKSEKOKULU": [
-        "Dijital Dönüşüm Elektroniği Programı",
-        "İş Sağlığı ve Güvenliği Programı",
-        "Lojistik Programı",
-        "Yapay Zekâ Operatörlüğü Programı",
-        "Bilgisayar Teknolojileri",
-        "Yönetim ve Organizasyon",
-        "Mülkiyet Koruma ve Güvenlik",
-        "Elektronik ve Otomasyon"
+        "Mülkiyet Koruma ve Güvenlik Bölümü",
+        "Yönetim ve Organizasyon Bölümü",
+        "Elektronik ve Otomasyon Bölümü",
+        "Bilgisayar Teknolojileri Bölümü",
     ]
 };
 

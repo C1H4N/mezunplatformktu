@@ -5,17 +5,7 @@ import { signIn } from "next-auth/react";
 import toast from "react-hot-toast";
 import Link from "next/link";
 import Image from "next/image";
-import {
-  Eye,
-  EyeOff,
-  Mail,
-  Lock,
-  LogIn,
-  Users,
-  Briefcase,
-  MapPin,
-  ArrowRight,
-} from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, ArrowRight } from "lucide-react";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -34,11 +24,11 @@ export default function LoginPage() {
           redirect: false,
         });
         if (result?.error) {
-          if (result.error === "CredentialsSignin") {
-            toast.error("E-posta veya şifre hatalı!");
-          } else {
-            toast.error(result.error || "Giriş başarısız! Lütfen tekrar deneyin.");
-          }
+          toast.error(
+            result.error === "CredentialsSignin"
+              ? "E-posta veya şifre hatalı!"
+              : result.error || "Giriş başarısız! Lütfen tekrar deneyin."
+          );
         } else {
           toast.success("Giriş başarılı! Yönlendiriliyorsunuz...");
           window.location.href = "/profile";
@@ -50,205 +40,152 @@ export default function LoginPage() {
   };
 
   return (
-    /* Navbar yüksekliği (90px) çıkarılarak tam ekran dolduruluyor */
-    <div className="flex h-[calc(100vh-90px)]">
-
-      {/* ──────────── SOL PANEL: Marka ──────────── */}
-      <div
-        className="hidden lg:flex w-[48%] flex-col justify-between relative overflow-hidden flex-shrink-0"
-        style={{
-          background: "linear-gradient(145deg, #0a2f52 0%, #125b96 55%, #1678c8 100%)",
-        }}
-      >
-        {/* Arkaplan foto */}
-        <div
-          className="absolute inset-0 bg-cover bg-center mix-blend-luminosity opacity-20"
-          style={{ backgroundImage: 'url("/aacomyobg.jpg")' }}
+    <div
+      className="relative flex items-center justify-center px-4 py-12"
+      style={{ minHeight: "calc(100vh - 90px)" }}
+    >
+      {/* Arka Plan */}
+      <div className="absolute inset-0 -z-10 overflow-hidden">
+        <Image
+          src="/aacomyobg.jpg"
+          alt=""
+          fill
+          className="object-cover object-center"
+          priority
         />
-        {/* Işık efektleri */}
-        <div className="absolute -top-40 -left-40 w-[480px] h-[480px] rounded-full bg-white/5 blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-24 -right-24 w-[380px] h-[380px] rounded-full bg-sky-400/10 blur-3xl pointer-events-none" />
-
-        <div className="relative z-10 flex flex-col h-full p-10 xl:p-14 justify-between">
-          {/* Logo */}
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-white/15 backdrop-blur border border-white/20 shadow-lg overflow-hidden flex items-center justify-center">
-              <Image
-                src="/aacomyoLogo.png"
-                alt="AACOMYO"
-                width={44}
-                height={44}
-                className="object-contain"
-              />
-            </div>
-            <div>
-              <p className="text-white font-bold text-sm leading-tight">AACOMYO</p>
-              <p className="text-white/60 text-xs">Mezun Platformu</p>
-            </div>
-          </div>
-
-          {/* Merkez metin */}
-          <div>
-            <span className="inline-block mb-5 py-1 px-4 rounded-full bg-white/10 border border-white/20 text-white/75 text-xs font-semibold tracking-widest uppercase">
-              KTÜ Araklı Ali Cevat Özyurt MYO
-            </span>
-            <h1 className="text-3xl xl:text-4xl font-extrabold text-white leading-snug mb-4">
-              Mezunlar Ağına<br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-sky-200 to-blue-200">
-                Hoş Geldiniz
-              </span>
-            </h1>
-            <p className="text-white/65 text-base leading-relaxed max-w-sm">
-              Türkiye'nin dört bir yanındaki AACOMYO mezunlarıyla bağlantı kurun,
-              kariyer fırsatlarını yakalayın.
-            </p>
-
-            {/* Özellik listesi */}
-            <div className="mt-8 space-y-3">
-              {[
-                { icon: Users, text: "Geniş Mezun Ağı", sub: "Binlerce mezunla bağlantı kur" },
-                { icon: Briefcase, text: "Kariyer Fırsatları", sub: "Sana özel iş ilanları" },
-                { icon: MapPin, text: "İnteraktif Harita", sub: "Mezun dağılımını keşfet" },
-              ].map(({ icon: Icon, text, sub }) => (
-                <div
-                  key={text}
-                  className="flex items-center gap-4 p-3.5 rounded-xl bg-white/8 border border-white/10 hover:bg-white/12 transition-all"
-                >
-                  <div className="w-9 h-9 rounded-lg bg-white/15 flex items-center justify-center flex-shrink-0">
-                    <Icon className="w-4 h-4 text-white" />
-                  </div>
-                  <div>
-                    <p className="text-white font-semibold text-sm">{text}</p>
-                    <p className="text-white/55 text-xs">{sub}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <p className="text-white/35 text-xs">
-            © {new Date().getFullYear()} AACOMYO Mezun Platformu — KTÜ
-          </p>
-        </div>
+        {/* Koyu gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0a2f52]/90 via-[#0e4a7a]/80 to-[#1678c8]/70" />
+        {/* Ekstra derinlik */}
+        <div className="absolute inset-0 backdrop-blur-[2px]" />
       </div>
 
-      {/* ──────────── SAĞ PANEL: Form ──────────── */}
-      <div className="flex-1 flex flex-col items-center justify-center overflow-y-auto bg-[#f1f5f9] px-4 sm:px-8 py-10">
+      {/* Dekoratif daireler */}
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-sky-400/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
 
-        {/* Mobilde logo */}
-        <div className="lg:hidden flex items-center gap-3 mb-8">
-          <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center overflow-hidden">
-            <Image src="/aacomyoLogo.png" alt="AACOMYO" width={32} height={32} className="object-contain" />
-          </div>
-          <span className="font-bold text-foreground text-sm">AACOMYO Mezun Platformu</span>
-        </div>
-
+      {/* Form Kartı */}
+      <div className="relative z-10 w-full max-w-md">
         {/* Kart */}
-        <div className="w-full max-w-md animate-fade-in-up">
-          <div className="bg-white rounded-2xl shadow-md border border-gray-200 px-8 py-10">
+        <div className="bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl p-8 sm:p-10 ring-1 ring-white/50">
+          <div className="mb-7">
+            <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight mb-1">
+              Tekrar Hoş Geldiniz
+            </h2>
+            <p className="text-slate-500 text-sm font-medium">
+              Hesabınıza erişmek için bilgilerinizi girin.
+            </p>
+          </div>
 
-            <div className="mb-7">
-              <h2 className="text-2xl font-bold text-gray-900 mb-1">Hoş Geldiniz</h2>
-              <p className="text-gray-500 text-sm">Hesabınıza giriş yapın</p>
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {/* E-posta */}
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">
+                E-posta Adresi
+              </label>
+              <div className="relative group">
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-primary transition-colors" />
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="ornek@aacomyo.edu.tr"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 placeholder:text-slate-400 text-sm font-medium focus:bg-white focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all"
+                />
+              </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-5">
-              {/* E-posta */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                  E-posta Adresi
+            {/* Şifre */}
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">
+                  Şifre
                 </label>
-                <div className="relative">
-                  <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-                  <input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="ornek@aacomyo.edu.tr"
-                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 bg-white text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 transition-all"
-                  />
-                </div>
+                <Link
+                  href="/forgot-password"
+                  className="text-xs text-primary hover:text-primary-hover font-semibold transition-colors"
+                >
+                  Şifremi unuttum
+                </Link>
               </div>
-
-              {/* Şifre */}
-              <div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <label className="block text-sm font-medium text-gray-700">Şifre</label>
-                  <Link
-                    href="/forgot-password"
-                    className="text-xs text-primary hover:text-primary-hover font-medium flex items-center gap-1 transition-colors"
-                  >
-                    Şifremi unuttum <ArrowRight className="w-3 h-3" />
-                  </Link>
-                </div>
-                <div className="relative">
-                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                    className="w-full pl-10 pr-12 py-2.5 rounded-xl border border-gray-200 bg-white text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 transition-all"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 transition-colors"
-                  >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                </div>
+              <div className="relative group">
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-primary transition-colors" />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full pl-10 pr-11 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 placeholder:text-slate-400 text-sm font-medium focus:bg-white focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors p-0.5"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
               </div>
+            </div>
 
-              {/* Beni hatırla */}
-              <div className="flex items-center gap-2">
+            {/* Beni Hatırla */}
+            <div className="flex items-center gap-2.5">
+              <div className="relative">
                 <input
                   type="checkbox"
                   id="rememberMe"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className="w-4 h-4 rounded border-gray-300 accent-primary cursor-pointer"
+                  className="peer appearance-none w-5 h-5 border-2 border-slate-200 rounded-md checked:bg-primary checked:border-primary transition-all cursor-pointer bg-white"
                 />
-                <label htmlFor="rememberMe" className="text-sm text-gray-500 cursor-pointer select-none">
-                  Beni hatırla
-                </label>
+                <svg
+                  className="absolute inset-0 m-auto w-3 h-3 text-white opacity-0 peer-checked:opacity-100 pointer-events-none transition-opacity"
+                  fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3.5"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
               </div>
+              <label htmlFor="rememberMe" className="text-sm text-slate-600 font-semibold cursor-pointer select-none">
+                Beni hatırla
+              </label>
+            </div>
 
-              {/* Giriş butonu */}
-              <button
-                type="submit"
-                disabled={isPending}
-                className="w-full flex items-center justify-center gap-2 py-2.5 px-6 rounded-xl bg-primary hover:bg-primary-hover text-white font-semibold text-sm transition-all hover:shadow-lg hover:shadow-primary/20 disabled:opacity-60 disabled:cursor-not-allowed active:scale-[0.98]"
+            {/* Giriş Butonu */}
+            <button
+              type="submit"
+              disabled={isPending}
+              className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-gradient-to-r from-primary to-[#0e7490] hover:from-primary-hover hover:to-primary text-white font-bold text-[15px] shadow-[0_6px_20px_rgba(18,91,150,0.35)] hover:shadow-[0_10px_28px_rgba(18,91,150,0.45)] hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none"
+            >
+              {isPending ? (
+                <>
+                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  Giriş yapılıyor…
+                </>
+              ) : (
+                <>
+                  Giriş Yap
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
+            </button>
+          </form>
+
+          <div className="mt-7 pt-6 border-t border-slate-100 text-center">
+            <p className="text-sm text-slate-600 font-medium">
+              Hesabınız yok mu?{" "}
+              <Link
+                href="/register"
+                className="text-primary hover:text-primary-hover font-bold transition-colors hover:underline underline-offset-4"
               >
-                {isPending ? (
-                  <>
-                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    Giriş yapılıyor…
-                  </>
-                ) : (
-                  <>
-                    <LogIn className="w-4 h-4" />
-                    Giriş Yap
-                  </>
-                )}
-              </button>
-
-              <p className="text-center text-sm text-gray-500 pt-1">
-                Hesabınız yok mu?{" "}
-                <Link href="/register" className="text-primary hover:text-primary-hover font-semibold transition-colors">
-                  Hesap Oluşturun
-                </Link>
-              </p>
-            </form>
+                Hemen Oluşturun
+              </Link>
+            </p>
           </div>
-
-          <p className="text-center text-xs text-gray-400 mt-5 leading-relaxed px-2">
-            Bu platform yalnızca KTÜ Araklı Ali Cevat Özyurt MYO mensuplarına özeldir.
-            Hesap oluşturmak için mezun, öğrenci veya akademisyen kaydı gerekmektedir.
-          </p>
         </div>
+
+        <p className="text-center text-xs text-white/50 mt-6 leading-relaxed px-4">
+          Bu platform yalnızca KTÜ Araklı Ali Cevat Özyurt MYO mensuplarına ve mezunlarına özeldir.
+        </p>
       </div>
     </div>
   );
