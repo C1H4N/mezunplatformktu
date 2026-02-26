@@ -20,6 +20,7 @@ import {
     LogOut,
     Building2,
     ClipboardCheck,
+    BarChart3,
 } from "lucide-react";
 
 const navItems = [
@@ -32,6 +33,7 @@ const navItems = [
     { href: "/admin/events", label: "Etkinlikler", icon: Calendar },
     { href: "/admin/moderation", label: "Moderasyon", icon: Shield },
     { href: "/admin/reports", label: "Şikayetler", icon: AlertTriangle },
+    { href: "/admin/detailed-reports", label: "Detaylı Raporlama", icon: BarChart3 },
     { href: "/admin/settings", label: "Ayarlar", icon: Settings },
 ];
 

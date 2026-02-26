@@ -9,7 +9,7 @@ import { flatDepartments } from "@/app/lib/constants";
 import {
   Eye, EyeOff, GraduationCap, Briefcase, BookOpen, UserCog,
   ArrowLeft, ArrowRight, Check, Users, MapPin,
-  Mail, Phone, User, Lock, Building2, Calendar,
+  Mail, Phone, User, Lock, Building2, Calendar, Hash,
 } from "lucide-react";
 import {
   type RegisterFormData,
@@ -67,12 +67,19 @@ const departments = flatDepartments;
 
 export default function RegisterPage() {
   const [step, setStep] = useState<Step>("role");
-  const [formData, setFormData] = useState<RegisterFormData>({
+  const [formData, setFormData] = useState<RegisterFormData & {
+    referenceTeacher?: string;
+    employmentStatus?: string;
+    employmentSector?: string;
+    schoolEmail?: string;
+  }>({
     firstName: "", lastName: "", email: "", phoneNumber: "",
     password: "", confirmPassword: "", role: "STUDENT",
     studentNo: "", department: "",
     graduationYear: new Date().getFullYear(),
     currentPosition: "", title: "",
+    referenceTeacher: "", employmentStatus: "",
+    employmentSector: "", schoolEmail: "",
   });
 
   const [errors, setErrors] = useState<Partial<Record<keyof RegisterFormData | "confirmPassword", string>>>({});
@@ -358,6 +365,26 @@ export default function RegisterPage() {
                       </div>
                       {errors.department && <p className="text-xs text-red-500">{errors.department}</p>}
                     </div>
+                    <div className="space-y-1.5">
+                      <label className={L}>
+                        Okul E-postası{" "}
+                        <span className="text-slate-400 font-normal normal-case tracking-normal">(öğrenci maili)</span>
+                      </label>
+                      <div className="relative group">
+                        <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-primary transition-colors" />
+                        <input type="email" value={formData.schoolEmail || ""} onChange={(e) => handleChange("schoolEmail" as any, e.target.value)} className={inputClass("email")} placeholder="123456@ogr.ktu.edu.tr" />
+                      </div>
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className={L}>
+                        Referans Hoca{" "}
+                        <span className="text-slate-400 font-normal normal-case tracking-normal">(opsiyonel)</span>
+                      </label>
+                      <div className="relative group">
+                        <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-primary transition-colors" />
+                        <input type="text" value={formData.referenceTeacher || ""} onChange={(e) => handleChange("referenceTeacher" as any, e.target.value)} className={inputClass("firstName")} placeholder="Örn: Prof. Dr. Ahmet Yılmaz" />
+                      </div>
+                    </div>
                   </>
                 )}
 
@@ -389,6 +416,55 @@ export default function RegisterPage() {
                         {errors.graduationYear && <p className="text-xs text-red-500">{errors.graduationYear}</p>}
                       </div>
                     </div>
+
+                    {/* Okul Numarası (Opsiyonel) */}
+                    <div className="space-y-1.5">
+                      <label className={L}>
+                        Okul Numarası{" "}
+                        <span className="text-slate-400 font-normal normal-case tracking-normal">(opsiyonel)</span>
+                      </label>
+                      <div className="relative group">
+                        <Hash className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-primary transition-colors" />
+                        <input type="text" value={formData.studentNo || ""} onChange={(e) => handleChange("studentNo", e.target.value)} className={inputClass("studentNo")} placeholder="Okul numaranız (opsiyonel)" />
+                      </div>
+                    </div>
+
+                    {/* Referans Hoca */}
+                    <div className="space-y-1.5">
+                      <label className={L}>Referans Hoca</label>
+                      <div className="relative group">
+                        <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-primary transition-colors" />
+                        <input type="text" value={formData.referenceTeacher || ""} onChange={(e) => handleChange("referenceTeacher" as any, e.target.value)} className={inputClass("firstName")} placeholder="Örn: Prof. Dr. Ahmet Yılmaz" />
+                      </div>
+                    </div>
+
+                    {/* Çalışma Durumu */}
+                    <div className="space-y-1.5">
+                      <label className={L}>Çalışma Durumu</label>
+                      <div className="relative group">
+                        <Briefcase className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-primary transition-colors pointer-events-none" />
+                        <select value={formData.employmentStatus || ""} onChange={(e) => handleChange("employmentStatus" as any, e.target.value)} className={selectClass("department" as any)}>
+                          <option value="">Çalışma durumunuzu seçin</option>
+                          <option value="EMPLOYED_OWN_SECTOR">Kendi sektörümde çalışıyorum</option>
+                          <option value="EMPLOYED_OTHER_SECTOR">Başka sektörde çalışıyorum</option>
+                          <option value="SELF_EMPLOYED">Serbest / Girişimci</option>
+                          <option value="UNEMPLOYED">Çalışmıyorum</option>
+                          <option value="STUDENT">Öğrenime devam ediyorum</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    {/* Sektör (çalışıyorsa göster) */}
+                    {(formData.employmentStatus === "EMPLOYED_OWN_SECTOR" || formData.employmentStatus === "EMPLOYED_OTHER_SECTOR" || formData.employmentStatus === "SELF_EMPLOYED") && (
+                      <div className="space-y-1.5">
+                        <label className={L}>Çalıştığınız Sektör</label>
+                        <div className="relative group">
+                          <Building2 className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-primary transition-colors" />
+                          <input type="text" value={formData.employmentSector || ""} onChange={(e) => handleChange("employmentSector" as any, e.target.value)} className={inputClass("firstName")} placeholder="Örn: Bilişim, Finans, Sağlık..." />
+                        </div>
+                      </div>
+                    )}
+
                     <div className="space-y-1.5">
                       <label className={L}>
                         Mevcut Pozisyon{" "}

@@ -6,7 +6,8 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { buttonVariants } from "../components/ui/Button";
-import { X, Plus, Eye, EyeOff, Users, Building2, Lock, FileText, Upload, AlertCircle } from "lucide-react";
+import { X, Plus, Eye, EyeOff, Users, Building2, Lock, FileText, Upload, AlertCircle, GraduationCap, Briefcase, Calendar, Hash, User as UserIcon } from "lucide-react";
+import { flatDepartments } from "@/app/lib/constants";
 
 interface Experience {
   id: string;
@@ -64,6 +65,17 @@ export default function ProfilePage() {
   const [isAddEducationOpen, setIsAddEducationOpen] = useState(false);
   const [isEditBioOpen, setIsEditBioOpen] = useState(false);
   const [isEditVisibilityOpen, setIsEditVisibilityOpen] = useState(false);
+  const [isGraduateModalOpen, setIsGraduateModalOpen] = useState(false);
+  const [graduateLoading, setGraduateLoading] = useState(false);
+  const [graduateData, setGraduateData] = useState({
+    graduationYear: new Date().getFullYear(),
+    department: "",
+    referenceTeacher: "",
+    employmentStatus: "",
+    employmentSector: "",
+    currentPosition: "",
+    studentNo: "",
+  });
 
   // Profile Form Data
   const [profileData, setProfileData] = useState({
@@ -781,6 +793,33 @@ export default function ProfilePage() {
           </div>
         </div>
 
+        {/* Mezun Oldum (Sadece STUDENT için) */}
+        {session.user.role === "STUDENT" && (
+          <div className="bg-card border border-emerald-500/20 rounded-xl p-8 shadow-sm">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-emerald-500/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <GraduationCap className="w-6 h-6 text-emerald-600" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-foreground">Mezun Oldunuz mu?</h2>
+                  <p className="text-sm text-muted mt-1">
+                    Mezun olduysanız bu butona tıklayarak mezun hesabına geçiş yapabilirsiniz.
+                    Geçiş sonrası bölüm başkanının onayı gerekecektir.
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsGraduateModalOpen(true)}
+                className="flex items-center gap-2 px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-semibold text-sm transition-all shadow-md shadow-emerald-500/20 hover:-translate-y-0.5 flex-shrink-0"
+              >
+                <GraduationCap className="w-4 h-4" />
+                Mezun Oldum
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Account Settings Section (Soft Delete / Dondurma) */}
         <div className="bg-card border border-rose-500/20 rounded-xl p-8 shadow-sm">
           <h2 className="text-xl font-bold text-foreground mb-4 text-rose-600 flex items-center gap-2">
@@ -1119,6 +1158,180 @@ export default function ProfilePage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Graduate Modal - Öğrenci → Mezun Geçişi */}
+      {isGraduateModalOpen && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-card border border-border rounded-xl p-6 w-full max-w-lg shadow-2xl animate-fade-in-up overflow-y-auto max-h-[90vh]">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 bg-emerald-500/10 rounded-xl flex items-center justify-center">
+                <GraduationCap className="w-5 h-5 text-emerald-600" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold">Mezuniyet Başvurusu</h2>
+                <p className="text-xs text-muted">Mezun bilgilerinizi doldurun</p>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              {/* Bölüm */}
+              <div>
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5 block">Bölüm *</label>
+                <div className="relative">
+                  <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                  <select
+                    value={graduateData.department}
+                    onChange={(e) => setGraduateData({ ...graduateData, department: e.target.value })}
+                    className="w-full pl-10 pr-4 py-3 bg-background border border-border rounded-xl text-sm focus:ring-2 focus:ring-primary outline-none appearance-none cursor-pointer"
+                  >
+                    <option value="">Bölüm seçin</option>
+                    {flatDepartments.map((d) => <option key={d} value={d}>{d}</option>)}
+                  </select>
+                </div>
+              </div>
+
+              {/* Mezuniyet Yılı */}
+              <div>
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5 block">Mezuniyet Yılı *</label>
+                <div className="relative">
+                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                  <select
+                    value={graduateData.graduationYear}
+                    onChange={(e) => setGraduateData({ ...graduateData, graduationYear: parseInt(e.target.value) })}
+                    className="w-full pl-10 pr-4 py-3 bg-background border border-border rounded-xl text-sm focus:ring-2 focus:ring-primary outline-none appearance-none cursor-pointer"
+                  >
+                    {Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - i).map((y) => (
+                      <option key={y} value={y}>{y}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Referans Hoca */}
+              <div>
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5 block">Referans Hoca</label>
+                <div className="relative">
+                  <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <input
+                    type="text"
+                    value={graduateData.referenceTeacher}
+                    onChange={(e) => setGraduateData({ ...graduateData, referenceTeacher: e.target.value })}
+                    className="w-full pl-10 pr-4 py-3 bg-background border border-border rounded-xl text-sm focus:ring-2 focus:ring-primary outline-none"
+                    placeholder="Örn: Prof. Dr. Ahmet Yılmaz"
+                  />
+                </div>
+              </div>
+
+              {/* Çalışma Durumu */}
+              <div>
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5 block">Çalışma Durumu</label>
+                <div className="relative">
+                  <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                  <select
+                    value={graduateData.employmentStatus}
+                    onChange={(e) => setGraduateData({ ...graduateData, employmentStatus: e.target.value })}
+                    className="w-full pl-10 pr-4 py-3 bg-background border border-border rounded-xl text-sm focus:ring-2 focus:ring-primary outline-none appearance-none cursor-pointer"
+                  >
+                    <option value="">Çalışma durumunuzu seçin</option>
+                    <option value="EMPLOYED_OWN_SECTOR">Kendi sektörümde çalışıyorum</option>
+                    <option value="EMPLOYED_OTHER_SECTOR">Başka sektörde çalışıyorum</option>
+                    <option value="SELF_EMPLOYED">Serbest / Girişimci</option>
+                    <option value="UNEMPLOYED">Çalışmıyorum</option>
+                    <option value="STUDENT">Öğrenime devam ediyorum</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Sektör (çalışıyorsa) */}
+              {(graduateData.employmentStatus === "EMPLOYED_OWN_SECTOR" || graduateData.employmentStatus === "EMPLOYED_OTHER_SECTOR" || graduateData.employmentStatus === "SELF_EMPLOYED") && (
+                <div>
+                  <label className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5 block">Çalıştığınız Sektör</label>
+                  <div className="relative">
+                    <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <input
+                      type="text"
+                      value={graduateData.employmentSector}
+                      onChange={(e) => setGraduateData({ ...graduateData, employmentSector: e.target.value })}
+                      className="w-full pl-10 pr-4 py-3 bg-background border border-border rounded-xl text-sm focus:ring-2 focus:ring-primary outline-none"
+                      placeholder="Örn: Bilişim, Finans, Sağlık..."
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Mevcut Pozisyon */}
+              <div>
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5 block">
+                  Mevcut Pozisyon <span className="text-slate-400 font-normal normal-case tracking-normal">(opsiyonel)</span>
+                </label>
+                <div className="relative">
+                  <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <input
+                    type="text"
+                    value={graduateData.currentPosition}
+                    onChange={(e) => setGraduateData({ ...graduateData, currentPosition: e.target.value })}
+                    className="w-full pl-10 pr-4 py-3 bg-background border border-border rounded-xl text-sm focus:ring-2 focus:ring-primary outline-none"
+                    placeholder="Örn: Yazılım Mühendisi"
+                  />
+                </div>
+              </div>
+
+              {/* Uyarı */}
+              <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl">
+                <p className="text-xs text-amber-700 font-medium">
+                  ⚠️ Bu işlem sonrası hesabınız mezun hesabına dönüştürülecek ve bölüm başkanınızın onayına sunulacaktır.
+                  Onaylanana kadar giriş yapamayacaksınız.
+                </p>
+              </div>
+
+              {/* Butonlar */}
+              <div className="flex justify-end gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setIsGraduateModalOpen(false)}
+                  className={buttonVariants({ variant: "ghost" })}
+                >
+                  İptal
+                </button>
+                <button
+                  onClick={async () => {
+                    if (!graduateData.department) {
+                      toast.error("Lütfen bölüm seçin.");
+                      return;
+                    }
+                    setGraduateLoading(true);
+                    try {
+                      const res = await fetch("/api/user/graduate", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(graduateData),
+                      });
+                      const data = await res.json();
+                      if (!res.ok) throw new Error(data.error);
+                      toast.success(data.message, { duration: 6000 });
+                      setIsGraduateModalOpen(false);
+                      setTimeout(() => router.push("/api/auth/signout"), 3000);
+                    } catch (e: any) {
+                      toast.error(e.message || "Bir hata oluştu.");
+                    } finally {
+                      setGraduateLoading(false);
+                    }
+                  }}
+                  disabled={graduateLoading}
+                  className="flex items-center gap-2 px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-semibold text-sm transition-all shadow-md disabled:opacity-60"
+                >
+                  {graduateLoading ? (
+                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <GraduationCap className="w-4 h-4" />
+                  )}
+                  Başvuru Yap
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}
