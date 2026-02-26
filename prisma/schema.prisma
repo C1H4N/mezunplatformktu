@@ -25,6 +25,22 @@ enum UserRole {
   HEAD_OF_DEPARTMENT
 }
 
+// Üye onay durumu
+enum ApprovalStatus {
+  PENDING   // Onay bekliyor (kayıt sonrası)
+  APPROVED  // Onaylandı
+  REJECTED  // Reddedildi
+}
+
+// Çalışma durumu
+enum EmploymentStatus {
+  EMPLOYED_OWN_SECTOR   // Kendi sektöründe çalışıyor
+  EMPLOYED_OTHER_SECTOR // Başka sektörde çalışıyor
+  UNEMPLOYED            // İşsiz
+  STUDENT              // Öğrenime devam ediyor
+  SELF_EMPLOYED        // Serbest / Girişimci
+}
+
 enum JobType {
   JOB
   INTERNSHIP
@@ -50,10 +66,42 @@ enum JobStatus {
 
 // Profil görünürlük ayarları (Belge 4.2.3)
 enum ProfileVisibility {
-  PUBLIC // Herkese açık
+  PUBLIC     // Herkese açık
   REGISTERED // Sadece kayıtlı kullanıcılar
-  PRIVATE // Gizli
+  PRIVATE    // Gizli
 }
+
+// ─── Bölüm/Program modelleri (Admin tarafından yönetilir) ───────────────────
+
+model Department {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  code        String?   @unique // Bölüm kodu (ör. BT, EO)
+  description String?
+  isActive    Boolean   @default(true)
+
+  programs    Program[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive])
+}
+
+model Program {
+  id           String     @id @default(cuid())
+  name         String
+  departmentId String
+  department   Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  isActive     Boolean    @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([departmentId, name])
+}
+
+// ────────────────────────────────────────────────────────────────────────────
 
 model User {
   id            String    @id @default(cuid())
@@ -71,6 +119,11 @@ model User {
   bio               String? // Kısa biyografi
   cvUrl             String? // CV dosya yolu (PDF)
   profileVisibility ProfileVisibility @default(PUBLIC)
+
+  // Üye onay akışı
+  approvalStatus ApprovalStatus @default(PENDING)
+  approvedAt     DateTime?
+  approvedById   String? // Onaylayan bölüm başkanı/admin ID
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -108,6 +161,9 @@ model User {
   // Raporlama ve Denetim (Yeni Eklenenler)
   submittedReports Report[]   @relation("ReportSubmitted")
   auditLogs        AuditLog[] @relation("UserAuditLogs")
+
+  @@index([approvalStatus])
+  @@index([role, approvalStatus])
 }
 
 model Experience {
@@ -161,9 +217,11 @@ model Student {
   userId String @unique
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  studentNo  String   @unique
-  department String
-  interests  String[] // Array of strings
+  studentNo        String   @unique
+  department       String
+  schoolEmail      String?  // Okul e-postası (ör. 123456@aacomyo.edu.tr)
+  interests        String[] // Array of strings
+  referenceTeacher String?  // Referans hoca adı
 
   applications       JobApplication[]
   mentorshipRequests MentorshipRequest[]
@@ -184,8 +242,17 @@ model Alumni {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   graduationYear   Int
-  department       String? // Added for filtering
-  currentPosition  String
+  department       String? // Bölüm adı
+
+  // Mesleki bilgiler
+  currentPosition  String          @default("")
+  employmentStatus EmploymentStatus? // Çalışma durumu
+  employmentSector String?          // Çalışılan sektör (serbest metin)
+
+  // Onay akışı
+  referenceTeacher String?  // Referans hoca adı (kayıt sırasında)
+  studentNo        String?  // Opsiyonel okul numarası
+
   competencies     String[]
   mentorshipTopics String[]
 
@@ -256,21 +323,21 @@ model MentorshipRequest {
 
 // Etkinlik türleri
 enum EventType {
-  CAREER_FAIR // Kariyer Fuarı
-  NETWORKING // Networking Etkinliği
-  WORKSHOP // Atölye
-  SEMINAR // Seminer
-  CONFERENCE // Konferans
-  MEETUP // Buluşma
-  OTHER // Diğer
+  CAREER_FAIR  // Kariyer Fuarı
+  NETWORKING   // Networking Etkinliği
+  WORKSHOP     // Atölye
+  SEMINAR      // Seminer
+  CONFERENCE   // Konferans
+  MEETUP       // Buluşma
+  OTHER        // Diğer
 }
 
 // Etkinlik durumları
 enum EventStatus {
-  UPCOMING // Yaklaşan
-  ONGOING // Devam Eden
-  COMPLETED // Tamamlandı
-  CANCELLED // İptal Edildi
+  UPCOMING   // Yaklaşan
+  ONGOING    // Devam Eden
+  COMPLETED  // Tamamlandı
+  CANCELLED  // İptal Edildi
 }
 
 model Event {
@@ -278,12 +345,12 @@ model Event {
   title       String
   description String
   date        DateTime
-  endDate     DateTime? // Opsiyonel bitiş tarihi
+  endDate     DateTime?   // Opsiyonel bitiş tarihi
   location    String
   type        EventType   @default(OTHER)
   status      EventStatus @default(UPCOMING)
-  capacity    Int? // Maksimum katılımcı sayısı
-  image       String? // Etkinlik görseli
+  capacity    Int?        // Maksimum katılımcı sayısı
+  image       String?     // Etkinlik görseli
 
   organizerId String
   organizer   User   @relation(fields: [organizerId], references: [id])
@@ -403,11 +470,12 @@ model PasswordResetToken {
 
 // Bildirim türleri
 enum NotificationType {
-  MESSAGE // Yeni mesaj
+  MESSAGE       // Yeni mesaj
   JOB_APPLICATION // İş başvurusu durumu
-  EVENT // Etkinlik hatırlatması
-  MENTORSHIP // Mentorluk talebi
-  SYSTEM // Sistem bildirimi
+  EVENT         // Etkinlik hatırlatması
+  MENTORSHIP    // Mentorluk talebi
+  SYSTEM        // Sistem bildirimi
+  APPROVAL      // Üyelik onay bildirimi
 }
 
 // Bildirimler modeli (Belge 4.4)
@@ -417,7 +485,7 @@ model Notification {
   type    NotificationType
   title   String
   message String
-  link    String? // Tıklandığında gidilecek sayfa
+  link    String?          // Tıklandığında gidilecek sayfa
   isRead  Boolean          @default(false)
 
   createdAt DateTime @default(now())
@@ -449,11 +517,11 @@ model Report {
 
   reportedId  String // Şikâyet edilen içerik/kullanıcı ID'si
   type        ReportType
-  reason      String // Şikâyet nedeni
-  description String? // Ek açıklama
+  reason      String     // Şikâyet nedeni
+  description String?    // Ek açıklama
 
   status      ReportStatus @default(PENDING)
-  actionTaken String? // Moderatörün aldığı aksiyon notu
+  actionTaken String?      // Moderatörün aldığı aksiyon notu
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -479,7 +547,7 @@ model AuditLog {
   user   User?   @relation("UserAuditLogs", fields: [userId], references: [id])
 
   action     AuditAction
-  entityType String // Hangi tablo/modül üzerinde işlem yapıldı (örn: "JOB", "USER")
+  entityType String  // Hangi tablo/modül üzerinde işlem yapıldı (örn: "JOB", "USER")
   entityId   String? // İlgili kaydın ID'si
   details    String? // Değişiklik detayları (JSON formatında saklanabilir)
   ipAddress  String? // İşlemin yapıldığı IP adresi
@@ -493,14 +561,14 @@ model AuditLog {
 
 // Duyuru / Haberler Modeli
 model Announcement {
-  id        String   @id @default(cuid())
-  title     String
-  content   String   @db.Text
-  imageUrl  String?
-  isPinned  Boolean  @default(false) // Sabitlenmiş duyuru
+  id       String  @id @default(cuid())
+  title    String
+  content  String  @db.Text
+  imageUrl String?
+  isPinned Boolean @default(false) // Sabitlenmiş duyuru
 
-  authorId  String
-  author    User     @relation("AnnouncementsAuthored", fields: [authorId], references: [id])
+  authorId String
+  author   User   @relation("AnnouncementsAuthored", fields: [authorId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

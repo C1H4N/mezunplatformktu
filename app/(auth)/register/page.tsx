@@ -111,16 +111,33 @@ export default function RegisterPage() {
           phoneNumber: "+90" + formData.phoneNumber,
         }),
       });
-      const data = await res.json();
+
+      // Güvenli JSON parse — API HTML döndürse de çökmez
+      let data: any = {};
+      try {
+        const text = await res.text();
+        data = JSON.parse(text);
+      } catch {
+        console.error("API geçersiz yanıt döndürdü (HTML/empty):", res.status, res.url);
+        toast.error("Sunucu hatası oluştu. Lütfen daha sonra tekrar deneyin.");
+        return;
+      }
+
       if (!res.ok) {
         if (data.errors) setErrors(data.errors);
         toast.error(data.message || "Kayıt sırasında bir hata oluştu.");
       } else {
-        toast.success("Kayıt başarılı! Giriş sayfasına yönlendiriliyorsunuz...");
-        setTimeout(() => router.push("/login"), 1500);
+        if (data.requiresApproval) {
+          toast.success("Başvurunuz alındı! Bölüm başkanı onayladıktan sonra giriş yapabilirsiniz.", { duration: 6000 });
+          setTimeout(() => router.push("/login"), 3000);
+        } else {
+          toast.success("Kayıt başarılı! Giriş sayfasına yönlendiriliyorsunuz...");
+          setTimeout(() => router.push("/login"), 1500);
+        }
       }
-    } catch {
-      toast.error("Sunucuya bağlanılamadı.");
+    } catch (err) {
+      console.error("Register fetch hatası:", err);
+      toast.error("Sunucuya bağlanılamadı. Lütfen internet bağlantınızı kontrol edin.");
     } finally {
       setLoading(false);
     }

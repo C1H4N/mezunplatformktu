@@ -53,6 +53,23 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           throw new CredentialsSignin("Geçersiz şifre.");
         }
 
+        // Onay bekleyen kullanıcılar giriş yapamaz
+        if (
+          user.approvalStatus === "PENDING" &&
+          !["ADMIN", "MODERATOR"].includes(user.role)
+        ) {
+          throw new CredentialsSignin(
+            "Hesabınız henüz onaylanmadı. Bölüm başkanının onayından sonra giriş yapabilirsiniz."
+          );
+        }
+
+        // Reddedilen kullanıcılar giriş yapamaz
+        if (user.approvalStatus === "REJECTED") {
+          throw new CredentialsSignin(
+            "Üyelik başvurunuz reddedildi. Daha fazla bilgi için yöneticiyle iletişime geçin."
+          );
+        }
+
         await prisma.user.update({
           where: { id: user.id },
           data: { lastLogin: new Date() },

@@ -10,9 +10,27 @@ import { UserRole } from "@/app/generated/prisma";
 import { generateVerificationToken } from "@/lib/tokens";
 import { sendVerificationEmail } from "@/lib/email";
 
+// Çalışma durumu geçerli değerleri (schema enum ile eşleşmeli)
+const VALID_EMPLOYMENT_STATUS = [
+  "EMPLOYED_OWN_SECTOR",
+  "EMPLOYED_OTHER_SECTOR",
+  "UNEMPLOYED",
+  "STUDENT",
+  "SELF_EMPLOYED",
+] as const;
+type EmploymentStatusType = typeof VALID_EMPLOYMENT_STATUS[number];
+
+
+type ExtendedRegisterBody = RegisterFormData & {
+  referenceTeacher?: string;
+  employmentStatus?: string;
+  employmentSector?: string;
+  schoolEmail?: string;
+};
+
 export async function POST(req: Request) {
   try {
-    const body: RegisterFormData = await req.json();
+    const body = (await req.json()) as ExtendedRegisterBody;
 
     // Rol bazlı validasyon
     const validation = validateRegisterByRole(body);
@@ -34,14 +52,15 @@ export async function POST(req: Request) {
       phoneNumber,
       password,
       role,
-      // Öğrenci
       studentNo,
       department,
-      // Mezun
       graduationYear,
       currentPosition,
-      // Akademisyen
       title,
+      referenceTeacher,
+      employmentStatus,
+      employmentSector,
+      schoolEmail,
     } = body;
 
     // Email benzersizlik kontrolü
@@ -60,18 +79,19 @@ export async function POST(req: Request) {
     }
 
     // Telefon benzersizlik kontrolü
-    const existingPhone = await prisma.user.findUnique({
-      where: { phoneNumber },
-    });
-
-    if (existingPhone) {
-      return NextResponse.json(
-        {
-          message: "Bu telefon numarası zaten kullanılıyor.",
-          errors: { phoneNumber: "Bu telefon numarası zaten kullanılıyor." },
-        },
-        { status: 400 }
-      );
+    if (phoneNumber) {
+      const existingPhone = await prisma.user.findUnique({
+        where: { phoneNumber },
+      });
+      if (existingPhone) {
+        return NextResponse.json(
+          {
+            message: "Bu telefon numarası zaten kullanılıyor.",
+            errors: { phoneNumber: "Bu telefon numarası zaten kullanılıyor." },
+          },
+          { status: 400 }
+        );
+      }
     }
 
     // Öğrenci numarası benzersizlik kontrolü
@@ -79,7 +99,6 @@ export async function POST(req: Request) {
       const existingStudentNo = await prisma.student.findUnique({
         where: { studentNo },
       });
-
       if (existingStudentNo) {
         return NextResponse.json(
           {
@@ -94,8 +113,15 @@ export async function POST(req: Request) {
     // Şifre hashleme
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    // Prisma role enum'una çevir
-    const userRole = role as UserRole;
+    // Admin ve Moderator dışındaki tüm roller onay bekler
+    const requiresApproval = !["ADMIN", "MODERATOR"].includes(role);
+    const approvalStatus = requiresApproval ? "PENDING" : "APPROVED";
+
+    // Çalışma durumu enum kontrolü
+    const parsedEmploymentStatus = employmentStatus &&
+      (VALID_EMPLOYMENT_STATUS as readonly string[]).includes(employmentStatus)
+      ? (employmentStatus as EmploymentStatusType)
+      : null;
 
     // Transaction ile kullanıcı ve rol bazlı kayıt oluştur
     const user = await prisma.$transaction(async (tx) => {
@@ -105,10 +131,11 @@ export async function POST(req: Request) {
           firstName,
           lastName,
           email: email.toLowerCase(),
-          phoneNumber,
+          phoneNumber: phoneNumber || null,
           password: hashedPassword,
-          role: userRole,
-          // emailVerified: null // Email doğrulama bekliyor - FAZA 1.2'de aktifleştirilecek
+          role: role as UserRole,
+          approvalStatus,
+          isActive: !requiresApproval,
         },
       });
 
@@ -119,6 +146,8 @@ export async function POST(req: Request) {
             userId: newUser.id,
             studentNo,
             department,
+            schoolEmail: schoolEmail || null,
+            referenceTeacher: referenceTeacher || null,
             interests: [],
           },
         });
@@ -131,6 +160,9 @@ export async function POST(req: Request) {
             graduationYear: graduationYear || new Date().getFullYear(),
             department,
             currentPosition: currentPosition || "",
+            referenceTeacher: referenceTeacher || null,
+            employmentStatus: parsedEmploymentStatus,
+            employmentSector: employmentSector || null,
             competencies: [],
             mentorshipTopics: [],
           },
@@ -157,14 +189,46 @@ export async function POST(req: Request) {
         });
       }
 
+      // Bölüm başkanına / admin'e bildirim gönder
+      if (requiresApproval) {
+        const admins = await tx.user.findMany({
+          where: {
+            role: {
+              in: [UserRole.ADMIN, UserRole.MODERATOR, UserRole.HEAD_OF_DEPARTMENT],
+            },
+          },
+          select: { id: true },
+        });
 
+        if (admins.length > 0) {
+          await tx.notification.createMany({
+            data: admins.map((admin) => ({
+              userId: admin.id,
+              type: "APPROVAL",
+              title: "Yeni Üyelik Başvurusu",
+              message: `${firstName} ${lastName} adlı kullanıcı üyelik başvurusunda bulundu.`,
+              link: "/admin/approvals",
+            })),
+          });
+        }
 
+        // Kullanıcıya bilgi bildirimi
+        await tx.notification.create({
+          data: {
+            userId: newUser.id,
+            type: "SYSTEM",
+            title: "Başvurunuz Alındı",
+            message:
+              "Üyelik başvurunuz alındı. Bölüm başkanının onayından sonra hesabınız aktif hale gelecek.",
+            link: "/",
+          },
+        });
+      }
 
       return newUser;
     });
 
     // Email doğrulama tokeni oluştur ve email gönder
-    // Not: RESEND_API_KEY yoksa email gönderilmez, kullanıcı yine de kayıt olabilir
     try {
       if (process.env.RESEND_API_KEY) {
         const verificationToken = await generateVerificationToken(user.email);
@@ -172,23 +236,28 @@ export async function POST(req: Request) {
 
         return NextResponse.json(
           {
-            message: "Kayıt başarılı! E-posta adresinize doğrulama bağlantısı gönderildi.",
+            message: requiresApproval
+              ? "Kayıt başarılı! Başvurunuz bölüm başkanına iletildi. Onaydan sonra giriş yapabilirsiniz."
+              : "Kayıt başarılı! E-posta adresinize doğrulama bağlantısı gönderildi.",
             userId: user.id,
             requiresVerification: true,
+            requiresApproval,
           },
           { status: 201 }
         );
       }
     } catch (emailError) {
       console.error("Email gönderim hatası:", emailError);
-      // Email gönderilemese bile kayıt başarılı
     }
 
     return NextResponse.json(
       {
-        message: "Kayıt başarılı! Giriş yapabilirsiniz.",
+        message: requiresApproval
+          ? "Kayıt başarılı! Başvurunuz bölüm başkanına iletildi. Onaydan sonra giriş yapabilirsiniz."
+          : "Kayıt başarılı! Giriş yapabilirsiniz.",
         userId: user.id,
         requiresVerification: false,
+        requiresApproval,
       },
       { status: 201 }
     );

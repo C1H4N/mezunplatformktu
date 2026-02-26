@@ -14,7 +14,7 @@ async function main() {
   console.log("👑 Creating Admin user...");
   const admin = await prisma.user.upsert({
     where: { email: "admin@ktu.edu.tr" },
-    update: {},
+    update: { approvalStatus: "APPROVED" as any, isActive: true },
     create: {
       email: "admin@ktu.edu.tr",
       firstName: "Admin",
@@ -24,6 +24,8 @@ async function main() {
       emailVerified: new Date(),
       phoneNumber: "+905551234567",
       bio: "AACOMYO Mezun Platformu Yöneticisi",
+      approvalStatus: "APPROVED" as any,
+      isActive: true,
       admin: { create: {} },
     },
   });
