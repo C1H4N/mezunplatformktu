@@ -6,7 +6,7 @@ import { NextResponse } from "next/server";
 export async function GET(req: Request) {
     try {
         const session = await auth();
-        if (!session?.user || !["ADMIN", "MODERATOR"].includes(session.user.role || "")) {
+        if (!session?.user || !["ADMIN", "MODERATOR", "HEAD_OF_DEPARTMENT"].includes(session.user.role || "")) {
             return NextResponse.json({ error: "Yetkisiz erişim" }, { status: 403 });
         }
 
@@ -38,7 +38,7 @@ export async function GET(req: Request) {
 export async function PUT(req: Request) {
     try {
         const session = await auth();
-        if (!session?.user || !["ADMIN", "MODERATOR"].includes(session.user.role || "")) {
+        if (!session?.user || !["ADMIN", "MODERATOR", "HEAD_OF_DEPARTMENT"].includes(session.user.role || "")) {
             return NextResponse.json({ error: "Yetkisiz erişim" }, { status: 403 });
         }
 

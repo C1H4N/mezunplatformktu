@@ -51,7 +51,149 @@ async function main() {
   });
   console.log(`   ✅ Moderator: ${moderator.email}`);
 
+  // ============================================
+  // 3. BÖLÜM BAŞKANI
+  // ============================================
+  console.log("🎓 Creating Head of Department user...");
+  const headOfDept = await prisma.user.upsert({
+    where: { email: "bolumbaskan@ktu.edu.tr" },
+    update: { approvalStatus: "APPROVED" as any, isActive: true },
+    create: {
+      email: "bolumbaskan@ktu.edu.tr",
+      firstName: "Prof. Dr. Mehmet",
+      lastName: "Yıldız",
+      password,
+      role: UserRole.HEAD_OF_DEPARTMENT,
+      emailVerified: new Date(),
+      phoneNumber: "+905551234569",
+      bio: "Bilgisayar Teknolojileri Bölüm Başkanı",
+      approvalStatus: "APPROVED" as any,
+      isActive: true,
+      headOfDepartment: {
+        create: {
+          department: "Bilgisayar Teknolojileri Bölümü",
+          title: "Prof. Dr.",
+        },
+      },
+    },
+  });
+  console.log(`   ✅ Head of Dept: ${headOfDept.email}`);
 
+  // ============================================
+  // 2.5. BÖLÜMLER & PROGRAMLAR
+  // ============================================
+  console.log("🏫 Creating Departments & Programs...");
+
+  const deptBT = await prisma.department.upsert({
+    where: { name: "Bilgisayar Teknolojileri Bölümü" },
+    update: {},
+    create: {
+      name: "Bilgisayar Teknolojileri Bölümü",
+      code: "BT",
+      description: "Yazılım ve bilişim alanında nitelikli teknik eleman yetiştiren bölüm.",
+      isActive: true,
+      programs: {
+        create: [
+          { name: "Bilgisayar Programcılığı" },
+          { name: "Bilişim Güvenliği Teknolojisi" },
+        ],
+      },
+    },
+  });
+  console.log(`   ✅ Department: ${deptBT.name}`);
+
+  const deptEO = await prisma.department.upsert({
+    where: { name: "Elektronik ve Otomasyon Bölümü" },
+    update: {},
+    create: {
+      name: "Elektronik ve Otomasyon Bölümü",
+      code: "EO",
+      description: "Elektronik, mekatronik ve otomasyon alanlarında yetkin mezunlar yetiştiren bölüm.",
+      isActive: true,
+      programs: {
+        create: [
+          { name: "Elektronik Teknolojisi" },
+          { name: "Mekatronik" },
+        ],
+      },
+    },
+  });
+  console.log(`   ✅ Department: ${deptEO.name}`);
+
+  const deptYO = await prisma.department.upsert({
+    where: { name: "Yönetim ve Organizasyon Bölümü" },
+    update: {},
+    create: {
+      name: "Yönetim ve Organizasyon Bölümü",
+      code: "YO",
+      description: "İşletme yönetimi ve organizasyon alanında uzmanlaşmış bölüm.",
+      isActive: true,
+      programs: {
+        create: [
+          { name: "İşletme Yönetimi" },
+          { name: "Lojistik" },
+        ],
+      },
+    },
+  });
+  console.log(`   ✅ Department: ${deptYO.name}`);
+
+  const deptMuh = await prisma.department.upsert({
+    where: { name: "Mülkiyet Koruma ve Güvenlik Bölümü" },
+    update: {},
+    create: {
+      name: "Mülkiyet Koruma ve Güvenlik Bölümü",
+      code: "MKG",
+      description: "İş güvenliği ve sivil savunma alanlarında eğitim veren bölüm.",
+      isActive: true,
+      programs: {
+        create: [
+          { name: "İş Sağlığı ve Güvenliği" },
+        ],
+      },
+    },
+  });
+  console.log(`   ✅ Department: ${deptMuh.name}`);
+
+  // ============================================
+  // 2.6. DUYURULAR
+  // ============================================
+  console.log("📢 Creating Announcements...");
+
+  await prisma.announcement.createMany({
+    data: [
+      {
+        title: "2026 Yılı Mezunlar Buluşması Etkinliği",
+        content: "Değerli mezunlarımız, geleneksel hale getirdiğimiz mezunlar buluşması etkinliğimiz bu yıl büyük bir katılımla gerçekleşecek. Yenilenen kampüsümüzde eski anıları tazelemek ve yeni mezun ağımızı güçlendirmek için hepinizi bekliyoruz. Etkinlik tarihi ve detayları yakında duyurulacaktır.",
+        imageUrl: "https://images.unsplash.com/photo-1523580494863-6f3031224c94?q=80&w=800&auto=format&fit=crop",
+        isPinned: true,
+        authorId: admin.id,
+      },
+      {
+        title: "Kariyer Platformu Rozet Sistemi Yayında!",
+        content: "Mezun platformumuza entegre ettiğimiz yeni rozet sistemi sayesinde artık profilinize yetkinliklerinizi ve elde ettiğiniz başarıları ekleyebilirsiniz. Platform üzerinde aktif kalarak özel rozetler kazanabilirsiniz. Hemen profilinizi güncelleyin!",
+        imageUrl: null,
+        isPinned: false,
+        authorId: admin.id,
+      },
+      {
+        title: "Yazılımcılar İçin Özel Hackathon",
+        content: "Üniversitemiz bilgisayar programcılığı bölümü mezunları ve öğrencileri için düzenlenecek olan kodlama yarışmasına (Hackathon) başvurular başladı. Büyük ödüller sizi bekliyor! Detaylar ve başvuru formu platform üzerinden paylaşılacaktır.",
+        imageUrl: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=800&auto=format&fit=crop",
+        isPinned: false,
+        authorId: moderator.id,
+      },
+      {
+        title: "Yeni Staj ve İş İlanları Eklendi",
+        content: "Platformumuza 10'dan fazla yeni iş ve staj ilanı eklendi. Bilişim, elektronik ve yönetim alanlarında farklı pozisyonlarda fırsatlar sizi bekliyor. İlanları incelemek için Kariyer sayfasını ziyaret edin.",
+        imageUrl: null,
+        isPinned: false,
+        authorId: admin.id,
+      },
+    ],
+    skipDuplicates: true,
+  });
+  console.log("   ✅ 4 Announcements created");
 
   // ============================================
   // 4. ÖĞRENCİ KULLANICILARI
@@ -473,6 +615,7 @@ Ali Demir`,
   console.log("\n📋 TEST HESAPLARI (Şifre: Test123!):\n");
   console.log("   👑 Admin:     admin@ktu.edu.tr");
   console.log("   🛡️ Moderator: moderator@ktu.edu.tr");
+  console.log("   🏫 Bölüm Bşk: bolumbaskan@ktu.edu.tr");
 
   console.log("   🎓 Öğrenci 1: ogrenci1@ktu.edu.tr");
   console.log("   🎓 Öğrenci 2: ogrenci2@ktu.edu.tr");

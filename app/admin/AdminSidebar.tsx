@@ -23,18 +23,21 @@ import {
     BarChart3,
 } from "lucide-react";
 
+const ALL_ADMIN_ROLES = ["ADMIN", "MODERATOR", "HEAD_OF_DEPARTMENT"];
+const ADMIN_MOD_ONLY = ["ADMIN", "MODERATOR"];
+
 const navItems = [
-    { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
-    { href: "/admin/users", label: "Kullanıcılar", icon: Users },
-    { href: "/admin/approvals", label: "Üye Onayları", icon: ClipboardCheck },
-    { href: "/admin/departments", label: "Bölüm & Program", icon: Building2 },
-    { href: "/admin/announcements", label: "Duyurular", icon: Megaphone },
-    { href: "/admin/jobs", label: "İlanlar", icon: Briefcase },
-    { href: "/admin/events", label: "Etkinlikler", icon: Calendar },
-    { href: "/admin/moderation", label: "Moderasyon", icon: Shield },
-    { href: "/admin/reports", label: "Şikayetler", icon: AlertTriangle },
-    { href: "/admin/detailed-reports", label: "Detaylı Raporlama", icon: BarChart3 },
-    { href: "/admin/settings", label: "Ayarlar", icon: Settings },
+    { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true, allowedRoles: ALL_ADMIN_ROLES },
+    { href: "/admin/users", label: "Kullanıcılar", icon: Users, allowedRoles: ALL_ADMIN_ROLES },
+    { href: "/admin/approvals", label: "Üye Onayları", icon: ClipboardCheck, allowedRoles: ALL_ADMIN_ROLES },
+    { href: "/admin/departments", label: "Bölüm & Program", icon: Building2, allowedRoles: ALL_ADMIN_ROLES },
+    { href: "/admin/announcements", label: "Duyurular", icon: Megaphone, allowedRoles: ALL_ADMIN_ROLES },
+    { href: "/admin/jobs", label: "İlanlar", icon: Briefcase, allowedRoles: ADMIN_MOD_ONLY },
+    { href: "/admin/events", label: "Etkinlikler", icon: Calendar, allowedRoles: ALL_ADMIN_ROLES },
+    { href: "/admin/moderation", label: "Moderasyon", icon: Shield, allowedRoles: ADMIN_MOD_ONLY },
+    { href: "/admin/reports", label: "Şikayetler", icon: AlertTriangle, allowedRoles: ALL_ADMIN_ROLES },
+    { href: "/admin/detailed-reports", label: "Detaylı Raporlama", icon: BarChart3, allowedRoles: ALL_ADMIN_ROLES },
+    { href: "/admin/settings", label: "Ayarlar", icon: Settings, allowedRoles: ALL_ADMIN_ROLES },
 ];
 
 export function AdminSidebar() {
@@ -42,10 +45,14 @@ export function AdminSidebar() {
     const { data: session } = useSession();
     const [mobileOpen, setMobileOpen] = useState(false);
 
+    const userRole = session?.user?.role || "";
+
     const isActive = (item: typeof navItems[0]) => {
         if (item.exact) return pathname === item.href;
         return pathname.startsWith(item.href);
     };
+
+    const visibleNavItems = navItems.filter(item => item.allowedRoles.includes(userRole));
 
     const SidebarContent = () => (
         <>
@@ -56,7 +63,9 @@ export function AdminSidebar() {
                         <Shield className="w-5 h-5 text-white" />
                     </div>
                     <div>
-                        <h2 className="text-sm font-bold text-white">Admin Paneli</h2>
+                        <h2 className="text-sm font-bold text-white">
+                            {userRole === "HEAD_OF_DEPARTMENT" ? "Bölüm Başkanı" : "Admin Paneli"}
+                        </h2>
                         <p className="text-xs text-slate-400">{session?.user?.role}</p>
                     </div>
                 </div>
@@ -64,7 +73,7 @@ export function AdminSidebar() {
 
             {/* Nav */}
             <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
-                {navItems.map((item) => {
+                {visibleNavItems.map((item) => {
                     const Icon = item.icon;
                     const active = isActive(item);
                     return (

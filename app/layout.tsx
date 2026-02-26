@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
+import ConditionalLayout from "./components/ConditionalLayout";
 import { SessionProvider } from "next-auth/react";
 import { Toaster } from "react-hot-toast";
 
@@ -12,8 +11,6 @@ const fontSans = Plus_Jakarta_Sans({
   display: "swap",
   weight: ["400", "500", "600", "700", "800"],
 });
-
-
 
 export const metadata: Metadata = {
   title: "AACOMYO Mezun Platformu",
@@ -49,9 +46,9 @@ export default async function RootLayout({
         className={`${fontSans.variable} font-sans antialiased flex flex-col min-h-screen text-slate-800`}
       >
         <SessionProvider session={session}>
-          <Navbar />
-          {children}
-          <Footer />
+          <ConditionalLayout>
+            {children}
+          </ConditionalLayout>
           <Toaster
             position="bottom-right"
             toastOptions={{

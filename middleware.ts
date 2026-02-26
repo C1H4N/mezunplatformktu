@@ -31,13 +31,21 @@ export default auth((req) => {
     const isPublicApi = publicApiPrefixes.some((prefix) =>
         nextUrl.pathname.startsWith(prefix)
     );
+    const isApiRoute = nextUrl.pathname.startsWith("/api/");
 
     if (isPublicApi || isPublicRoute) {
         return NextResponse.next();
     }
 
     if (!isLoggedIn) {
-        // Giriş gerektiren route — unauthorized sayfasına yönlendir
+        // API route'ları için JSON 401 döndür (HTML rewrite yapmak client-side fetch'i bozar)
+        if (isApiRoute) {
+            return NextResponse.json(
+                { error: "Oturum açmanız gerekiyor" },
+                { status: 401 }
+            );
+        }
+        // Sayfa route'ları için unauthorized sayfasına yönlendir
         return NextResponse.rewrite(new URL("/unauthorized", nextUrl));
     }
 

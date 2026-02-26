@@ -56,7 +56,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         // Onay bekleyen kullanıcılar giriş yapamaz
         if (
           user.approvalStatus === "PENDING" &&
-          !["ADMIN", "MODERATOR"].includes(user.role)
+          !["ADMIN", "MODERATOR", "HEAD_OF_DEPARTMENT"].includes(user.role)
         ) {
           throw new CredentialsSignin(
             "Hesabınız henüz onaylanmadı. Bölüm başkanının onayından sonra giriş yapabilirsiniz."

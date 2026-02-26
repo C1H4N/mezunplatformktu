@@ -2,11 +2,11 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { Bell, Check, Trash2, MessageSquare, Briefcase, Calendar, Users, Settings, X } from "lucide-react";
+import { Bell, Check, Trash2, MessageSquare, Briefcase, Calendar, Users, Settings, X, ShieldCheck } from "lucide-react";
 
 interface Notification {
   id: string;
-  type: "MESSAGE" | "JOB_APPLICATION" | "EVENT" | "MENTORSHIP" | "SYSTEM";
+  type: "MESSAGE" | "JOB_APPLICATION" | "EVENT" | "MENTORSHIP" | "SYSTEM" | "APPROVAL";
   title: string;
   message: string;
   link?: string;
@@ -14,20 +14,22 @@ interface Notification {
   createdAt: string;
 }
 
-const typeIcons = {
+const typeIcons: Record<string, typeof Bell> = {
   MESSAGE: MessageSquare,
   JOB_APPLICATION: Briefcase,
   EVENT: Calendar,
   MENTORSHIP: Users,
   SYSTEM: Settings,
+  APPROVAL: ShieldCheck,
 };
 
-const typeColors = {
+const typeColors: Record<string, string> = {
   MESSAGE: "text-blue-500 bg-blue-500/10",
   JOB_APPLICATION: "text-green-500 bg-green-500/10",
   EVENT: "text-purple-500 bg-purple-500/10",
   MENTORSHIP: "text-orange-500 bg-orange-500/10",
   SYSTEM: "text-gray-500 bg-gray-500/10",
+  APPROVAL: "text-teal-500 bg-teal-500/10",
 };
 
 export default function NotificationBell() {
@@ -169,8 +171,8 @@ export default function NotificationBell() {
             ) : (
               <div className="divide-y divide-border">
                 {notifications.map((notif) => {
-                  const Icon = typeIcons[notif.type];
-                  const colorClass = typeColors[notif.type];
+                  const Icon = typeIcons[notif.type] || Bell;
+                  const colorClass = typeColors[notif.type] || "text-gray-500 bg-gray-500/10";
 
                   return (
                     <div

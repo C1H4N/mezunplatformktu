@@ -3,7 +3,7 @@ import { prisma } from "@/lib/db";
 import { NextResponse } from "next/server";
 
 function isAdmin(role?: string | null) {
-    return role === "ADMIN" || role === "MODERATOR";
+    return role === "ADMIN" || role === "MODERATOR" || role === "HEAD_OF_DEPARTMENT";
 }
 
 // Tüm bölümleri listele (herkese açık - register formları için)

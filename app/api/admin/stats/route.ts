@@ -8,7 +8,7 @@ export async function GET() {
     const session = await auth();
 
     // Yetki kontrolü
-    if (!session?.user || !["ADMIN", "MODERATOR"].includes(session.user.role || "")) {
+    if (!session?.user || !["ADMIN", "MODERATOR", "HEAD_OF_DEPARTMENT"].includes(session.user.role || "")) {
       return NextResponse.json({ error: "Yetkisiz erişim" }, { status: 403 });
     }
 

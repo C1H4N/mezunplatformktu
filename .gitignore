@@ -16,6 +16,7 @@
 # next.js
 /.next/
 /out/
+/CUsersCihanBDocumentsmezunplatformktu
 
 # production
 /build

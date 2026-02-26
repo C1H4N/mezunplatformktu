@@ -67,8 +67,9 @@ export async function PUT(
       return NextResponse.json({ error: "Etkinlik bulunamadı" }, { status: 404 });
     }
 
-    // Sadece organizör veya admin güncelleyebilir
-    if (event.organizerId !== session.user.id && session.user.role !== UserRole.ADMIN) {
+    // Sadece organizör veya yetkili roller güncelleyebilir
+    const canManage = ["ADMIN", "MODERATOR", "HEAD_OF_DEPARTMENT"].includes(session.user.role || "");
+    if (event.organizerId !== session.user.id && !canManage) {
       return NextResponse.json({ error: "Bu işlem için yetkiniz yok" }, { status: 403 });
     }
 
@@ -131,8 +132,9 @@ export async function DELETE(
       return NextResponse.json({ error: "Etkinlik bulunamadı" }, { status: 404 });
     }
 
-    // Sadece organizör veya admin silebilir
-    if (event.organizerId !== session.user.id && session.user.role !== UserRole.ADMIN) {
+    // Sadece organizör veya yetkili roller silebilir
+    const canManage = ["ADMIN", "MODERATOR", "HEAD_OF_DEPARTMENT"].includes(session.user.role || "");
+    if (event.organizerId !== session.user.id && !canManage) {
       return NextResponse.json({ error: "Bu işlem için yetkiniz yok" }, { status: 403 });
     }
 
