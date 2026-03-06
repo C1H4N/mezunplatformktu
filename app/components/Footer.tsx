@@ -9,15 +9,20 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Logo ve Açıklama */}
           <div className="col-span-1 md:col-span-2">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-[0.8rem]">AACOMYO</span>
-              </div>
+            <Link href="/" className="flex items-center gap-3 mb-4 group">
+              <img
+                src="/aacomyoLogo.png"
+                alt="AACOMYO Logo"
+                width={180}
+                height={56}
+                className="object-contain"
+              />
+              <div className="w-px h-10 bg-border" />
               <div>
-                <h3 className="text-lg font-semibold text-foreground">Mezun Platformu</h3>
+                <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors">Mezun Platformu</h3>
                 <p className="text-sm text-muted">KTÜ Araklı Ali Cevat Özyurt Meslek Yüksekokulu</p>
               </div>
-            </div>
+            </Link>
             <p className="text-muted text-sm max-w-md leading-relaxed">
               Mezunlarımızı bir araya getiren, kariyer gelişimini destekleyen ve networking
               fırsatları sunan resmi platform.
