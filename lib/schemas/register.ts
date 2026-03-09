@@ -1,7 +1,12 @@
 import { z } from "zod";
 
 // Kullanıcı rolleri (Belge 3.2)
-export const UserRoleEnum = z.enum(["STUDENT", "ALUMNI", "ACADEMICIAN", "HEAD_OF_DEPARTMENT"]);
+export const UserRoleEnum = z.enum([
+  "STUDENT",
+  "ALUMNI",
+  "ACADEMICIAN",
+  "HEAD_OF_DEPARTMENT",
+]);
 export type UserRoleType = z.infer<typeof UserRoleEnum>;
 
 // Şifre validasyonu - Belge 4.1.1 Validasyon Kuralları
@@ -28,9 +33,10 @@ const baseSchema = z.object({
     .string()
     .transform((val) => val.replace(/\D/g, "")) // Rakam olmayan karakterleri temizle
     .pipe(
-      z.string()
+      z
+        .string()
         .min(10, "Telefon numarası en az 10 haneli olmalı.")
-        .max(15, "Telefon numarası en fazla 15 haneli olabilir.")
+        .max(15, "Telefon numarası en fazla 15 haneli olabilir."),
     ),
   password: passwordSchema,
   confirmPassword: z.string(),
@@ -78,15 +84,13 @@ export const academicianFieldsSchema = z.object({
     .max(50, "Unvan en fazla 50 karakter olabilir."),
 });
 
-
-
 // Ana kayıt şeması - Şifre eşleşme kontrolü ile
 export const registerSchema = baseSchema.refine(
   (data) => data.password === data.confirmPassword,
   {
     message: "Şifreler eşleşmiyor.",
     path: ["confirmPassword"],
-  }
+  },
 );
 
 // Öğrenci kayıt şeması
@@ -120,8 +124,6 @@ export const headOfDepartmentRegisterSchema = baseSchema
     message: "Şifreler eşleşmiyor.",
     path: ["confirmPassword"],
   });
-
-
 
 // Tüm kayıt tiplerini birleştir
 export type RegisterFormData = z.infer<typeof baseSchema> & {

@@ -17,7 +17,10 @@ export async function GET() {
     });
 
     if (!student) {
-      return NextResponse.json({ error: "Öğrenci profili bulunamadı" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Öğrenci profili bulunamadı" },
+        { status: 404 },
+      );
     }
 
     const applications = await prisma.jobApplication.findMany({
@@ -43,4 +46,3 @@ export async function GET() {
     return NextResponse.json({ error: "Bir hata oluştu" }, { status: 500 });
   }
 }
-

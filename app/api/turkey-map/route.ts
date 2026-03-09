@@ -8,7 +8,9 @@ export async function GET() {
     const content = await fs.readFile(filePath, "utf8");
 
     // Yalnızca SVG'yi ayıkla (id=svg-turkiye-haritasi)
-    const match = content.match(/<svg[^>]*id=["']svg-turkiye-haritasi["'][\s\S]*?<\/svg>/i);
+    const match = content.match(
+      /<svg[^>]*id=["']svg-turkiye-haritasi["'][\s\S]*?<\/svg>/i,
+    );
     if (!match) {
       return new NextResponse("SVG not found", { status: 404 });
     }
@@ -28,5 +30,3 @@ export async function GET() {
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }
-
-

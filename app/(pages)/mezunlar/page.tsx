@@ -35,10 +35,8 @@ const departments = [
   "İş Sağlığı ve Güvenliği Programı",
   "Lojistik Programı",
   "Yapay Zekâ Operatörlüğü Programı",
-  "Bilgisayar Teknolojileri",
-  "Yönetim ve Organizasyon",
-  "Mülkiyet Koruma ve Güvenlik",
-  "Elektronik ve Otomasyon",
+  "Bilgisayar Destekli Tasarım ve Animasyon Programı",
+  "İnsan Kaynakları Yönetimi Programı",
 ];
 
 const cities = [
@@ -75,7 +73,8 @@ export default function MezunlarPage() {
       try {
         const params = new URLSearchParams();
         if (search) params.append("search", search);
-        if (departmentFilter !== "Tümü") params.append("department", departmentFilter);
+        if (departmentFilter !== "Tümü")
+          params.append("department", departmentFilter);
         if (cityFilter !== "Tümü") params.append("city", cityFilter);
         if (yearFilter !== "Tümü") params.append("year", yearFilter);
 
@@ -94,12 +93,15 @@ export default function MezunlarPage() {
     return () => clearTimeout(timeoutId);
   }, [search, departmentFilter, cityFilter, yearFilter]);
 
-  const alumniCounts = alumni.reduce((acc, person) => {
-    if (person.city && person.city !== "Bilinmiyor") {
-      acc[person.city] = (acc[person.city] || 0) + 1;
-    }
-    return acc;
-  }, {} as Record<string, number>);
+  const alumniCounts = alumni.reduce(
+    (acc, person) => {
+      if (person.city && person.city !== "Bilinmiyor") {
+        acc[person.city] = (acc[person.city] || 0) + 1;
+      }
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted-bg/20">
@@ -111,13 +113,16 @@ export default function MezunlarPage() {
               Mezun Ağı
             </h1>
             <p className="text-lg text-muted">
-              AACOMYO mezunlarıyla bağlantı kur, mentorluk al, kariyer fırsatlarını keşfet.
-              Binlerce başarılı mezunumuzla tanış.
+              AACOMYO mezunlarıyla bağlantı kur, mentorluk al, kariyer
+              fırsatlarını keşfet. Binlerce başarılı mezunumuzla tanış.
             </p>
             <div className="flex items-center justify-center gap-4 mt-6">
               <div className="flex items-center gap-2 text-sm text-muted">
                 <Users className="w-5 h-5 text-primary" />
-                <span className="font-semibold text-foreground">{alumni.length}</span> Mezun
+                <span className="font-semibold text-foreground">
+                  {alumni.length}
+                </span>{" "}
+                Mezun
               </div>
             </div>
           </div>
@@ -147,7 +152,9 @@ export default function MezunlarPage() {
             >
               <Filter className="w-5 h-5" />
               Filtreler
-              <ChevronDown className={`w-4 h-4 transition-transform ${showFilters ? "rotate-180" : ""}`} />
+              <ChevronDown
+                className={`w-4 h-4 transition-transform ${showFilters ? "rotate-180" : ""}`}
+              />
             </button>
 
             {/* Desktop Filters */}
@@ -158,7 +165,9 @@ export default function MezunlarPage() {
                 className="px-4 py-3 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary outline-none min-w-[180px]"
               >
                 {departments.map((dept) => (
-                  <option key={dept} value={dept}>{dept}</option>
+                  <option key={dept} value={dept}>
+                    {dept}
+                  </option>
                 ))}
               </select>
 
@@ -168,7 +177,9 @@ export default function MezunlarPage() {
                 className="px-4 py-3 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary outline-none min-w-[140px]"
               >
                 {cities.map((city) => (
-                  <option key={city} value={city}>{city}</option>
+                  <option key={city} value={city}>
+                    {city}
+                  </option>
                 ))}
               </select>
 
@@ -178,7 +189,9 @@ export default function MezunlarPage() {
                 className="px-4 py-3 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary outline-none min-w-[120px]"
               >
                 {graduationYears.map((year) => (
-                  <option key={year} value={year}>{year === "Tümü" ? "Yıl" : year}</option>
+                  <option key={year} value={year}>
+                    {year === "Tümü" ? "Yıl" : year}
+                  </option>
                 ))}
               </select>
             </div>
@@ -193,7 +206,9 @@ export default function MezunlarPage() {
                 className="px-4 py-3 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary outline-none"
               >
                 {departments.map((dept) => (
-                  <option key={dept} value={dept}>{dept}</option>
+                  <option key={dept} value={dept}>
+                    {dept}
+                  </option>
                 ))}
               </select>
 
@@ -203,7 +218,9 @@ export default function MezunlarPage() {
                 className="px-4 py-3 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary outline-none"
               >
                 {cities.map((city) => (
-                  <option key={city} value={city}>{city}</option>
+                  <option key={city} value={city}>
+                    {city}
+                  </option>
                 ))}
               </select>
 
@@ -213,7 +230,9 @@ export default function MezunlarPage() {
                 className="px-4 py-3 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary outline-none"
               >
                 {graduationYears.map((year) => (
-                  <option key={year} value={year}>{year === "Tümü" ? "Mezuniyet Yılı" : year}</option>
+                  <option key={year} value={year}>
+                    {year === "Tümü" ? "Mezuniyet Yılı" : year}
+                  </option>
                 ))}
               </select>
             </div>
@@ -223,8 +242,13 @@ export default function MezunlarPage() {
         {/* Harita */}
         <div className="bg-card border border-border rounded-xl mb-8 overflow-hidden shadow-sm">
           <div className="px-6 pt-6 pb-2">
-            <h3 className="text-xl font-bold text-foreground">Mezun Dağılım Haritası</h3>
-            <p className="text-sm text-muted mt-1">İllere göre mezun yoğunluğunu inceleyin, şehrinizi seçerek filtreleyin.</p>
+            <h3 className="text-xl font-bold text-foreground">
+              Mezun Dağılım Haritası
+            </h3>
+            <p className="text-sm text-muted mt-1">
+              İllere göre mezun yoğunluğunu inceleyin, şehrinizi seçerek
+              filtreleyin.
+            </p>
           </div>
           <div className="p-4">
             <TurkeyMap
@@ -250,7 +274,8 @@ export default function MezunlarPage() {
             <Users className="w-16 h-16 mx-auto text-muted mb-4" />
             <h3 className="text-xl font-semibold mb-2">Mezun Bulunamadı</h3>
             <p className="text-muted">
-              Arama kriterlerinize uygun mezun bulunamadı. Filtreleri değiştirerek tekrar deneyin.
+              Arama kriterlerinize uygun mezun bulunamadı. Filtreleri
+              değiştirerek tekrar deneyin.
             </p>
           </div>
         ) : (
@@ -275,7 +300,11 @@ export default function MezunlarPage() {
                     ) : (
                       <div className="w-20 h-20 rounded-full border-4 border-card bg-primary/10 flex items-center justify-center">
                         <span className="text-2xl font-bold text-primary">
-                          {person.name.split(" ").map(n => n[0]).join("").slice(0, 2)}
+                          {person.name
+                            .split(" ")
+                            .map((n) => n[0])
+                            .join("")
+                            .slice(0, 2)}
                         </span>
                       </div>
                     )}
@@ -302,12 +331,15 @@ export default function MezunlarPage() {
                   )}
 
                   <div className="flex items-center justify-center gap-4 mt-4 text-xs text-muted">
-                    {person.department && person.department !== "Bilinmiyor" && (
-                      <div className="flex items-center gap-1">
-                        <GraduationCap className="w-3.5 h-3.5" />
-                        <span className="truncate max-w-[100px]">{person.department}</span>
-                      </div>
-                    )}
+                    {person.department &&
+                      person.department !== "Bilinmiyor" && (
+                        <div className="flex items-center gap-1">
+                          <GraduationCap className="w-3.5 h-3.5" />
+                          <span className="truncate max-w-[100px]">
+                            {person.department}
+                          </span>
+                        </div>
+                      )}
                     {person.graduationYear && (
                       <div className="flex items-center gap-1">
                         <span>'{String(person.graduationYear).slice(-2)}</span>
@@ -354,4 +386,3 @@ export default function MezunlarPage() {
     </div>
   );
 }
-

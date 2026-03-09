@@ -59,14 +59,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           !["ADMIN", "MODERATOR", "HEAD_OF_DEPARTMENT"].includes(user.role)
         ) {
           throw new CredentialsSignin(
-            "Hesabınız henüz onaylanmadı. Bölüm başkanının onayından sonra giriş yapabilirsiniz."
+            "Hesabınız henüz onaylanmadı. Bölüm başkanının onayından sonra giriş yapabilirsiniz.",
           );
         }
 
         // Reddedilen kullanıcılar giriş yapamaz
         if (user.approvalStatus === "REJECTED") {
           throw new CredentialsSignin(
-            "Üyelik başvurunuz reddedildi. Daha fazla bilgi için yöneticiyle iletişime geçin."
+            "Üyelik başvurunuz reddedildi. Daha fazla bilgi için yöneticiyle iletişime geçin.",
           );
         }
 

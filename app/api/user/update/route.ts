@@ -32,7 +32,7 @@ export async function PUT(req: Request) {
       if (existingUser) {
         return NextResponse.json(
           { error: "Bu e-posta adresi zaten kullanımda." },
-          { status: 400 }
+          { status: 400 },
         );
       }
     }
@@ -75,7 +75,7 @@ export async function PUT(req: Request) {
     console.error("Update error:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -104,7 +104,10 @@ export async function GET() {
     });
 
     if (!user) {
-      return NextResponse.json({ error: "Kullanıcı bulunamadı" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Kullanıcı bulunamadı" },
+        { status: 404 },
+      );
     }
 
     return NextResponse.json(user);
@@ -112,7 +115,7 @@ export async function GET() {
     console.error("Get profile error:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -5,14 +5,17 @@ import { NextResponse } from "next/server";
 // Etkinliğe katıl
 export async function POST(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
     const session = await auth();
 
     if (!session?.user) {
-      return NextResponse.json({ error: "Giriş yapmalısınız" }, { status: 401 });
+      return NextResponse.json(
+        { error: "Giriş yapmalısınız" },
+        { status: 401 },
+      );
     }
 
     const event = await prisma.event.findUnique({
@@ -25,13 +28,16 @@ export async function POST(
     });
 
     if (!event) {
-      return NextResponse.json({ error: "Etkinlik bulunamadı" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Etkinlik bulunamadı" },
+        { status: 404 },
+      );
     }
 
     if (event.status !== "UPCOMING") {
       return NextResponse.json(
         { error: "Bu etkinliğe artık katılım yapılamaz" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -39,7 +45,7 @@ export async function POST(
     if (event.capacity && event._count.participants >= event.capacity) {
       return NextResponse.json(
         { error: "Etkinlik kapasitesi doldu" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -56,7 +62,7 @@ export async function POST(
     if (existingParticipant) {
       return NextResponse.json(
         { error: "Bu etkinliğe zaten kayıtlısınız" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -71,21 +77,27 @@ export async function POST(
     return NextResponse.json(participant, { status: 201 });
   } catch (error) {
     console.error("Error joining event:", error);
-    return NextResponse.json({ error: "Katılım işlemi başarısız" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Katılım işlemi başarısız" },
+      { status: 500 },
+    );
   }
 }
 
 // Etkinlikten ayrıl
 export async function DELETE(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
     const session = await auth();
 
     if (!session?.user) {
-      return NextResponse.json({ error: "Giriş yapmalısınız" }, { status: 401 });
+      return NextResponse.json(
+        { error: "Giriş yapmalısınız" },
+        { status: 401 },
+      );
     }
 
     const participant = await prisma.eventParticipant.findUnique({
@@ -100,7 +112,7 @@ export async function DELETE(
     if (!participant) {
       return NextResponse.json(
         { error: "Bu etkinliğe kayıtlı değilsiniz" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -118,7 +130,7 @@ export async function DELETE(
 // Kullanıcının katılım durumunu kontrol et
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
@@ -146,4 +158,3 @@ export async function GET(
     return NextResponse.json({ error: "Bir hata oluştu" }, { status: 500 });
   }
 }
-

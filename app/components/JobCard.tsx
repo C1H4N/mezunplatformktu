@@ -34,10 +34,11 @@ export default function JobCard({
           <p className="text-sm text-muted font-medium">{publisherName}</p>
         </div>
         <span
-          className={`px-3 py-1 rounded-full text-xs font-medium border ${type === "JOB"
+          className={`px-3 py-1 rounded-full text-xs font-medium border ${
+            type === "JOB"
               ? "bg-blue-500/10 text-blue-500 border-blue-500/20"
               : "bg-purple-500/10 text-purple-500 border-purple-500/20"
-            }`}
+          }`}
         >
           {type === "JOB" ? "İş İlanı" : "Staj"}
         </span>
@@ -87,7 +88,10 @@ export default function JobCard({
       <div className="mt-auto pt-4 border-t border-border/50">
         <Link
           href={`/jobs/${id}`}
-          className={buttonVariants({ variant: "outline", className: "w-full" })}
+          className={buttonVariants({
+            variant: "outline",
+            className: "w-full",
+          })}
         >
           Detayları Gör
         </Link>

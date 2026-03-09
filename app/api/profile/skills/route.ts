@@ -4,7 +4,10 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 const skillSchema = z.object({
-  name: z.string().min(1, "Yetenek adı gerekli").max(50, "Yetenek adı en fazla 50 karakter olabilir"),
+  name: z
+    .string()
+    .min(1, "Yetenek adı gerekli")
+    .max(50, "Yetenek adı en fazla 50 karakter olabilir"),
 });
 
 // Yetenekleri getir
@@ -43,7 +46,7 @@ export async function POST(req: Request) {
     if (!validation.success) {
       return NextResponse.json(
         { error: validation.error.issues[0].message },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -62,7 +65,7 @@ export async function POST(req: Request) {
     if (existingSkill) {
       return NextResponse.json(
         { error: "Bu yetenek zaten eklenmiş" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -102,7 +105,10 @@ export async function DELETE(req: Request) {
     });
 
     if (!skill) {
-      return NextResponse.json({ error: "Yetenek bulunamadı" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Yetenek bulunamadı" },
+        { status: 404 },
+      );
     }
 
     await prisma.skill.delete({
@@ -115,4 +121,3 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ error: "Bir hata oluştu" }, { status: 500 });
   }
 }
-

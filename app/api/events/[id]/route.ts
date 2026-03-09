@@ -7,7 +7,7 @@ import { z } from "zod";
 // Tek etkinlik detayı
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
@@ -36,7 +36,10 @@ export async function GET(
     });
 
     if (!event) {
-      return NextResponse.json({ error: "Etkinlik bulunamadı" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Etkinlik bulunamadı" },
+        { status: 404 },
+      );
     }
 
     return NextResponse.json(event);
@@ -49,7 +52,7 @@ export async function GET(
 // Etkinlik güncelle (Organizör veya Admin)
 export async function PUT(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
@@ -64,17 +67,35 @@ export async function PUT(
     });
 
     if (!event) {
-      return NextResponse.json({ error: "Etkinlik bulunamadı" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Etkinlik bulunamadı" },
+        { status: 404 },
+      );
     }
 
     // Sadece organizör veya yetkili roller güncelleyebilir
-    const canManage = ["ADMIN", "MODERATOR", "HEAD_OF_DEPARTMENT"].includes(session.user.role || "");
+    const canManage = ["ADMIN", "MODERATOR", "HEAD_OF_DEPARTMENT"].includes(
+      session.user.role || "",
+    );
     if (event.organizerId !== session.user.id && !canManage) {
-      return NextResponse.json({ error: "Bu işlem için yetkiniz yok" }, { status: 403 });
+      return NextResponse.json(
+        { error: "Bu işlem için yetkiniz yok" },
+        { status: 403 },
+      );
     }
 
     const body = await request.json();
-    const { title, description, date, endDate, location, type, capacity, image, status } = body;
+    const {
+      title,
+      description,
+      date,
+      endDate,
+      location,
+      type,
+      capacity,
+      image,
+      status,
+    } = body;
 
     const updatedEvent = await prisma.event.update({
       where: { id },
@@ -107,14 +128,17 @@ export async function PUT(
     return NextResponse.json(updatedEvent);
   } catch (error) {
     console.error("Error updating event:", error);
-    return NextResponse.json({ error: "Etkinlik güncellenemedi" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Etkinlik güncellenemedi" },
+      { status: 500 },
+    );
   }
 }
 
 // Etkinlik sil (Organizör veya Admin)
 export async function DELETE(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
@@ -129,13 +153,21 @@ export async function DELETE(
     });
 
     if (!event) {
-      return NextResponse.json({ error: "Etkinlik bulunamadı" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Etkinlik bulunamadı" },
+        { status: 404 },
+      );
     }
 
     // Sadece organizör veya yetkili roller silebilir
-    const canManage = ["ADMIN", "MODERATOR", "HEAD_OF_DEPARTMENT"].includes(session.user.role || "");
+    const canManage = ["ADMIN", "MODERATOR", "HEAD_OF_DEPARTMENT"].includes(
+      session.user.role || "",
+    );
     if (event.organizerId !== session.user.id && !canManage) {
-      return NextResponse.json({ error: "Bu işlem için yetkiniz yok" }, { status: 403 });
+      return NextResponse.json(
+        { error: "Bu işlem için yetkiniz yok" },
+        { status: 403 },
+      );
     }
 
     await prisma.event.delete({
@@ -148,4 +180,3 @@ export async function DELETE(
     return NextResponse.json({ error: "Etkinlik silinemedi" }, { status: 500 });
   }
 }
-

@@ -79,7 +79,9 @@ export default function MessagesPage() {
     setSearchLoading(true);
     searchTimeout.current = setTimeout(async () => {
       try {
-        const res = await fetch(`/api/users/search?q=${encodeURIComponent(userSearch)}`);
+        const res = await fetch(
+          `/api/users/search?q=${encodeURIComponent(userSearch)}`,
+        );
         if (res.ok) {
           const data = await res.json();
           setSearchResults(data);
@@ -117,7 +119,8 @@ export default function MessagesPage() {
   };
 
   const filteredConversations = conversations.filter((conv) => {
-    const name = `${conv.partner.firstName} ${conv.partner.lastName}`.toLowerCase();
+    const name =
+      `${conv.partner.firstName} ${conv.partner.lastName}`.toLowerCase();
     return name.includes(search.toLowerCase());
   });
 
@@ -128,13 +131,19 @@ export default function MessagesPage() {
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
 
     if (days === 0) {
-      return date.toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" });
+      return date.toLocaleTimeString("tr-TR", {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
     } else if (days === 1) {
       return "Dün";
     } else if (days < 7) {
       return date.toLocaleDateString("tr-TR", { weekday: "short" });
     } else {
-      return date.toLocaleDateString("tr-TR", { day: "numeric", month: "short" });
+      return date.toLocaleDateString("tr-TR", {
+        day: "numeric",
+        month: "short",
+      });
     }
   };
 
@@ -256,7 +265,9 @@ export default function MessagesPage() {
             <div className="flex items-center justify-between p-5 border-b border-border">
               <div>
                 <h2 className="text-lg font-bold">Yeni Mesaj</h2>
-                <p className="text-sm text-muted">Kişi arayarak sohbet başlatın</p>
+                <p className="text-sm text-muted">
+                  Kişi arayarak sohbet başlatın
+                </p>
               </div>
               <button
                 onClick={() => {
@@ -324,7 +335,8 @@ export default function MessagesPage() {
                       ) : (
                         <div className="w-11 h-11 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                           <span className="text-primary font-bold text-sm">
-                            {user.firstName[0]}{user.lastName[0]}
+                            {user.firstName[0]}
+                            {user.lastName[0]}
                           </span>
                         </div>
                       )}
@@ -332,7 +344,9 @@ export default function MessagesPage() {
                         <p className="font-semibold text-sm truncate">
                           {user.firstName} {user.lastName}
                         </p>
-                        <p className="text-xs text-muted truncate">{user.email}</p>
+                        <p className="text-xs text-muted truncate">
+                          {user.email}
+                        </p>
                       </div>
                       <span className="text-xs px-2 py-1 rounded-full bg-muted-bg text-muted font-medium flex-shrink-0">
                         {roleLabels[user.role] || user.role}

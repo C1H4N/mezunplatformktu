@@ -81,7 +81,8 @@ export default function ChatPage() {
 
   const scrollToBottom = () => {
     if (messagesContainerRef.current) {
-      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+      messagesContainerRef.current.scrollTop =
+        messagesContainerRef.current.scrollHeight;
     }
   };
 
@@ -108,7 +109,8 @@ export default function ChatPage() {
       setNewMessage("");
       fetchMessages(); // Refresh messages
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : "Bir hata oluştu";
+      const message =
+        error instanceof Error ? error.message : "Bir hata oluştu";
       toast.error(message);
     } finally {
       setSending(false);
@@ -194,7 +196,10 @@ export default function ChatPage() {
       </div>
 
       {/* Messages */}
-      <div ref={messagesContainerRef} className="flex-1 overflow-y-auto px-4 py-6 scroll-smooth">
+      <div
+        ref={messagesContainerRef}
+        className="flex-1 overflow-y-auto px-4 py-6 scroll-smooth"
+      >
         <div className="max-w-4xl mx-auto space-y-6">
           {groupedMessages.map((group) => (
             <div key={group.date}>
@@ -215,15 +220,19 @@ export default function ChatPage() {
                     className={`flex ${msg.isFromMe ? "justify-end" : "justify-start"}`}
                   >
                     <div
-                      className={`max-w-[75%] md:max-w-[60%] px-4 py-2.5 rounded-2xl ${msg.isFromMe
-                        ? "bg-primary text-white rounded-br-md"
-                        : "bg-card border border-border rounded-bl-md"
-                        }`}
+                      className={`max-w-[75%] md:max-w-[60%] px-4 py-2.5 rounded-2xl ${
+                        msg.isFromMe
+                          ? "bg-primary text-white rounded-br-md"
+                          : "bg-card border border-border rounded-bl-md"
+                      }`}
                     >
-                      <p className="whitespace-pre-wrap break-words">{msg.content}</p>
+                      <p className="whitespace-pre-wrap break-words">
+                        {msg.content}
+                      </p>
                       <p
-                        className={`text-xs mt-1 ${msg.isFromMe ? "text-white/70" : "text-muted"
-                          }`}
+                        className={`text-xs mt-1 ${
+                          msg.isFromMe ? "text-white/70" : "text-muted"
+                        }`}
                       >
                         {formatTime(msg.timestamp)}
                       </p>
@@ -265,4 +274,3 @@ export default function ChatPage() {
     </div>
   );
 }
-

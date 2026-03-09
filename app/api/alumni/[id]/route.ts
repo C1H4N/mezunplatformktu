@@ -3,7 +3,7 @@ import { prisma } from "@/lib/db";
 
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
@@ -20,10 +20,7 @@ export async function GET(
     });
 
     if (!user || user.role !== "ALUMNI") {
-      return NextResponse.json(
-        { error: "Mezun bulunamadı" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Mezun bulunamadı" }, { status: 404 });
     }
 
     // Transform to frontend format
@@ -70,10 +67,6 @@ export async function GET(
     return NextResponse.json(alumniProfile);
   } catch (error) {
     console.error("Error fetching alumni:", error);
-    return NextResponse.json(
-      { error: "Bir hata oluştu" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Bir hata oluştu" }, { status: 500 });
   }
 }
-

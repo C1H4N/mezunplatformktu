@@ -20,7 +20,7 @@ export async function POST(req: Request) {
     const buffer = Buffer.from(await file.arrayBuffer());
     const filename = Date.now() + "_" + file.name.replaceAll(" ", "_");
     const uploadDir = path.join(process.cwd(), "public/uploads");
-    
+
     try {
       await writeFile(path.join(uploadDir, filename), buffer);
     } catch (error) {
@@ -28,12 +28,15 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Error saving file" }, { status: 500 });
     }
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       url: `/uploads/${filename}`,
-      success: true 
+      success: true,
     });
   } catch (error) {
     console.error("Upload error:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 },
+    );
   }
 }

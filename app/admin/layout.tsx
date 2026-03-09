@@ -9,16 +9,19 @@ export default async function AdminLayout({
 }) {
   const session = await auth();
 
-  if (!session?.user || !["ADMIN", "MODERATOR", "HEAD_OF_DEPARTMENT"].includes(session.user.role || "")) {
+  if (
+    !session?.user ||
+    !["ADMIN", "MODERATOR", "HEAD_OF_DEPARTMENT"].includes(
+      session.user.role || "",
+    )
+  ) {
     redirect("/");
   }
 
   return (
     <div className="min-h-screen bg-slate-50 flex">
       <AdminSidebar />
-      <main className="flex-1 overflow-auto min-w-0">
-        {children}
-      </main>
+      <main className="flex-1 overflow-auto min-w-0">{children}</main>
     </div>
   );
 }

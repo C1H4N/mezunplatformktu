@@ -8,12 +8,21 @@ export async function GET() {
     const session = await auth();
 
     // Yetki kontrolü
-    if (!session?.user || !["ADMIN", "MODERATOR", "HEAD_OF_DEPARTMENT"].includes(session.user.role || "")) {
+    if (
+      !session?.user ||
+      !["ADMIN", "MODERATOR", "HEAD_OF_DEPARTMENT"].includes(
+        session.user.role || "",
+      )
+    ) {
       return NextResponse.json({ error: "Yetkisiz erişim" }, { status: 403 });
     }
 
     const now = new Date();
-    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const todayStart = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate(),
+    );
     const weekStart = new Date(todayStart);
     weekStart.setDate(weekStart.getDate() - 7);
 
@@ -59,4 +68,3 @@ export async function GET() {
     return NextResponse.json({ error: "Bir hata oluştu" }, { status: 500 });
   }
 }
-

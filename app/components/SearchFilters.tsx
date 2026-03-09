@@ -60,7 +60,12 @@ export default function SearchFilters({ onFilterChange }: SearchFiltersProps) {
               stroke="currentColor"
               viewBox="0 0 24 24"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
             </svg>
           </div>
           <input
@@ -85,23 +90,44 @@ export default function SearchFilters({ onFilterChange }: SearchFiltersProps) {
                 {activeFilterCount}
               </span>
             )}
-            <svg className={`w-4 h-4 transition-transform ${showFilters ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            <svg
+              className={`w-4 h-4 transition-transform ${showFilters ? "rotate-180" : ""}`}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 9l-7 7-7-7"
+              />
             </svg>
           </button>
 
           {activeFilterCount > 0 && (
-            <button type="button" onClick={clearFilters} className="text-xs text-rose-500 hover:text-rose-600 font-bold transition-colors">
+            <button
+              type="button"
+              onClick={clearFilters}
+              className="text-xs text-rose-500 hover:text-rose-600 font-bold transition-colors"
+            >
               Temizle
             </button>
           )}
         </div>
 
         {/* Filtre Seçenekleri */}
-        <div className={`w-full lg:w-auto grid grid-cols-1 sm:grid-cols-3 gap-3 ${showFilters ? "grid" : "hidden lg:grid"}`}>
+        <div
+          className={`w-full lg:w-auto grid grid-cols-1 sm:grid-cols-3 gap-3 ${showFilters ? "grid" : "hidden lg:grid"}`}
+        >
           {/* Şehir */}
           <div className="relative">
-            <label htmlFor="city" className="absolute -top-2 left-3 bg-[#ffffff] px-1 text-[10px] font-bold text-muted uppercase tracking-wider z-10">Şehir</label>
+            <label
+              htmlFor="city"
+              className="absolute -top-2 left-3 bg-[#ffffff] px-1 text-[10px] font-bold text-muted uppercase tracking-wider z-10"
+            >
+              Şehir
+            </label>
             <select
               id="city"
               value={filters.city}
@@ -110,14 +136,21 @@ export default function SearchFilters({ onFilterChange }: SearchFiltersProps) {
             >
               <option value="Seçin">Seçin</option>
               {cities.map((city) => (
-                <option key={city} value={city}>{city}</option>
+                <option key={city} value={city}>
+                  {city}
+                </option>
               ))}
             </select>
           </div>
 
           {/* Bölüm */}
           <div className="relative">
-            <label htmlFor="department" className="absolute -top-2 left-3 bg-[#ffffff] px-1 text-[10px] font-bold text-muted uppercase tracking-wider z-10">Bölüm</label>
+            <label
+              htmlFor="department"
+              className="absolute -top-2 left-3 bg-[#ffffff] px-1 text-[10px] font-bold text-muted uppercase tracking-wider z-10"
+            >
+              Bölüm
+            </label>
             <select
               id="department"
               value={filters.department}
@@ -128,7 +161,9 @@ export default function SearchFilters({ onFilterChange }: SearchFiltersProps) {
               {Object.entries(departmentGroups).map(([faculty, depts]) => (
                 <optgroup key={faculty} label={faculty}>
                   {depts.map((dept) => (
-                    <option key={dept} value={dept}>{dept}</option>
+                    <option key={dept} value={dept}>
+                      {dept}
+                    </option>
                   ))}
                 </optgroup>
               ))}
@@ -137,7 +172,12 @@ export default function SearchFilters({ onFilterChange }: SearchFiltersProps) {
 
           {/* İş Alanı */}
           <div className="relative">
-            <label htmlFor="jobField" className="absolute -top-2 left-3 bg-[#ffffff] px-1 text-[10px] font-bold text-muted uppercase tracking-wider z-10">İş Alanı</label>
+            <label
+              htmlFor="jobField"
+              className="absolute -top-2 left-3 bg-[#ffffff] px-1 text-[10px] font-bold text-muted uppercase tracking-wider z-10"
+            >
+              İş Alanı
+            </label>
             <select
               id="jobField"
               value={filters.jobField}
@@ -146,7 +186,9 @@ export default function SearchFilters({ onFilterChange }: SearchFiltersProps) {
             >
               <option value="Seçin">Seçin</option>
               {jobFields.map((field) => (
-                <option key={field} value={field}>{field}</option>
+                <option key={field} value={field}>
+                  {field}
+                </option>
               ))}
             </select>
           </div>
@@ -160,11 +202,22 @@ export default function SearchFilters({ onFilterChange }: SearchFiltersProps) {
             className="hidden lg:flex items-center justify-center p-3 bg-rose-50 hover:bg-rose-100 text-rose-500 rounded-2xl transition-colors shadow-sm shrink-0"
             title="Sıfırla"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2.5}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
           </button>
         )}
       </div>
     </div>
   );
 }
-

@@ -6,11 +6,22 @@ import { z } from "zod";
 
 const eventSchema = z.object({
   title: z.string().min(3, "Başlık en az 3 karakter olmalı").max(200),
-  description: z.string().min(10, "Açıklama en az 10 karakter olmalı").max(5000),
+  description: z
+    .string()
+    .min(10, "Açıklama en az 10 karakter olmalı")
+    .max(5000),
   date: z.string(),
   endDate: z.string().optional(),
   location: z.string().min(3, "Konum en az 3 karakter olmalı"),
-  type: z.enum(["CAREER_FAIR", "NETWORKING", "WORKSHOP", "SEMINAR", "CONFERENCE", "MEETUP", "OTHER"]),
+  type: z.enum([
+    "CAREER_FAIR",
+    "NETWORKING",
+    "WORKSHOP",
+    "SEMINAR",
+    "CONFERENCE",
+    "MEETUP",
+    "OTHER",
+  ]),
   capacity: z.number().min(1).optional(),
   image: z.string().optional(),
 });
@@ -27,7 +38,7 @@ export async function GET(req: Request) {
 
     if (type) where.type = type;
     if (status) where.status = status;
-    
+
     if (search) {
       where.OR = [
         { title: { contains: search, mode: "insensitive" } },
@@ -58,7 +69,10 @@ export async function GET(req: Request) {
     return NextResponse.json({ events });
   } catch (error) {
     console.error("Error fetching events:", error);
-    return NextResponse.json({ error: "Etkinlikler getirilemedi" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Etkinlikler getirilemedi" },
+      { status: 500 },
+    );
   }
 }
 
@@ -72,11 +86,15 @@ export async function POST(req: Request) {
     }
 
     // Sadece Admin, Moderator veya Alumni etkinlik oluşturabilir
-    const allowedRoles: UserRole[] = [UserRole.ADMIN, UserRole.MODERATOR, UserRole.ALUMNI];
+    const allowedRoles: UserRole[] = [
+      UserRole.ADMIN,
+      UserRole.MODERATOR,
+      UserRole.ALUMNI,
+    ];
     if (!allowedRoles.includes(session.user.role as UserRole)) {
       return NextResponse.json(
         { error: "Etkinlik oluşturma yetkiniz yok" },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -86,11 +104,20 @@ export async function POST(req: Request) {
     if (!validation.success) {
       return NextResponse.json(
         { error: validation.error.issues[0].message },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-    const { title, description, date, endDate, location, type, capacity, image } = validation.data;
+    const {
+      title,
+      description,
+      date,
+      endDate,
+      location,
+      type,
+      capacity,
+      image,
+    } = validation.data;
 
     const event = await prisma.event.create({
       data: {
@@ -120,7 +147,9 @@ export async function POST(req: Request) {
     return NextResponse.json(event, { status: 201 });
   } catch (error) {
     console.error("Error creating event:", error);
-    return NextResponse.json({ error: "Etkinlik oluşturulamadı" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Etkinlik oluşturulamadı" },
+      { status: 500 },
+    );
   }
 }
-

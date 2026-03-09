@@ -6,7 +6,7 @@ import { NextResponse } from "next/server";
 // Kullanıcının bu ilana başvurup başvurmadığını kontrol et
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
@@ -37,4 +37,3 @@ export async function GET(
     return NextResponse.json({ error: "Bir hata oluştu" }, { status: 500 });
   }
 }
-

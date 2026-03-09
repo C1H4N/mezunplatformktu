@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     "KTÜ",
     "Trabzon",
     "Araklı",
-    "Meslek Yüksekokulu"
+    "Meslek Yüksekokulu",
   ],
 };
 
@@ -46,9 +46,7 @@ export default async function RootLayout({
         className={`${fontSans.variable} font-sans antialiased flex flex-col min-h-screen text-slate-800`}
       >
         <SessionProvider session={session}>
-          <ConditionalLayout>
-            {children}
-          </ConditionalLayout>
+          <ConditionalLayout>{children}</ConditionalLayout>
           <Toaster
             position="bottom-right"
             toastOptions={{

@@ -8,7 +8,10 @@ export async function GET(req: Request) {
     const session = await auth();
 
     if (!session?.user) {
-      return NextResponse.json({ error: "Giriş yapmalısınız" }, { status: 401 });
+      return NextResponse.json(
+        { error: "Giriş yapmalısınız" },
+        { status: 401 },
+      );
     }
 
     const { searchParams } = new URL(req.url);
@@ -53,7 +56,10 @@ export async function PUT(req: Request) {
     const session = await auth();
 
     if (!session?.user) {
-      return NextResponse.json({ error: "Giriş yapmalısınız" }, { status: 401 });
+      return NextResponse.json(
+        { error: "Giriş yapmalısınız" },
+        { status: 401 },
+      );
     }
 
     const body = await req.json();
@@ -69,11 +75,16 @@ export async function PUT(req: Request) {
         data: { isRead: true },
       });
 
-      return NextResponse.json({ message: "Tüm bildirimler okundu işaretlendi" });
+      return NextResponse.json({
+        message: "Tüm bildirimler okundu işaretlendi",
+      });
     }
 
     if (!notificationId) {
-      return NextResponse.json({ error: "Bildirim ID gerekli" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Bildirim ID gerekli" },
+        { status: 400 },
+      );
     }
 
     // Tek bildirimi okundu yap
@@ -86,7 +97,10 @@ export async function PUT(req: Request) {
     });
 
     if (notification.count === 0) {
-      return NextResponse.json({ error: "Bildirim bulunamadı" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Bildirim bulunamadı" },
+        { status: 404 },
+      );
     }
 
     return NextResponse.json({ message: "Bildirim okundu işaretlendi" });
@@ -102,14 +116,20 @@ export async function DELETE(req: Request) {
     const session = await auth();
 
     if (!session?.user) {
-      return NextResponse.json({ error: "Giriş yapmalısınız" }, { status: 401 });
+      return NextResponse.json(
+        { error: "Giriş yapmalısınız" },
+        { status: 401 },
+      );
     }
 
     const { searchParams } = new URL(req.url);
     const notificationId = searchParams.get("id");
 
     if (!notificationId) {
-      return NextResponse.json({ error: "Bildirim ID gerekli" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Bildirim ID gerekli" },
+        { status: 400 },
+      );
     }
 
     const result = await prisma.notification.deleteMany({
@@ -120,7 +140,10 @@ export async function DELETE(req: Request) {
     });
 
     if (result.count === 0) {
-      return NextResponse.json({ error: "Bildirim bulunamadı" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Bildirim bulunamadı" },
+        { status: 404 },
+      );
     }
 
     return NextResponse.json({ message: "Bildirim silindi" });
@@ -129,4 +152,3 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ error: "Bir hata oluştu" }, { status: 500 });
   }
 }
-

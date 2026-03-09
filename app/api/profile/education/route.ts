@@ -18,7 +18,7 @@ export async function GET(req: Request) {
   } catch (error) {
     return NextResponse.json(
       { error: "Error fetching educations" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -31,7 +31,15 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { school, degree, fieldOfStudy, startDate, endDate, current, description } = body;
+    const {
+      school,
+      degree,
+      fieldOfStudy,
+      startDate,
+      endDate,
+      current,
+      description,
+    } = body;
 
     const education = await prisma.education.create({
       data: {
@@ -51,7 +59,7 @@ export async function POST(req: Request) {
     console.error(error);
     return NextResponse.json(
       { error: "Error creating education" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -64,7 +72,16 @@ export async function PUT(req: Request) {
     }
 
     const body = await req.json();
-    const { id, school, degree, fieldOfStudy, startDate, endDate, current, description } = body;
+    const {
+      id,
+      school,
+      degree,
+      fieldOfStudy,
+      startDate,
+      endDate,
+      current,
+      description,
+    } = body;
 
     // Verify ownership
     const existing = await prisma.education.findUnique({
@@ -92,7 +109,7 @@ export async function PUT(req: Request) {
   } catch (error) {
     return NextResponse.json(
       { error: "Error updating education" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -128,7 +145,7 @@ export async function DELETE(req: Request) {
   } catch (error) {
     return NextResponse.json(
       { error: "Error deleting education" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -41,9 +41,12 @@ enum EmploymentStatus {
   SELF_EMPLOYED        // Serbest / Girişimci
 }
 
+// İlan türleri
 enum JobType {
-  JOB
-  INTERNSHIP
+  JOB           // İş ilanı (mezun paylaşır)
+  INTERNSHIP    // Staj ilanı (mezun/şirket)
+  INTERNSHIP_REQUEST // Staj talebi (öğrenci arar)
+  JOB_SEARCH    // İş arayışı (mezun/öğrenci)
 }
 
 enum ApplicationStatus {
@@ -284,16 +287,24 @@ model Moderator {
 model JobAdvertisement {
   id          String    @id @default(cuid())
   title       String
-  description String
-  location    String
+  description String    // Kısa açıklama / özet
+  content     String?   @db.Text // Detaylı içerik (markdown/zengin metin)
+  location    String    @default("")
   type        JobType
   status      JobStatus @default(OPEN)
+  externalLink String?  // Harici bağlantı (şirket sayfası, başvuru linki vb.)
+  tags        String[]  // Etiketler (ör: ["Python", "Uzaktan"])
   publisherId String
-  publisher   User  @relation(fields: [publisherId], references: [id])
+  publisher   User      @relation(fields: [publisherId], references: [id])
 
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   applications JobApplication[]
+
+  @@index([type, status])
+  @@index([publisherId])
+  @@index([createdAt])
 }
 
 model JobApplication {

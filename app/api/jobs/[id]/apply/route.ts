@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 
 export async function POST(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
@@ -14,7 +14,7 @@ export async function POST(
     if (!session || !session.user || session.user.role !== UserRole.STUDENT) {
       return NextResponse.json(
         { error: "Sadece öğrenciler başvuru yapabilir." },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -33,16 +33,13 @@ export async function POST(
     });
 
     if (!job) {
-      return NextResponse.json(
-        { error: "İlan bulunamadı." },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "İlan bulunamadı." }, { status: 404 });
     }
 
     if (job.status !== "OPEN") {
       return NextResponse.json(
         { error: "Bu ilan artık başvuruya kapalı." },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -54,7 +51,7 @@ export async function POST(
     if (!student) {
       return NextResponse.json(
         { error: "Öğrenci profili bulunamadı." },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -69,7 +66,7 @@ export async function POST(
     if (existingApplication) {
       return NextResponse.json(
         { error: "Bu ilana zaten başvurdunuz." },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -87,7 +84,7 @@ export async function POST(
     console.error("Error applying to job:", error);
     return NextResponse.json(
       { error: "Başvuru yapılırken bir hata oluştu." },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

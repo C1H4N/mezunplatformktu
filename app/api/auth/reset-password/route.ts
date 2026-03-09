@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { verifyPasswordResetToken, consumePasswordResetToken } from "@/lib/tokens";
+import {
+  verifyPasswordResetToken,
+  consumePasswordResetToken,
+} from "@/lib/tokens";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 
@@ -23,7 +26,7 @@ export async function GET(req: Request) {
     if (!token) {
       return NextResponse.json(
         { valid: false, message: "Token eksik." },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -32,7 +35,7 @@ export async function GET(req: Request) {
     if (!result.success) {
       return NextResponse.json(
         { valid: false, message: result.error },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -44,7 +47,7 @@ export async function GET(req: Request) {
     console.error("Token doğrulama hatası:", error);
     return NextResponse.json(
       { valid: false, message: "Bir hata oluştu." },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -56,11 +59,8 @@ export async function POST(req: Request) {
     const validation = schema.safeParse(body);
 
     if (!validation.success) {
-      const errors = validation.error.issues.map(e => e.message);
-      return NextResponse.json(
-        { message: errors[0] },
-        { status: 400 }
-      );
+      const errors = validation.error.issues.map((e) => e.message);
+      return NextResponse.json({ message: errors[0] }, { status: 400 });
     }
 
     const { token, password } = validation.data;
@@ -69,10 +69,7 @@ export async function POST(req: Request) {
     const result = await verifyPasswordResetToken(token);
 
     if (!result.success) {
-      return NextResponse.json(
-        { message: result.error },
-        { status: 400 }
-      );
+      return NextResponse.json({ message: result.error }, { status: 400 });
     }
 
     // Kullanıcıyı bul
@@ -83,7 +80,7 @@ export async function POST(req: Request) {
     if (!user) {
       return NextResponse.json(
         { message: "Kullanıcı bulunamadı." },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -105,8 +102,7 @@ export async function POST(req: Request) {
     console.error("Şifre sıfırlama hatası:", error);
     return NextResponse.json(
       { message: "Bir hata oluştu. Lütfen tekrar deneyin." },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
-

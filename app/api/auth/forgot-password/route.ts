@@ -16,7 +16,7 @@ export async function POST(req: Request) {
     if (!validation.success) {
       return NextResponse.json(
         { message: "Geçerli bir e-posta adresi giriniz." },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -30,7 +30,8 @@ export async function POST(req: Request) {
     // Güvenlik: Kullanıcı olmasa bile aynı mesajı göster
     if (!user) {
       return NextResponse.json({
-        message: "Eğer bu e-posta adresi sistemde kayıtlıysa, şifre sıfırlama bağlantısı gönderildi.",
+        message:
+          "Eğer bu e-posta adresi sistemde kayıtlıysa, şifre sıfırlama bağlantısı gönderildi.",
       });
     }
 
@@ -43,20 +44,23 @@ export async function POST(req: Request) {
     if (!emailResult.success) {
       console.error("Email gönderim hatası:", emailResult.error);
       return NextResponse.json(
-        { message: "E-posta gönderilirken bir hata oluştu. Lütfen tekrar deneyin." },
-        { status: 500 }
+        {
+          message:
+            "E-posta gönderilirken bir hata oluştu. Lütfen tekrar deneyin.",
+        },
+        { status: 500 },
       );
     }
 
     return NextResponse.json({
-      message: "Eğer bu e-posta adresi sistemde kayıtlıysa, şifre sıfırlama bağlantısı gönderildi.",
+      message:
+        "Eğer bu e-posta adresi sistemde kayıtlıysa, şifre sıfırlama bağlantısı gönderildi.",
     });
   } catch (error) {
     console.error("Şifre sıfırlama talebi hatası:", error);
     return NextResponse.json(
       { message: "Bir hata oluştu. Lütfen tekrar deneyin." },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
-

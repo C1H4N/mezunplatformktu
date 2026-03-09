@@ -43,14 +43,45 @@ interface Event {
   };
 }
 
-const eventTypeConfig: Record<string, { label: string; icon: React.ReactNode; color: string }> = {
-  CAREER_FAIR: { label: "Kariyer Fuarı", icon: <Briefcase className="w-4 h-4" />, color: "bg-blue-500/10 text-blue-600 border-blue-500/20" },
-  NETWORKING: { label: "Networking", icon: <Users2 className="w-4 h-4" />, color: "bg-purple-500/10 text-purple-600 border-purple-500/20" },
-  WORKSHOP: { label: "Atölye", icon: <Wrench className="w-4 h-4" />, color: "bg-orange-500/10 text-orange-600 border-orange-500/20" },
-  SEMINAR: { label: "Seminer", icon: <GraduationCap className="w-4 h-4" />, color: "bg-green-500/10 text-green-600 border-green-500/20" },
-  CONFERENCE: { label: "Konferans", icon: <Presentation className="w-4 h-4" />, color: "bg-red-500/10 text-red-600 border-red-500/20" },
-  MEETUP: { label: "Buluşma", icon: <Coffee className="w-4 h-4" />, color: "bg-yellow-500/10 text-yellow-600 border-yellow-500/20" },
-  OTHER: { label: "Diğer", icon: <MoreHorizontal className="w-4 h-4" />, color: "bg-gray-500/10 text-gray-600 border-gray-500/20" },
+const eventTypeConfig: Record<
+  string,
+  { label: string; icon: React.ReactNode; color: string }
+> = {
+  CAREER_FAIR: {
+    label: "Kariyer Fuarı",
+    icon: <Briefcase className="w-4 h-4" />,
+    color: "bg-blue-500/10 text-blue-600 border-blue-500/20",
+  },
+  NETWORKING: {
+    label: "Networking",
+    icon: <Users2 className="w-4 h-4" />,
+    color: "bg-purple-500/10 text-purple-600 border-purple-500/20",
+  },
+  WORKSHOP: {
+    label: "Atölye",
+    icon: <Wrench className="w-4 h-4" />,
+    color: "bg-orange-500/10 text-orange-600 border-orange-500/20",
+  },
+  SEMINAR: {
+    label: "Seminer",
+    icon: <GraduationCap className="w-4 h-4" />,
+    color: "bg-green-500/10 text-green-600 border-green-500/20",
+  },
+  CONFERENCE: {
+    label: "Konferans",
+    icon: <Presentation className="w-4 h-4" />,
+    color: "bg-red-500/10 text-red-600 border-red-500/20",
+  },
+  MEETUP: {
+    label: "Buluşma",
+    icon: <Coffee className="w-4 h-4" />,
+    color: "bg-yellow-500/10 text-yellow-600 border-yellow-500/20",
+  },
+  OTHER: {
+    label: "Diğer",
+    icon: <MoreHorizontal className="w-4 h-4" />,
+    color: "bg-gray-500/10 text-gray-600 border-gray-500/20",
+  },
 };
 
 const statusConfig: Record<string, { label: string; color: string }> = {
@@ -116,16 +147,18 @@ export default function EventsPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
-              <h1 className="text-4xl font-bold text-foreground mb-2">Etkinlikler</h1>
+              <h1 className="text-4xl font-bold text-foreground mb-2">
+                Etkinlikler
+              </h1>
               <p className="text-muted max-w-2xl">
-                Kariyer fuarları, networking etkinlikleri, workshoplar ve daha fazlası.
-                Mezunlar ve öğrencilerle bir araya gelin.
+                Kariyer fuarları, networking etkinlikleri, workshoplar ve daha
+                fazlası. Mezunlar ve öğrencilerle bir araya gelin.
               </p>
             </div>
             {canCreateEvent && (
               <Link
                 href="/events/new"
-                style={{ color: '#ffffff' }}
+                style={{ color: "#ffffff" }}
                 className={buttonVariants({ variant: "default", size: "lg" })}
               >
                 <Plus className="w-5 h-5 mr-2" />
@@ -158,7 +191,9 @@ export default function EventsPage() {
             >
               <option value="ALL">Tüm Türler</option>
               {Object.entries(eventTypeConfig).map(([key, { label }]) => (
-                <option key={key} value={key}>{label}</option>
+                <option key={key} value={key}>
+                  {label}
+                </option>
               ))}
             </select>
 
@@ -169,7 +204,9 @@ export default function EventsPage() {
             >
               <option value="ALL">Tüm Durumlar</option>
               {Object.entries(statusConfig).map(([key, { label }]) => (
-                <option key={key} value={key}>{label}</option>
+                <option key={key} value={key}>
+                  {label}
+                </option>
               ))}
             </select>
           </div>
@@ -184,14 +221,19 @@ export default function EventsPage() {
           <div className="bg-card border border-border rounded-xl p-12 text-center">
             <Calendar className="w-16 h-16 mx-auto text-muted mb-4" />
             <h3 className="text-lg font-semibold mb-2">Etkinlik bulunamadı</h3>
-            <p className="text-muted">Arama kriterlerinize uygun etkinlik yok.</p>
+            <p className="text-muted">
+              Arama kriterlerinize uygun etkinlik yok.
+            </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {events.map((event) => {
-              const typeInfo = eventTypeConfig[event.type] || eventTypeConfig.OTHER;
-              const statusInfo = statusConfig[event.status] || statusConfig.UPCOMING;
-              const isFull = event.capacity && event._count.participants >= event.capacity;
+              const typeInfo =
+                eventTypeConfig[event.type] || eventTypeConfig.OTHER;
+              const statusInfo =
+                statusConfig[event.status] || statusConfig.UPCOMING;
+              const isFull =
+                event.capacity && event._count.participants >= event.capacity;
 
               return (
                 <Link
@@ -215,13 +257,17 @@ export default function EventsPage() {
                     )}
                     {/* Status Badge */}
                     <div className="absolute top-3 left-3">
-                      <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${statusInfo.color}`}>
+                      <span
+                        className={`px-2.5 py-1 rounded-full text-xs font-medium ${statusInfo.color}`}
+                      >
                         {statusInfo.label}
                       </span>
                     </div>
                     {/* Type Badge */}
                     <div className="absolute top-3 right-3">
-                      <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium border ${typeInfo.color}`}>
+                      <span
+                        className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium border ${typeInfo.color}`}
+                      >
                         {typeInfo.icon}
                         {typeInfo.label}
                       </span>
@@ -251,7 +297,9 @@ export default function EventsPage() {
                         <span>
                           {event._count.participants} katılımcı
                           {event.capacity && ` / ${event.capacity}`}
-                          {isFull && <span className="text-red-500 ml-1">(Dolu)</span>}
+                          {isFull && (
+                            <span className="text-red-500 ml-1">(Dolu)</span>
+                          )}
                         </span>
                       </div>
                     </div>
@@ -285,4 +333,3 @@ export default function EventsPage() {
     </div>
   );
 }
-

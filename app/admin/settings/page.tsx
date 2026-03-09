@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { 
-  Settings, 
+import {
+  Settings,
   Bell,
   Mail,
   Shield,
@@ -80,7 +80,8 @@ export default function AdminSettingsPage() {
         {
           key: "requireEmailVerification",
           label: "E-posta Doğrulama Zorunlu",
-          description: "Yeni kullanıcıların e-postalarını doğrulaması zorunlu olsun",
+          description:
+            "Yeni kullanıcıların e-postalarını doğrulaması zorunlu olsun",
           type: "toggle",
           value: true,
         },
@@ -134,26 +135,30 @@ export default function AdminSettingsPage() {
               settings: section.settings.map((setting) =>
                 setting.key === settingKey
                   ? { ...setting, value: !setting.value }
-                  : setting
+                  : setting,
               ),
             }
-          : section
-      )
+          : section,
+      ),
     );
   };
 
-  const handleChange = (sectionId: string, settingKey: string, value: string) => {
+  const handleChange = (
+    sectionId: string,
+    settingKey: string,
+    value: string,
+  ) => {
     setSections((prev) =>
       prev.map((section) =>
         section.id === sectionId
           ? {
               ...section,
               settings: section.settings.map((setting) =>
-                setting.key === settingKey ? { ...setting, value } : setting
+                setting.key === settingKey ? { ...setting, value } : setting,
               ),
             }
-          : section
-      )
+          : section,
+      ),
     );
   };
 
@@ -203,7 +208,9 @@ export default function AdminSettingsPage() {
                   >
                     <div>
                       <p className="font-medium">{setting.label}</p>
-                      <p className="text-sm text-muted">{setting.description}</p>
+                      <p className="text-sm text-muted">
+                        {setting.description}
+                      </p>
                     </div>
                     <div>
                       {setting.type === "toggle" && (
@@ -225,7 +232,11 @@ export default function AdminSettingsPage() {
                           type="text"
                           value={setting.value as string}
                           onChange={(e) =>
-                            handleChange(section.id, setting.key, e.target.value)
+                            handleChange(
+                              section.id,
+                              setting.key,
+                              e.target.value,
+                            )
                           }
                           className="px-3 py-1.5 bg-muted-bg border border-border rounded-lg text-sm w-64"
                         />
@@ -234,7 +245,11 @@ export default function AdminSettingsPage() {
                         <select
                           value={setting.value as string}
                           onChange={(e) =>
-                            handleChange(section.id, setting.key, e.target.value)
+                            handleChange(
+                              section.id,
+                              setting.key,
+                              e.target.value,
+                            )
                           }
                           className="px-3 py-1.5 bg-muted-bg border border-border rounded-lg text-sm"
                         >
@@ -282,4 +297,3 @@ export default function AdminSettingsPage() {
     </div>
   );
 }
-

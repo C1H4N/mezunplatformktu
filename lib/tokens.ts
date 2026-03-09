@@ -118,4 +118,3 @@ export async function consumePasswordResetToken(token: string) {
     where: { token },
   });
 }
-

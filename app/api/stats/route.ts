@@ -14,7 +14,7 @@ export async function GET() {
     // We can group by location in Info model where user is ALUMNI
     // But Info doesn't have role.
     // Let's just fetch all locations for ALUMNI users.
-    
+
     const alumniInfos = await prisma.info.findMany({
       where: {
         user: {
@@ -35,6 +35,9 @@ export async function GET() {
     });
   } catch (error) {
     console.error("Error fetching stats:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 },
+    );
   }
 }

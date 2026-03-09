@@ -18,8 +18,7 @@ const VALID_EMPLOYMENT_STATUS = [
   "STUDENT",
   "SELF_EMPLOYED",
 ] as const;
-type EmploymentStatusType = typeof VALID_EMPLOYMENT_STATUS[number];
-
+type EmploymentStatusType = (typeof VALID_EMPLOYMENT_STATUS)[number];
 
 type ExtendedRegisterBody = RegisterFormData & {
   referenceTeacher?: string;
@@ -41,7 +40,7 @@ export async function POST(req: Request) {
           message: "Lütfen tüm alanları doğru şekilde doldurun.",
           errors: getZodFieldErrors(validation.error),
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -74,7 +73,7 @@ export async function POST(req: Request) {
           message: "Bu e-posta adresi zaten kullanılıyor.",
           errors: { email: "Bu e-posta adresi zaten kullanılıyor." },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -89,7 +88,7 @@ export async function POST(req: Request) {
             message: "Bu telefon numarası zaten kullanılıyor.",
             errors: { phoneNumber: "Bu telefon numarası zaten kullanılıyor." },
           },
-          { status: 400 }
+          { status: 400 },
         );
       }
     }
@@ -105,7 +104,7 @@ export async function POST(req: Request) {
             message: "Bu öğrenci numarası zaten kullanılıyor.",
             errors: { studentNo: "Bu öğrenci numarası zaten kullanılıyor." },
           },
-          { status: 400 }
+          { status: 400 },
         );
       }
     }
@@ -118,10 +117,11 @@ export async function POST(req: Request) {
     const approvalStatus = requiresApproval ? "PENDING" : "APPROVED";
 
     // Çalışma durumu enum kontrolü
-    const parsedEmploymentStatus = employmentStatus &&
+    const parsedEmploymentStatus =
+      employmentStatus &&
       (VALID_EMPLOYMENT_STATUS as readonly string[]).includes(employmentStatus)
-      ? (employmentStatus as EmploymentStatusType)
-      : null;
+        ? (employmentStatus as EmploymentStatusType)
+        : null;
 
     // Transaction ile kullanıcı ve rol bazlı kayıt oluştur
     const user = await prisma.$transaction(async (tx) => {
@@ -194,7 +194,11 @@ export async function POST(req: Request) {
         const admins = await tx.user.findMany({
           where: {
             role: {
-              in: [UserRole.ADMIN, UserRole.MODERATOR, UserRole.HEAD_OF_DEPARTMENT],
+              in: [
+                UserRole.ADMIN,
+                UserRole.MODERATOR,
+                UserRole.HEAD_OF_DEPARTMENT,
+              ],
             },
           },
           select: { id: true },
@@ -243,7 +247,7 @@ export async function POST(req: Request) {
             requiresVerification: true,
             requiresApproval,
           },
-          { status: 201 }
+          { status: 201 },
         );
       }
     } catch (emailError) {
@@ -259,13 +263,13 @@ export async function POST(req: Request) {
         requiresVerification: false,
         requiresApproval,
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     console.error("Kayıt hatası:", error);
     return NextResponse.json(
       { message: "Kayıt sırasında bir hata oluştu. Lütfen tekrar deneyin." },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

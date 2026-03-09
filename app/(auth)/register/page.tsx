@@ -7,9 +7,24 @@ import Link from "next/link";
 import Image from "next/image";
 import { flatDepartments } from "@/app/lib/constants";
 import {
-  Eye, EyeOff, GraduationCap, Briefcase, BookOpen, UserCog,
-  ArrowLeft, ArrowRight, Check, Users, MapPin,
-  Mail, Phone, User, Lock, Building2, Calendar, Hash,
+  Eye,
+  EyeOff,
+  GraduationCap,
+  Briefcase,
+  BookOpen,
+  UserCog,
+  ArrowLeft,
+  ArrowRight,
+  Check,
+  Users,
+  MapPin,
+  Mail,
+  Phone,
+  User,
+  Lock,
+  Building2,
+  Calendar,
+  Hash,
 } from "lucide-react";
 import {
   type RegisterFormData,
@@ -28,61 +43,74 @@ const roles: {
   hoverBorder: string;
   iconClass: string;
 }[] = [
-    {
-      value: "STUDENT",
-      label: "Öğrenci",
-      description: "Aktif MYO öğrencisi",
-      icon: <GraduationCap className="w-5 h-5" />,
-      hoverBorder: "hover:border-blue-400",
-      iconClass: "bg-blue-50 text-blue-600",
-    },
-    {
-      value: "ALUMNI",
-      label: "Mezun",
-      description: "AACOMYO mezunu",
-      icon: <Briefcase className="w-5 h-5" />,
-      hoverBorder: "hover:border-emerald-400",
-      iconClass: "bg-emerald-50 text-emerald-600",
-    },
-    {
-      value: "ACADEMICIAN",
-      label: "Akademisyen",
-      description: "MYO öğretim üyesi",
-      icon: <BookOpen className="w-5 h-5" />,
-      hoverBorder: "hover:border-violet-400",
-      iconClass: "bg-violet-50 text-violet-600",
-    },
-    {
-      value: "HEAD_OF_DEPARTMENT",
-      label: "Bölüm Başkanı",
-      description: "Bölüm yönetim yetkilisi",
-      icon: <UserCog className="w-5 h-5" />,
-      hoverBorder: "hover:border-amber-400",
-      iconClass: "bg-amber-50 text-amber-600",
-    },
-  ];
+  {
+    value: "STUDENT",
+    label: "Öğrenci",
+    description: "Aktif MYO öğrencisi",
+    icon: <GraduationCap className="w-5 h-5" />,
+    hoverBorder: "hover:border-blue-400",
+    iconClass: "bg-blue-50 text-blue-600",
+  },
+  {
+    value: "ALUMNI",
+    label: "Mezun",
+    description: "AACOMYO mezunu",
+    icon: <Briefcase className="w-5 h-5" />,
+    hoverBorder: "hover:border-emerald-400",
+    iconClass: "bg-emerald-50 text-emerald-600",
+  },
+  {
+    value: "ACADEMICIAN",
+    label: "Akademisyen",
+    description: "MYO öğretim üyesi",
+    icon: <BookOpen className="w-5 h-5" />,
+    hoverBorder: "hover:border-violet-400",
+    iconClass: "bg-violet-50 text-violet-600",
+  },
+  {
+    value: "HEAD_OF_DEPARTMENT",
+    label: "Bölüm Başkanı",
+    description: "Bölüm yönetim yetkilisi",
+    icon: <UserCog className="w-5 h-5" />,
+    hoverBorder: "hover:border-amber-400",
+    iconClass: "bg-amber-50 text-amber-600",
+  },
+];
 
 // Bölümler merkezi olarak @/app/lib/constants.ts'ten geliyor
 const departments = flatDepartments;
 
 export default function RegisterPage() {
   const [step, setStep] = useState<Step>("role");
-  const [formData, setFormData] = useState<RegisterFormData & {
-    referenceTeacher?: string;
-    employmentStatus?: string;
-    employmentSector?: string;
-    schoolEmail?: string;
-  }>({
-    firstName: "", lastName: "", email: "", phoneNumber: "",
-    password: "", confirmPassword: "", role: "STUDENT",
-    studentNo: "", department: "",
+  const [formData, setFormData] = useState<
+    RegisterFormData & {
+      referenceTeacher?: string;
+      employmentStatus?: string;
+      employmentSector?: string;
+      schoolEmail?: string;
+    }
+  >({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phoneNumber: "",
+    password: "",
+    confirmPassword: "",
+    role: "STUDENT",
+    studentNo: "",
+    department: "",
     graduationYear: new Date().getFullYear(),
-    currentPosition: "", title: "",
-    referenceTeacher: "", employmentStatus: "",
-    employmentSector: "", schoolEmail: "",
+    currentPosition: "",
+    title: "",
+    referenceTeacher: "",
+    employmentStatus: "",
+    employmentSector: "",
+    schoolEmail: "",
   });
 
-  const [errors, setErrors] = useState<Partial<Record<keyof RegisterFormData | "confirmPassword", string>>>({});
+  const [errors, setErrors] = useState<
+    Partial<Record<keyof RegisterFormData | "confirmPassword", string>>
+  >({});
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -94,7 +122,10 @@ export default function RegisterPage() {
     setStep("details");
   };
 
-  const handleChange = (field: keyof RegisterFormData, value: string | number) => {
+  const handleChange = (
+    field: keyof RegisterFormData,
+    value: string | number,
+  ) => {
     setFormData((p) => ({ ...p, [field]: value }));
     setErrors((p) => ({ ...p, [field]: "" }));
   };
@@ -125,7 +156,11 @@ export default function RegisterPage() {
         const text = await res.text();
         data = JSON.parse(text);
       } catch {
-        console.error("API geçersiz yanıt döndürdü (HTML/empty):", res.status, res.url);
+        console.error(
+          "API geçersiz yanıt döndürdü (HTML/empty):",
+          res.status,
+          res.url,
+        );
         toast.error("Sunucu hatası oluştu. Lütfen daha sonra tekrar deneyin.");
         return;
       }
@@ -135,31 +170,40 @@ export default function RegisterPage() {
         toast.error(data.message || "Kayıt sırasında bir hata oluştu.");
       } else {
         if (data.requiresApproval) {
-          toast.success("Başvurunuz alındı! Bölüm başkanı onayladıktan sonra giriş yapabilirsiniz.", { duration: 6000 });
+          toast.success(
+            "Başvurunuz alındı! Bölüm başkanı onayladıktan sonra giriş yapabilirsiniz.",
+            { duration: 6000 },
+          );
           setTimeout(() => router.push("/login"), 3000);
         } else {
-          toast.success("Kayıt başarılı! Giriş sayfasına yönlendiriliyorsunuz...");
+          toast.success(
+            "Kayıt başarılı! Giriş sayfasına yönlendiriliyorsunuz...",
+          );
           setTimeout(() => router.push("/login"), 1500);
         }
       }
     } catch (err) {
       console.error("Register fetch hatası:", err);
-      toast.error("Sunucuya bağlanılamadı. Lütfen internet bağlantınızı kontrol edin.");
+      toast.error(
+        "Sunucuya bağlanılamadı. Lütfen internet bağlantınızı kontrol edin.",
+      );
     } finally {
       setLoading(false);
     }
   };
 
   const inputClass = (field: keyof RegisterFormData | "confirmPassword") =>
-    `w-full pl-10 pr-4 py-3 rounded-xl border bg-slate-50 text-slate-900 placeholder:text-slate-400 text-sm font-medium focus:bg-white focus:outline-none focus:ring-4 transition-all ${errors[field]
-      ? "border-red-400 focus:border-red-500 focus:ring-red-100"
-      : "border-slate-200 focus:border-primary focus:ring-primary/10"
+    `w-full pl-10 pr-4 py-3 rounded-xl border bg-slate-50 text-slate-900 placeholder:text-slate-400 text-sm font-medium focus:bg-white focus:outline-none focus:ring-4 transition-all ${
+      errors[field]
+        ? "border-red-400 focus:border-red-500 focus:ring-red-100"
+        : "border-slate-200 focus:border-primary focus:ring-primary/10"
     }`;
 
   const selectClass = (field: keyof RegisterFormData) =>
-    `w-full pl-10 pr-4 py-3 rounded-xl border bg-slate-50 text-slate-900 text-sm font-medium focus:bg-white focus:outline-none focus:ring-4 transition-all appearance-none cursor-pointer ${errors[field]
-      ? "border-red-400 focus:border-red-500 focus:ring-red-100"
-      : "border-slate-200 focus:border-primary focus:ring-primary/10"
+    `w-full pl-10 pr-4 py-3 rounded-xl border bg-slate-50 text-slate-900 text-sm font-medium focus:bg-white focus:outline-none focus:ring-4 transition-all appearance-none cursor-pointer ${
+      errors[field]
+        ? "border-red-400 focus:border-red-500 focus:ring-red-100"
+        : "border-slate-200 focus:border-primary focus:ring-primary/10"
     }`;
 
   const L = "text-[11px] font-bold text-slate-500 uppercase tracking-widest";
@@ -195,23 +239,29 @@ export default function RegisterPage() {
 
       {/* İçerik */}
       <div className="relative z-10 w-full max-w-lg">
-
         {/* Kart */}
         <div className="bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl p-8 sm:p-10 ring-1 ring-white/50">
-
           {/* ════ ADIM 1: Rol Seçimi ════ */}
           {step === "role" && (
             <>
               <div className="mb-7">
-                <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight mb-1">Hesap Oluşturun</h2>
-                <p className="text-slate-500 text-sm font-medium">Platforma katılmak için hesap türünüzü seçin.</p>
+                <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight mb-1">
+                  Hesap Oluşturun
+                </h2>
+                <p className="text-slate-500 text-sm font-medium">
+                  Platforma katılmak için hesap türünüzü seçin.
+                </p>
               </div>
 
               {/* Adım göstergesi */}
               <div className="flex items-center gap-2 mb-7">
-                <div className="w-7 h-7 rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center shadow-[0_2px_8px_rgba(18,91,150,0.4)]">1</div>
+                <div className="w-7 h-7 rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center shadow-[0_2px_8px_rgba(18,91,150,0.4)]">
+                  1
+                </div>
                 <div className="flex-1 h-px bg-slate-200" />
-                <div className="w-7 h-7 rounded-full bg-slate-100 text-slate-400 text-xs font-bold flex items-center justify-center">2</div>
+                <div className="w-7 h-7 rounded-full bg-slate-100 text-slate-400 text-xs font-bold flex items-center justify-center">
+                  2
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3 mb-7">
@@ -222,12 +272,18 @@ export default function RegisterPage() {
                     onClick={() => handleRoleSelect(role.value)}
                     className={`flex items-start gap-3 p-4 rounded-2xl border border-slate-200 bg-slate-50/80 transition-all duration-200 text-left hover:-translate-y-0.5 hover:bg-white hover:shadow-md ${role.hoverBorder}`}
                   >
-                    <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${role.iconClass}`}>
+                    <div
+                      className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${role.iconClass}`}
+                    >
                       {role.icon}
                     </div>
                     <div>
-                      <p className="font-bold text-slate-800 text-sm leading-tight">{role.label}</p>
-                      <p className="text-slate-400 text-xs mt-0.5 leading-snug">{role.description}</p>
+                      <p className="font-bold text-slate-800 text-sm leading-tight">
+                        {role.label}
+                      </p>
+                      <p className="text-slate-400 text-xs mt-0.5 leading-snug">
+                        {role.description}
+                      </p>
                     </div>
                   </button>
                 ))}
@@ -236,7 +292,10 @@ export default function RegisterPage() {
               <div className="pt-5 border-t border-slate-100 text-center">
                 <p className="text-sm text-slate-600 font-medium">
                   Zaten hesabınız var mı?{" "}
-                  <Link href="/login" className="text-primary hover:text-primary-hover font-bold transition-colors hover:underline underline-offset-4">
+                  <Link
+                    href="/login"
+                    className="text-primary hover:text-primary-hover font-bold transition-colors hover:underline underline-offset-4"
+                  >
                     Giriş Yapın
                   </Link>
                 </p>
@@ -261,9 +320,12 @@ export default function RegisterPage() {
                     {formData.role === "STUDENT" && "Öğrenci Kaydı"}
                     {formData.role === "ALUMNI" && "Mezun Kaydı"}
                     {formData.role === "ACADEMICIAN" && "Akademisyen Kaydı"}
-                    {formData.role === "HEAD_OF_DEPARTMENT" && "Bölüm Başkanı Kaydı"}
+                    {formData.role === "HEAD_OF_DEPARTMENT" &&
+                      "Bölüm Başkanı Kaydı"}
                   </h2>
-                  <p className="text-slate-500 text-sm font-medium mt-0.5">Bilgilerinizi eksiksiz doldurun.</p>
+                  <p className="text-slate-500 text-sm font-medium mt-0.5">
+                    Bilgilerinizi eksiksiz doldurun.
+                  </p>
                 </div>
               </div>
 
@@ -273,7 +335,9 @@ export default function RegisterPage() {
                   <Check className="w-3.5 h-3.5" />
                 </div>
                 <div className="flex-1 h-px bg-primary/30" />
-                <div className="w-7 h-7 rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center shadow-[0_2px_8px_rgba(18,91,150,0.4)]">2</div>
+                <div className="w-7 h-7 rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center shadow-[0_2px_8px_rgba(18,91,150,0.4)]">
+                  2
+                </div>
               </div>
 
               {/* Seçilen Rol */}
@@ -283,31 +347,54 @@ export default function RegisterPage() {
                     {selectedRole.icon}
                   </div>
                   <div>
-                    <p className="text-[11px] text-slate-400 uppercase tracking-widest font-bold">Hesap türü</p>
-                    <p className="text-sm font-bold text-slate-800">{selectedRole.label}</p>
+                    <p className="text-[11px] text-slate-400 uppercase tracking-widest font-bold">
+                      Hesap türü
+                    </p>
+                    <p className="text-sm font-bold text-slate-800">
+                      {selectedRole.label}
+                    </p>
                   </div>
                 </div>
               )}
 
               <form onSubmit={handleSubmit} className="space-y-4">
-
                 {/* Ad & Soyad */}
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1.5">
                     <label className={L}>Ad</label>
                     <div className="relative group">
                       <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-primary transition-colors" />
-                      <input type="text" value={formData.firstName} onChange={(e) => handleChange("firstName", e.target.value)} className={inputClass("firstName")} placeholder="Adınız" />
+                      <input
+                        type="text"
+                        value={formData.firstName}
+                        onChange={(e) =>
+                          handleChange("firstName", e.target.value)
+                        }
+                        className={inputClass("firstName")}
+                        placeholder="Adınız"
+                      />
                     </div>
-                    {errors.firstName && <p className="text-xs text-red-500">{errors.firstName}</p>}
+                    {errors.firstName && (
+                      <p className="text-xs text-red-500">{errors.firstName}</p>
+                    )}
                   </div>
                   <div className="space-y-1.5">
                     <label className={L}>Soyad</label>
                     <div className="relative group">
                       <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-primary transition-colors" />
-                      <input type="text" value={formData.lastName} onChange={(e) => handleChange("lastName", e.target.value)} className={inputClass("lastName")} placeholder="Soyadınız" />
+                      <input
+                        type="text"
+                        value={formData.lastName}
+                        onChange={(e) =>
+                          handleChange("lastName", e.target.value)
+                        }
+                        className={inputClass("lastName")}
+                        placeholder="Soyadınız"
+                      />
                     </div>
-                    {errors.lastName && <p className="text-xs text-red-500">{errors.lastName}</p>}
+                    {errors.lastName && (
+                      <p className="text-xs text-red-500">{errors.lastName}</p>
+                    )}
                   </div>
                 </div>
 
@@ -316,9 +403,17 @@ export default function RegisterPage() {
                   <label className={L}>E-posta Adresi</label>
                   <div className="relative group">
                     <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-primary transition-colors" />
-                    <input type="email" value={formData.email} onChange={(e) => handleChange("email", e.target.value)} className={inputClass("email")} placeholder="ornek@aacomyo.edu.tr" />
+                    <input
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => handleChange("email", e.target.value)}
+                      className={inputClass("email")}
+                      placeholder="ornek@aacomyo.edu.tr"
+                    />
                   </div>
-                  {errors.email && <p className="text-xs text-red-500">{errors.email}</p>}
+                  {errors.email && (
+                    <p className="text-xs text-red-500">{errors.email}</p>
+                  )}
                 </div>
 
                 {/* Telefon */}
@@ -334,13 +429,20 @@ export default function RegisterPage() {
                         type="tel"
                         maxLength={10}
                         value={formData.phoneNumber}
-                        onChange={(e) => handleChange("phoneNumber", e.target.value.replace(/\D/g, ""))}
+                        onChange={(e) =>
+                          handleChange(
+                            "phoneNumber",
+                            e.target.value.replace(/\D/g, ""),
+                          )
+                        }
                         className={`${inputClass("phoneNumber")} rounded-l-none`}
                         placeholder="5XX XXX XXXX"
                       />
                     </div>
                   </div>
-                  {errors.phoneNumber && <p className="text-xs text-red-500">{errors.phoneNumber}</p>}
+                  {errors.phoneNumber && (
+                    <p className="text-xs text-red-500">{errors.phoneNumber}</p>
+                  )}
                 </div>
 
                 {/* STUDENT */}
@@ -350,39 +452,88 @@ export default function RegisterPage() {
                       <label className={L}>Öğrenci Numarası</label>
                       <div className="relative group">
                         <GraduationCap className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-primary transition-colors" />
-                        <input type="text" value={formData.studentNo} onChange={(e) => handleChange("studentNo", e.target.value)} className={inputClass("studentNo")} placeholder="Öğrenci numaranız" />
+                        <input
+                          type="text"
+                          value={formData.studentNo}
+                          onChange={(e) =>
+                            handleChange("studentNo", e.target.value)
+                          }
+                          className={inputClass("studentNo")}
+                          placeholder="Öğrenci numaranız"
+                        />
                       </div>
-                      {errors.studentNo && <p className="text-xs text-red-500">{errors.studentNo}</p>}
+                      {errors.studentNo && (
+                        <p className="text-xs text-red-500">
+                          {errors.studentNo}
+                        </p>
+                      )}
                     </div>
                     <div className="space-y-1.5">
                       <label className={L}>Bölüm</label>
                       <div className="relative group">
                         <Building2 className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-primary transition-colors pointer-events-none" />
-                        <select value={formData.department} onChange={(e) => handleChange("department", e.target.value)} className={selectClass("department")}>
+                        <select
+                          value={formData.department}
+                          onChange={(e) =>
+                            handleChange("department", e.target.value)
+                          }
+                          className={selectClass("department")}
+                        >
                           <option value="">Bölüm seçin</option>
-                          {departments.map((d) => <option key={d} value={d}>{d}</option>)}
+                          {departments.map((d) => (
+                            <option key={d} value={d}>
+                              {d}
+                            </option>
+                          ))}
                         </select>
                       </div>
-                      {errors.department && <p className="text-xs text-red-500">{errors.department}</p>}
+                      {errors.department && (
+                        <p className="text-xs text-red-500">
+                          {errors.department}
+                        </p>
+                      )}
                     </div>
                     <div className="space-y-1.5">
                       <label className={L}>
                         Okul E-postası{" "}
-                        <span className="text-slate-400 font-normal normal-case tracking-normal">(öğrenci maili)</span>
+                        <span className="text-slate-400 font-normal normal-case tracking-normal">
+                          (öğrenci maili)
+                        </span>
                       </label>
                       <div className="relative group">
                         <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-primary transition-colors" />
-                        <input type="email" value={formData.schoolEmail || ""} onChange={(e) => handleChange("schoolEmail" as any, e.target.value)} className={inputClass("email")} placeholder="123456@ogr.ktu.edu.tr" />
+                        <input
+                          type="email"
+                          value={formData.schoolEmail || ""}
+                          onChange={(e) =>
+                            handleChange("schoolEmail" as any, e.target.value)
+                          }
+                          className={inputClass("email")}
+                          placeholder="123456@ogr.ktu.edu.tr"
+                        />
                       </div>
                     </div>
                     <div className="space-y-1.5">
                       <label className={L}>
                         Referans Hoca{" "}
-                        <span className="text-slate-400 font-normal normal-case tracking-normal">(opsiyonel)</span>
+                        <span className="text-slate-400 font-normal normal-case tracking-normal">
+                          (opsiyonel)
+                        </span>
                       </label>
                       <div className="relative group">
                         <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-primary transition-colors" />
-                        <input type="text" value={formData.referenceTeacher || ""} onChange={(e) => handleChange("referenceTeacher" as any, e.target.value)} className={inputClass("firstName")} placeholder="Örn: Prof. Dr. Ahmet Yılmaz" />
+                        <input
+                          type="text"
+                          value={formData.referenceTeacher || ""}
+                          onChange={(e) =>
+                            handleChange(
+                              "referenceTeacher" as any,
+                              e.target.value,
+                            )
+                          }
+                          className={inputClass("firstName")}
+                          placeholder="Örn: Prof. Dr. Ahmet Yılmaz"
+                        />
                       </div>
                     </div>
                   </>
@@ -396,24 +547,56 @@ export default function RegisterPage() {
                         <label className={L}>Bölüm</label>
                         <div className="relative group">
                           <Building2 className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-primary transition-colors pointer-events-none" />
-                          <select value={formData.department} onChange={(e) => handleChange("department", e.target.value)} className={selectClass("department")}>
+                          <select
+                            value={formData.department}
+                            onChange={(e) =>
+                              handleChange("department", e.target.value)
+                            }
+                            className={selectClass("department")}
+                          >
                             <option value="">Bölüm seçin</option>
-                            {departments.map((d) => <option key={d} value={d}>{d}</option>)}
+                            {departments.map((d) => (
+                              <option key={d} value={d}>
+                                {d}
+                              </option>
+                            ))}
                           </select>
                         </div>
-                        {errors.department && <p className="text-xs text-red-500">{errors.department}</p>}
+                        {errors.department && (
+                          <p className="text-xs text-red-500">
+                            {errors.department}
+                          </p>
+                        )}
                       </div>
                       <div className="space-y-1.5">
                         <label className={L}>Mezuniyet Yılı</label>
                         <div className="relative group">
                           <Calendar className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-primary transition-colors pointer-events-none" />
-                          <select value={formData.graduationYear} onChange={(e) => handleChange("graduationYear", parseInt(e.target.value))} className={selectClass("graduationYear")}>
-                            {Array.from({ length: 50 }, (_, i) => new Date().getFullYear() - i).map((y) => (
-                              <option key={y} value={y}>{y}</option>
+                          <select
+                            value={formData.graduationYear}
+                            onChange={(e) =>
+                              handleChange(
+                                "graduationYear",
+                                parseInt(e.target.value),
+                              )
+                            }
+                            className={selectClass("graduationYear")}
+                          >
+                            {Array.from(
+                              { length: 50 },
+                              (_, i) => new Date().getFullYear() - i,
+                            ).map((y) => (
+                              <option key={y} value={y}>
+                                {y}
+                              </option>
                             ))}
                           </select>
                         </div>
-                        {errors.graduationYear && <p className="text-xs text-red-500">{errors.graduationYear}</p>}
+                        {errors.graduationYear && (
+                          <p className="text-xs text-red-500">
+                            {errors.graduationYear}
+                          </p>
+                        )}
                       </div>
                     </div>
 
@@ -421,11 +604,21 @@ export default function RegisterPage() {
                     <div className="space-y-1.5">
                       <label className={L}>
                         Okul Numarası{" "}
-                        <span className="text-slate-400 font-normal normal-case tracking-normal">(opsiyonel)</span>
+                        <span className="text-slate-400 font-normal normal-case tracking-normal">
+                          (opsiyonel)
+                        </span>
                       </label>
                       <div className="relative group">
                         <Hash className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-primary transition-colors" />
-                        <input type="text" value={formData.studentNo || ""} onChange={(e) => handleChange("studentNo", e.target.value)} className={inputClass("studentNo")} placeholder="Okul numaranız (opsiyonel)" />
+                        <input
+                          type="text"
+                          value={formData.studentNo || ""}
+                          onChange={(e) =>
+                            handleChange("studentNo", e.target.value)
+                          }
+                          className={inputClass("studentNo")}
+                          placeholder="Okul numaranız (opsiyonel)"
+                        />
                       </div>
                     </div>
 
@@ -434,7 +627,18 @@ export default function RegisterPage() {
                       <label className={L}>Referans Hoca</label>
                       <div className="relative group">
                         <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-primary transition-colors" />
-                        <input type="text" value={formData.referenceTeacher || ""} onChange={(e) => handleChange("referenceTeacher" as any, e.target.value)} className={inputClass("firstName")} placeholder="Örn: Prof. Dr. Ahmet Yılmaz" />
+                        <input
+                          type="text"
+                          value={formData.referenceTeacher || ""}
+                          onChange={(e) =>
+                            handleChange(
+                              "referenceTeacher" as any,
+                              e.target.value,
+                            )
+                          }
+                          className={inputClass("firstName")}
+                          placeholder="Örn: Prof. Dr. Ahmet Yılmaz"
+                        />
                       </div>
                     </div>
 
@@ -443,24 +647,54 @@ export default function RegisterPage() {
                       <label className={L}>Çalışma Durumu</label>
                       <div className="relative group">
                         <Briefcase className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-primary transition-colors pointer-events-none" />
-                        <select value={formData.employmentStatus || ""} onChange={(e) => handleChange("employmentStatus" as any, e.target.value)} className={selectClass("department" as any)}>
+                        <select
+                          value={formData.employmentStatus || ""}
+                          onChange={(e) =>
+                            handleChange(
+                              "employmentStatus" as any,
+                              e.target.value,
+                            )
+                          }
+                          className={selectClass("department" as any)}
+                        >
                           <option value="">Çalışma durumunuzu seçin</option>
-                          <option value="EMPLOYED_OWN_SECTOR">Kendi sektörümde çalışıyorum</option>
-                          <option value="EMPLOYED_OTHER_SECTOR">Başka sektörde çalışıyorum</option>
-                          <option value="SELF_EMPLOYED">Serbest / Girişimci</option>
+                          <option value="EMPLOYED_OWN_SECTOR">
+                            Kendi sektörümde çalışıyorum
+                          </option>
+                          <option value="EMPLOYED_OTHER_SECTOR">
+                            Başka sektörde çalışıyorum
+                          </option>
+                          <option value="SELF_EMPLOYED">
+                            Serbest / Girişimci
+                          </option>
                           <option value="UNEMPLOYED">Çalışmıyorum</option>
-                          <option value="STUDENT">Öğrenime devam ediyorum</option>
+                          <option value="STUDENT">
+                            Öğrenime devam ediyorum
+                          </option>
                         </select>
                       </div>
                     </div>
 
                     {/* Sektör (çalışıyorsa göster) */}
-                    {(formData.employmentStatus === "EMPLOYED_OWN_SECTOR" || formData.employmentStatus === "EMPLOYED_OTHER_SECTOR" || formData.employmentStatus === "SELF_EMPLOYED") && (
+                    {(formData.employmentStatus === "EMPLOYED_OWN_SECTOR" ||
+                      formData.employmentStatus === "EMPLOYED_OTHER_SECTOR" ||
+                      formData.employmentStatus === "SELF_EMPLOYED") && (
                       <div className="space-y-1.5">
                         <label className={L}>Çalıştığınız Sektör</label>
                         <div className="relative group">
                           <Building2 className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-primary transition-colors" />
-                          <input type="text" value={formData.employmentSector || ""} onChange={(e) => handleChange("employmentSector" as any, e.target.value)} className={inputClass("firstName")} placeholder="Örn: Bilişim, Finans, Sağlık..." />
+                          <input
+                            type="text"
+                            value={formData.employmentSector || ""}
+                            onChange={(e) =>
+                              handleChange(
+                                "employmentSector" as any,
+                                e.target.value,
+                              )
+                            }
+                            className={inputClass("firstName")}
+                            placeholder="Örn: Bilişim, Finans, Sağlık..."
+                          />
                         </div>
                       </div>
                     )}
@@ -468,11 +702,21 @@ export default function RegisterPage() {
                     <div className="space-y-1.5">
                       <label className={L}>
                         Mevcut Pozisyon{" "}
-                        <span className="text-slate-400 font-normal normal-case tracking-normal">(opsiyonel)</span>
+                        <span className="text-slate-400 font-normal normal-case tracking-normal">
+                          (opsiyonel)
+                        </span>
                       </label>
                       <div className="relative group">
                         <Briefcase className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-primary transition-colors" />
-                        <input type="text" value={formData.currentPosition} onChange={(e) => handleChange("currentPosition", e.target.value)} className={inputClass("currentPosition")} placeholder="Örn: Yazılım Mühendisi" />
+                        <input
+                          type="text"
+                          value={formData.currentPosition}
+                          onChange={(e) =>
+                            handleChange("currentPosition", e.target.value)
+                          }
+                          className={inputClass("currentPosition")}
+                          placeholder="Örn: Yazılım Mühendisi"
+                        />
                       </div>
                     </div>
                   </>
@@ -485,22 +729,46 @@ export default function RegisterPage() {
                       <label className={L}>Unvan</label>
                       <div className="relative group">
                         <BookOpen className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-primary transition-colors" />
-                        <input type="text" value={formData.title} onChange={(e) => handleChange("title" as any, e.target.value)} className={inputClass("title" as any)} placeholder="Örn: Prof. Dr., Doç. Dr., Öğr. Gör." />
+                        <input
+                          type="text"
+                          value={formData.title}
+                          onChange={(e) =>
+                            handleChange("title" as any, e.target.value)
+                          }
+                          className={inputClass("title" as any)}
+                          placeholder="Örn: Prof. Dr., Doç. Dr., Öğr. Gör."
+                        />
                       </div>
                       {/* @ts-ignore */}
-                      {errors.title && <p className="text-xs text-red-500">{errors.title}</p>}
+                      {errors.title && (
+                        <p className="text-xs text-red-500">{errors.title}</p>
+                      )}
                     </div>
                     <div className="space-y-1.5">
                       <label className={L}>Bölüm</label>
                       <div className="relative group">
                         <Building2 className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-primary transition-colors pointer-events-none" />
-                        <select value={formData.department} onChange={(e) => handleChange("department" as any, e.target.value)} className={selectClass("department" as any)}>
+                        <select
+                          value={formData.department}
+                          onChange={(e) =>
+                            handleChange("department" as any, e.target.value)
+                          }
+                          className={selectClass("department" as any)}
+                        >
                           <option value="">Bölüm seçin</option>
-                          {departments.map((d) => <option key={d} value={d}>{d}</option>)}
+                          {departments.map((d) => (
+                            <option key={d} value={d}>
+                              {d}
+                            </option>
+                          ))}
                         </select>
                       </div>
                       {/* @ts-ignore */}
-                      {errors.department && <p className="text-xs text-red-500">{errors.department}</p>}
+                      {errors.department && (
+                        <p className="text-xs text-red-500">
+                          {errors.department}
+                        </p>
+                      )}
                     </div>
                   </>
                 )}
@@ -512,22 +780,46 @@ export default function RegisterPage() {
                       <label className={L}>Unvan</label>
                       <div className="relative group">
                         <UserCog className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-primary transition-colors" />
-                        <input type="text" value={formData.title} onChange={(e) => handleChange("title" as any, e.target.value)} className={inputClass("title" as any)} placeholder="Örn: Prof. Dr., Doç. Dr." />
+                        <input
+                          type="text"
+                          value={formData.title}
+                          onChange={(e) =>
+                            handleChange("title" as any, e.target.value)
+                          }
+                          className={inputClass("title" as any)}
+                          placeholder="Örn: Prof. Dr., Doç. Dr."
+                        />
                       </div>
                       {/* @ts-ignore */}
-                      {errors.title && <p className="text-xs text-red-500">{errors.title}</p>}
+                      {errors.title && (
+                        <p className="text-xs text-red-500">{errors.title}</p>
+                      )}
                     </div>
                     <div className="space-y-1.5">
                       <label className={L}>Bölüm</label>
                       <div className="relative group">
                         <Building2 className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-primary transition-colors pointer-events-none" />
-                        <select value={formData.department} onChange={(e) => handleChange("department" as any, e.target.value)} className={selectClass("department" as any)}>
+                        <select
+                          value={formData.department}
+                          onChange={(e) =>
+                            handleChange("department" as any, e.target.value)
+                          }
+                          className={selectClass("department" as any)}
+                        >
                           <option value="">Bölüm seçin</option>
-                          {departments.map((d) => <option key={d} value={d}>{d}</option>)}
+                          {departments.map((d) => (
+                            <option key={d} value={d}>
+                              {d}
+                            </option>
+                          ))}
                         </select>
                       </div>
                       {/* @ts-ignore */}
-                      {errors.department && <p className="text-xs text-red-500">{errors.department}</p>}
+                      {errors.department && (
+                        <p className="text-xs text-red-500">
+                          {errors.department}
+                        </p>
+                      )}
                     </div>
                   </>
                 )}
@@ -549,14 +841,23 @@ export default function RegisterPage() {
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors p-0.5"
                     >
-                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      {showPassword ? (
+                        <EyeOff className="w-4 h-4" />
+                      ) : (
+                        <Eye className="w-4 h-4" />
+                      )}
                     </button>
                   </div>
-                  {errors.password && <p className="text-xs text-red-500">{errors.password}</p>}
+                  {errors.password && (
+                    <p className="text-xs text-red-500">{errors.password}</p>
+                  )}
                   {formData.password.length > 0 && (
                     <div className="flex flex-wrap gap-1.5 pt-0.5">
                       {pwChecks.map(({ label, ok }) => (
-                        <span key={label} className={`inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full font-semibold transition-all ${ok ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "bg-slate-100 text-slate-400 border border-slate-200"}`}>
+                        <span
+                          key={label}
+                          className={`inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full font-semibold transition-all ${ok ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "bg-slate-100 text-slate-400 border border-slate-200"}`}
+                        >
                           {ok && <Check className="w-3 h-3" />}
                           {label}
                         </span>
@@ -573,12 +874,18 @@ export default function RegisterPage() {
                     <input
                       type={showPassword ? "text" : "password"}
                       value={formData.confirmPassword}
-                      onChange={(e) => handleChange("confirmPassword", e.target.value)}
+                      onChange={(e) =>
+                        handleChange("confirmPassword", e.target.value)
+                      }
                       className={inputClass("confirmPassword")}
                       placeholder="Şifrenizi tekrar girin"
                     />
                   </div>
-                  {errors.confirmPassword && <p className="text-xs text-red-500">{errors.confirmPassword}</p>}
+                  {errors.confirmPassword && (
+                    <p className="text-xs text-red-500">
+                      {errors.confirmPassword}
+                    </p>
+                  )}
                 </div>
 
                 {/* Kayıt Butonu */}
@@ -603,7 +910,10 @@ export default function RegisterPage() {
                 <div className="pt-5 border-t border-slate-100 text-center">
                   <p className="text-sm text-slate-600 font-medium">
                     Zaten hesabınız var mı?{" "}
-                    <Link href="/login" className="text-primary hover:text-primary-hover font-bold transition-colors hover:underline underline-offset-4">
+                    <Link
+                      href="/login"
+                      className="text-primary hover:text-primary-hover font-bold transition-colors hover:underline underline-offset-4"
+                    >
                       Giriş Yapın
                     </Link>
                   </p>
@@ -614,7 +924,8 @@ export default function RegisterPage() {
         </div>
 
         <p className="text-center text-xs text-white/50 mt-6 leading-relaxed px-4">
-          Bu platform yalnızca KTÜ Araklı Ali Cevat Özyurt MYO mensuplarına ve mezunlarına özeldir.
+          Bu platform yalnızca KTÜ Araklı Ali Cevat Özyurt MYO mensuplarına ve
+          mezunlarına özeldir.
         </p>
       </div>
     </div>

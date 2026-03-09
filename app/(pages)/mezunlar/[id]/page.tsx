@@ -19,7 +19,7 @@ import {
   Users,
   Award,
   BookOpen,
-  AlertCircle
+  AlertCircle,
 } from "lucide-react";
 import { ReportModal } from "@/app/components/ui/ReportModal";
 
@@ -63,7 +63,11 @@ interface AlumniProfile {
   };
 }
 
-export default function AlumniProfilePage({ params }: { params: Promise<{ id: string }> }) {
+export default function AlumniProfilePage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = use(params);
   const { data: session } = useSession();
   const [alumni, setAlumni] = useState<AlumniProfile | null>(null);
@@ -106,10 +110,7 @@ export default function AlumniProfilePage({ params }: { params: Promise<{ id: st
           <Users className="w-16 h-16 mx-auto text-muted mb-4" />
           <h2 className="text-xl font-semibold mb-2">Mezun Bulunamadı</h2>
           <p className="text-muted mb-4">{error}</p>
-          <Link
-            href="/mezunlar"
-            className="text-primary hover:underline"
-          >
+          <Link href="/mezunlar" className="text-primary hover:underline">
             ← Mezunlara Dön
           </Link>
         </div>
@@ -165,7 +166,10 @@ export default function AlumniProfilePage({ params }: { params: Promise<{ id: st
                   {alumni.company && ` • ${alumni.company}`}
                 </p>
               )}
-              <div style={{ color: "#e6f0f9" }} className="flex flex-wrap gap-4">
+              <div
+                style={{ color: "#e6f0f9" }}
+                className="flex flex-wrap gap-4"
+              >
                 <div className="flex items-center gap-2">
                   <GraduationCap className="w-5 h-5" />
                   {alumni.department}
@@ -270,7 +274,10 @@ export default function AlumniProfilePage({ params }: { params: Promise<{ id: st
                 </h2>
                 <div className="space-y-6">
                   {alumni.experience.map((exp) => (
-                    <div key={exp.id} className="border-l-2 border-primary pl-4">
+                    <div
+                      key={exp.id}
+                      className="border-l-2 border-primary pl-4"
+                    >
                       <h3 className="text-lg font-semibold text-foreground">
                         {exp.position}
                       </h3>
@@ -294,11 +301,16 @@ export default function AlumniProfilePage({ params }: { params: Promise<{ id: st
                 </h2>
                 <div className="space-y-4">
                   {alumni.education.map((edu) => (
-                    <div key={edu.id} className="border-l-2 border-primary pl-4">
+                    <div
+                      key={edu.id}
+                      className="border-l-2 border-primary pl-4"
+                    >
                       <h3 className="font-semibold text-foreground">
                         {edu.school}
                       </h3>
-                      <p className="text-primary">{edu.degree} - {edu.field}</p>
+                      <p className="text-primary">
+                        {edu.degree} - {edu.field}
+                      </p>
                       <p className="text-sm text-muted">{edu.period}</p>
                     </div>
                   ))}

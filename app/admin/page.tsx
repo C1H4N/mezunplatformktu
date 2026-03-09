@@ -69,18 +69,14 @@ export default function AdminDashboard() {
       value: stats?.totalJobs || 0,
       icon: Briefcase,
       color: "bg-green-500/10 text-green-600",
-      subStats: [
-        { label: "Aktif", value: stats?.activeJobs || 0 },
-      ],
+      subStats: [{ label: "Aktif", value: stats?.activeJobs || 0 }],
     },
     {
       title: "Etkinlikler",
       value: stats?.totalEvents || 0,
       icon: Calendar,
       color: "bg-purple-500/10 text-purple-600",
-      subStats: [
-        { label: "Yaklaşan", value: stats?.upcomingEvents || 0 },
-      ],
+      subStats: [{ label: "Yaklaşan", value: stats?.upcomingEvents || 0 }],
     },
     {
       title: "Mesajlar",
@@ -119,12 +115,16 @@ export default function AdminDashboard() {
               className="bg-card border border-border rounded-xl p-6"
             >
               <div className="flex items-center gap-4 mb-4">
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${card.color}`}>
+                <div
+                  className={`w-12 h-12 rounded-xl flex items-center justify-center ${card.color}`}
+                >
                   <Icon className="w-6 h-6" />
                 </div>
                 <div>
                   <p className="text-sm text-muted">{card.title}</p>
-                  <p className="text-3xl font-bold">{card.value.toLocaleString()}</p>
+                  <p className="text-3xl font-bold">
+                    {card.value.toLocaleString()}
+                  </p>
                 </div>
               </div>
               {card.subStats && (
@@ -132,7 +132,9 @@ export default function AdminDashboard() {
                   {card.subStats.map((sub) => (
                     <div key={sub.label}>
                       <p className="text-xs text-muted">{sub.label}</p>
-                      <p className="text-sm font-semibold">{sub.value.toLocaleString()}</p>
+                      <p className="text-sm font-semibold">
+                        {sub.value.toLocaleString()}
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -179,4 +181,3 @@ export default function AdminDashboard() {
     </div>
   );
 }
-

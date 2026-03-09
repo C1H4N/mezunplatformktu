@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { 
-  Shield, 
+import {
+  Shield,
   CheckCircle,
   XCircle,
   Clock,
@@ -173,12 +173,9 @@ export default function AdminModerationPage() {
             <Shield className="w-8 h-8 text-green-600" />
           </div>
           <h3 className="font-semibold text-lg mb-2">Tebrikler!</h3>
-          <p className="text-muted">
-            Şu an onay bekleyen içerik bulunmuyor.
-          </p>
+          <p className="text-muted">Şu an onay bekleyen içerik bulunmuyor.</p>
         </div>
       )}
     </div>
   );
 }
-

@@ -42,7 +42,7 @@ export async function createNotification({
 export async function notifyNewMessage(
   receiverId: string,
   senderName: string,
-  senderId: string
+  senderId: string,
 ) {
   return createNotification({
     userId: receiverId,
@@ -58,7 +58,7 @@ export async function notifyApplicationStatus(
   userId: string,
   jobTitle: string,
   status: string,
-  jobId: string
+  jobId: string,
 ) {
   const statusMessages: Record<string, string> = {
     REVIEWED: "inceleniyor",
@@ -80,7 +80,7 @@ export async function notifyEventReminder(
   userId: string,
   eventTitle: string,
   eventId: string,
-  timeUntil: string
+  timeUntil: string,
 ) {
   return createNotification({
     userId,
@@ -95,7 +95,7 @@ export async function notifyEventReminder(
 export async function notifyMentorshipRequest(
   mentorId: string,
   studentName: string,
-  requestId: string
+  requestId: string,
 ) {
   return createNotification({
     userId: mentorId,
@@ -111,7 +111,7 @@ export async function notifySystem(
   userId: string,
   title: string,
   message: string,
-  link?: string
+  link?: string,
 ) {
   return createNotification({
     userId,
@@ -121,4 +121,3 @@ export async function notifySystem(
     link,
   });
 }
-

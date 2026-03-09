@@ -52,9 +52,14 @@
 
   /* Premium Gölgeler (Sert hatlar yok, camsı yumuşak yayılım) */
   --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.04);
-  --shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.05), 0 2px 4px -2px rgba(15, 23, 42, 0.03);
-  --shadow-md: 0 12px 20px -4px rgba(15, 23, 42, 0.06), 0 4px 8px -4px rgba(15, 23, 42, 0.04);
-  --shadow-lg: 0 20px 30px -5px rgba(15, 23, 42, 0.08), 0 10px 15px -6px rgba(15, 23, 42, 0.04);
+  --shadow:
+    0 4px 6px -1px rgba(15, 23, 42, 0.05), 0 2px 4px -2px rgba(15, 23, 42, 0.03);
+  --shadow-md:
+    0 12px 20px -4px rgba(15, 23, 42, 0.06), 0 4px 8px -4px
+    rgba(15, 23, 42, 0.04);
+  --shadow-lg:
+    0 20px 30px -5px rgba(15, 23, 42, 0.08), 0 10px 15px -6px
+    rgba(15, 23, 42, 0.04);
 }
 
 @theme {
@@ -107,7 +112,6 @@
 }
 
 @layer base {
-
   /* Base Body Styles */
   body {
     background: var(--background);

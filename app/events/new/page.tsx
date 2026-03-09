@@ -6,7 +6,14 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import { buttonVariants } from "../../components/ui/Button";
-import { ArrowLeft, Calendar, MapPin, Users, FileText, Image as ImageIcon } from "lucide-react";
+import {
+  ArrowLeft,
+  Calendar,
+  MapPin,
+  Users,
+  FileText,
+  Image as ImageIcon,
+} from "lucide-react";
 
 const eventTypes = [
   { value: "CAREER_FAIR", label: "Kariyer Fuarı" },
@@ -83,14 +90,16 @@ export default function NewEventPage() {
       toast.success("Etkinlik başarıyla oluşturuldu!");
       router.push(`/events/${data.id}`);
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : "Bir hata oluştu";
+      const message =
+        error instanceof Error ? error.message : "Bir hata oluştu";
       toast.error(message);
     } finally {
       setLoading(false);
     }
   };
 
-  const inputClass = "w-full px-4 py-3 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary outline-none transition";
+  const inputClass =
+    "w-full px-4 py-3 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary outline-none transition";
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted-bg/20 py-12 px-4 sm:px-6 lg:px-8">
@@ -109,11 +118,15 @@ export default function NewEventPage() {
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Title */}
             <div>
-              <label className="text-sm font-medium mb-2 block">Etkinlik Başlığı *</label>
+              <label className="text-sm font-medium mb-2 block">
+                Etkinlik Başlığı *
+              </label>
               <input
                 type="text"
                 value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, title: e.target.value })
+                }
                 className={inputClass}
                 placeholder="Örn: Yazılım Kariyer Fuarı 2025"
                 required
@@ -123,15 +136,21 @@ export default function NewEventPage() {
 
             {/* Type */}
             <div>
-              <label className="text-sm font-medium mb-2 block">Etkinlik Türü *</label>
+              <label className="text-sm font-medium mb-2 block">
+                Etkinlik Türü *
+              </label>
               <select
                 value={formData.type}
-                onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, type: e.target.value })
+                }
                 className={inputClass}
                 required
               >
                 {eventTypes.map(({ value, label }) => (
-                  <option key={value} value={value}>{label}</option>
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
                 ))}
               </select>
             </div>
@@ -146,7 +165,9 @@ export default function NewEventPage() {
                 <input
                   type="datetime-local"
                   value={formData.date}
-                  onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, date: e.target.value })
+                  }
                   className={inputClass}
                   required
                 />
@@ -159,7 +180,9 @@ export default function NewEventPage() {
                 <input
                   type="datetime-local"
                   value={formData.endDate}
-                  onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, endDate: e.target.value })
+                  }
                   className={inputClass}
                 />
               </div>
@@ -174,7 +197,9 @@ export default function NewEventPage() {
               <input
                 type="text"
                 value={formData.location}
-                onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, location: e.target.value })
+                }
                 className={inputClass}
                 placeholder="Örn: AACOMYO Konferans Salonu, Araklı"
                 required
@@ -190,7 +215,9 @@ export default function NewEventPage() {
               <input
                 type="number"
                 value={formData.capacity}
-                onChange={(e) => setFormData({ ...formData, capacity: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, capacity: e.target.value })
+                }
                 className={inputClass}
                 placeholder="Maksimum katılımcı sayısı"
                 min={1}
@@ -206,7 +233,9 @@ export default function NewEventPage() {
               <input
                 type="url"
                 value={formData.image}
-                onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, image: e.target.value })
+                }
                 className={inputClass}
                 placeholder="https://example.com/image.jpg"
               />
@@ -220,14 +249,18 @@ export default function NewEventPage() {
               </label>
               <textarea
                 value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
                 rows={6}
                 className={inputClass + " resize-none"}
                 placeholder="Etkinlik hakkında detaylı bilgi..."
                 required
                 maxLength={5000}
               />
-              <p className="text-xs text-muted mt-1">{formData.description.length}/5000 karakter</p>
+              <p className="text-xs text-muted mt-1">
+                {formData.description.length}/5000 karakter
+              </p>
             </div>
 
             {/* Actions */}
@@ -241,7 +274,7 @@ export default function NewEventPage() {
               <button
                 type="submit"
                 disabled={loading}
-                style={{ color: '#ffffff' }}
+                style={{ color: "#ffffff" }}
                 className={buttonVariants({ variant: "default" })}
               >
                 {loading ? "Oluşturuluyor..." : "Etkinlik Oluştur"}
@@ -253,4 +286,3 @@ export default function NewEventPage() {
     </div>
   );
 }
-

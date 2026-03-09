@@ -5,19 +5,32 @@ import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import toast from "react-hot-toast";
-import { buttonVariants } from "../../components/ui/Button";
-import { ArrowLeft, Building2, MapPin, Calendar, Briefcase, CheckCircle, Clock, Send, X, AlertCircle } from "lucide-react";
-import { ReportModal } from "../../components/ui/ReportModal";
+import { buttonVariants } from "../../../components/ui/Button";
+import {
+  ArrowLeft,
+  Building2,
+  MapPin,
+  Calendar,
+  Briefcase,
+  CheckCircle,
+  Clock,
+  Send,
+  X,
+  AlertCircle,
+  MessageCircle,
+} from "lucide-react";
+import { ReportModal } from "../../../components/ui/ReportModal";
 
 interface JobDetail {
   id: string;
   title: string;
   description: string;
   location: string;
-  type: "JOB" | "INTERNSHIP";
-  status: "OPEN" | "CLOSED";
+  type: string;
+  status: "OPEN" | "CLOSED" | "PENDING";
   createdAt: string;
   publisher: {
+    id: string;
     firstName: string;
     lastName: string;
     email: string;
@@ -32,10 +45,41 @@ interface Application {
 }
 
 const statusLabels = {
-  PENDING: { label: "Beklemede", color: "bg-yellow-500/10 text-yellow-600 border-yellow-500/20" },
-  REVIEWED: { label: "İnceleniyor", color: "bg-blue-500/10 text-blue-600 border-blue-500/20" },
-  ACCEPTED: { label: "Kabul Edildi", color: "bg-green-500/10 text-green-600 border-green-500/20" },
-  REJECTED: { label: "Reddedildi", color: "bg-red-500/10 text-red-600 border-red-500/20" },
+  PENDING: {
+    label: "Beklemede",
+    color: "bg-yellow-500/10 text-yellow-600 border-yellow-500/20",
+  },
+  REVIEWED: {
+    label: "İnceleniyor",
+    color: "bg-blue-500/10 text-blue-600 border-blue-500/20",
+  },
+  ACCEPTED: {
+    label: "Kabul Edildi",
+    color: "bg-green-500/10 text-green-600 border-green-500/20",
+  },
+  REJECTED: {
+    label: "Reddedildi",
+    color: "bg-red-500/10 text-red-600 border-red-500/20",
+  },
+};
+
+const POST_TYPE_CONFIG: Record<string, { label: string; color: string }> = {
+  JOB: {
+    label: "İş İlanı",
+    color: "bg-blue-500/10 text-blue-500 border-blue-500/20",
+  },
+  INTERNSHIP: {
+    label: "Staj İlanı",
+    color: "bg-purple-500/10 text-purple-500 border-purple-500/20",
+  },
+  INTERNSHIP_REQUEST: {
+    label: "Staj Arıyorum",
+    color: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
+  },
+  JOB_SEARCH: {
+    label: "İş Arıyorum",
+    color: "bg-amber-500/10 text-amber-500 border-amber-500/20",
+  },
 };
 
 export default function JobDetailPage() {
@@ -53,13 +97,11 @@ export default function JobDetailPage() {
   useEffect(() => {
     const fetchJobAndApplication = async () => {
       try {
-        // Fetch job details
         const jobRes = await fetch(`/api/jobs/${params.id}`);
         if (!jobRes.ok) throw new Error("İlan bulunamadı");
         const jobData = await jobRes.json();
         setJob(jobData);
 
-        // Check if already applied (for students)
         if (session?.user?.role === "STUDENT") {
           const appRes = await fetch(`/api/jobs/${params.id}/application`);
           if (appRes.ok) {
@@ -109,7 +151,8 @@ export default function JobDetailPage() {
       setCoverLetter("");
       toast.success("Başvurunuz başarıyla alındı!");
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : "Bir hata oluştu";
+      const message =
+        error instanceof Error ? error.message : "Bir hata oluştu";
       toast.error(message);
     } finally {
       setApplying(false);
@@ -134,6 +177,8 @@ export default function JobDetailPage() {
     year: "numeric",
   });
 
+  const typeCfg = POST_TYPE_CONFIG[job.type] || POST_TYPE_CONFIG.JOB;
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted-bg/20 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
@@ -151,14 +196,13 @@ export default function JobDetailPage() {
             <div className="flex flex-col md:flex-row justify-between items-start gap-6 mb-8">
               <div className="flex-1">
                 <div className="flex flex-wrap items-center gap-3 mb-3">
-                  <h1 className="text-3xl font-bold text-foreground">{job.title}</h1>
+                  <h1 className="text-3xl font-bold text-foreground">
+                    {job.title}
+                  </h1>
                   <span
-                    className={`px-3 py-1 rounded-full text-xs font-medium border ${job.type === "JOB"
-                      ? "bg-blue-500/10 text-blue-500 border-blue-500/20"
-                      : "bg-purple-500/10 text-purple-500 border-purple-500/20"
-                      }`}
+                    className={`px-3 py-1 rounded-full text-xs font-medium border ${typeCfg.color}`}
                   >
-                    {job.type === "JOB" ? "İş İlanı" : "Staj"}
+                    {typeCfg.label}
                   </span>
                   {!isJobOpen && (
                     <span className="px-3 py-1 rounded-full text-xs font-medium border bg-red-500/10 text-red-500 border-red-500/20">
@@ -179,19 +223,34 @@ export default function JobDetailPage() {
                     <Calendar className="w-4 h-4" />
                     <span>{formattedDate}</span>
                   </div>
-
                 </div>
               </div>
 
               {/* Action Button */}
               <div className="w-full md:w-auto flex flex-col md:flex-row items-stretch md:items-center gap-3">
+                {session?.user && session.user.id !== job.publisher.id && (
+                  <Link
+                    href={`/messages/${job.publisher.id}`}
+                    className={buttonVariants({
+                      variant: "outline",
+                      size: "lg",
+                      className:
+                        "border-primary/20 text-primary hover:bg-primary/10",
+                    })}
+                  >
+                    <MessageCircle className="w-4 h-4 mr-2" />
+                    Mesaj Gönder
+                  </Link>
+                )}
+
                 {session?.user && (
                   <button
                     onClick={() => setIsReportModalOpen(true)}
                     className={buttonVariants({
                       variant: "outline",
                       size: "lg",
-                      className: "border-rose-500/20 text-rose-500 hover:bg-rose-500/10",
+                      className:
+                        "border-rose-500/20 text-rose-500 hover:bg-rose-500/10",
                     })}
                   >
                     <AlertCircle className="w-4 h-4 mr-2" />
@@ -199,19 +258,22 @@ export default function JobDetailPage() {
                   </button>
                 )}
 
-                {isStudent && isJobOpen && !application && (
-                  <button
-                    onClick={() => setShowApplyModal(true)}
-                    className={buttonVariants({
-                      variant: "default",
-                      size: "lg",
-                      className: "w-full md:w-auto",
-                    })}
-                  >
-                    <Send className="w-4 h-4 mr-2" />
-                    Hemen Başvur
-                  </button>
-                )}
+                {isStudent &&
+                  isJobOpen &&
+                  !application &&
+                  ["JOB", "INTERNSHIP"].includes(job.type) && (
+                    <button
+                      onClick={() => setShowApplyModal(true)}
+                      className={buttonVariants({
+                        variant: "default",
+                        size: "lg",
+                        className: "w-full md:w-auto",
+                      })}
+                    >
+                      <Send className="w-4 h-4 mr-2" />
+                      Hemen Başvur
+                    </button>
+                  )}
 
                 {application && (
                   <div className="p-4 bg-card border border-border rounded-lg">
@@ -221,36 +283,43 @@ export default function JobDetailPage() {
                     </div>
                     <div className="flex items-center gap-2">
                       <span
-                        className={`px-2 py-1 rounded-full text-xs font-medium border ${statusLabels[application.status].color
-                          }`}
+                        className={`px-2 py-1 rounded-full text-xs font-medium border ${
+                          statusLabels[application.status].color
+                        }`}
                       >
                         {statusLabels[application.status].label}
                       </span>
                       <span className="text-xs text-muted">
-                        {new Date(application.applicationDate).toLocaleDateString("tr-TR")}
+                        {new Date(
+                          application.applicationDate,
+                        ).toLocaleDateString("tr-TR")}
                       </span>
                     </div>
                   </div>
                 )}
 
-                {!session && isJobOpen && (
-                  <Link
-                    href="/login"
-                    className={buttonVariants({
-                      variant: "default",
-                      size: "lg",
-                      className: "w-full md:w-auto",
-                    })}
-                  >
-                    Başvuru İçin Giriş Yap
-                  </Link>
-                )}
+                {!session &&
+                  isJobOpen &&
+                  ["JOB", "INTERNSHIP"].includes(job.type) && (
+                    <Link
+                      href="/login"
+                      className={buttonVariants({
+                        variant: "default",
+                        size: "lg",
+                        className: "w-full md:w-auto",
+                      })}
+                    >
+                      Başvuru İçin Giriş Yap
+                    </Link>
+                  )}
               </div>
             </div>
 
             {/* Description */}
             <div className="prose prose-invert max-w-none">
-              <h3 className="text-xl font-semibold text-foreground mb-4">İlan Detayları</h3>
+              <h3 className="text-xl font-semibold text-foreground mb-4">
+                İlan Detayları
+              </h3>
               <div className="whitespace-pre-wrap text-muted-foreground leading-relaxed">
                 {job.description}
               </div>
@@ -275,7 +344,9 @@ export default function JobDetailPage() {
 
             <div className="mb-4 p-3 bg-muted-bg rounded-lg">
               <p className="text-sm font-medium">{job.title}</p>
-              <p className="text-xs text-muted">{job.publisher.firstName} {job.publisher.lastName}</p>
+              <p className="text-xs text-muted">
+                {job.publisher.firstName} {job.publisher.lastName}
+              </p>
             </div>
 
             <div className="mb-4">
@@ -290,7 +361,9 @@ export default function JobDetailPage() {
                 placeholder="Kendinizi tanıtın ve neden bu pozisyon için uygun olduğunuzu açıklayın..."
                 className="w-full px-3 py-2 bg-background border border-border rounded-lg resize-none focus:ring-2 focus:ring-primary outline-none"
               />
-              <p className="text-xs text-muted mt-1">{coverLetter.length}/2000 karakter</p>
+              <p className="text-xs text-muted mt-1">
+                {coverLetter.length}/2000 karakter
+              </p>
             </div>
 
             <div className="flex justify-end gap-2">

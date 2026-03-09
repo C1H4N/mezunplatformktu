@@ -14,7 +14,10 @@ export async function GET(req: Request) {
     const session = await auth();
 
     if (!session?.user) {
-      return NextResponse.json({ error: "Giriş yapmalısınız" }, { status: 401 });
+      return NextResponse.json(
+        { error: "Giriş yapmalısınız" },
+        { status: 401 },
+      );
     }
 
     const userId = session.user.id;
@@ -22,10 +25,7 @@ export async function GET(req: Request) {
     // Benzersiz konuşmaları bul
     const messages = await prisma.message.findMany({
       where: {
-        OR: [
-          { senderId: userId },
-          { receiverId: userId },
-        ],
+        OR: [{ senderId: userId }, { receiverId: userId }],
       },
       include: {
         sender: {
@@ -49,22 +49,25 @@ export async function GET(req: Request) {
     });
 
     // Konuşmaları grupla
-    const conversationsMap = new Map<string, {
-      partnerId: string;
-      partner: {
-        id: string;
-        firstName: string;
-        lastName: string;
-        image: string | null;
-      };
-      lastMessage: {
-        id: string;
-        content: string;
-        timestamp: Date;
-        isFromMe: boolean;
-      };
-      unreadCount: number;
-    }>();
+    const conversationsMap = new Map<
+      string,
+      {
+        partnerId: string;
+        partner: {
+          id: string;
+          firstName: string;
+          lastName: string;
+          image: string | null;
+        };
+        lastMessage: {
+          id: string;
+          content: string;
+          timestamp: Date;
+          isFromMe: boolean;
+        };
+        unreadCount: number;
+      }
+    >();
 
     for (const msg of messages) {
       const partnerId = msg.senderId === userId ? msg.receiverId : msg.senderId;
@@ -100,7 +103,10 @@ export async function POST(req: Request) {
     const session = await auth();
 
     if (!session?.user) {
-      return NextResponse.json({ error: "Giriş yapmalısınız" }, { status: 401 });
+      return NextResponse.json(
+        { error: "Giriş yapmalısınız" },
+        { status: 401 },
+      );
     }
 
     const body = await req.json();
@@ -109,7 +115,7 @@ export async function POST(req: Request) {
     if (!validation.success) {
       return NextResponse.json(
         { error: validation.error.issues[0].message },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -128,7 +134,7 @@ export async function POST(req: Request) {
     if (receiverId === session.user.id) {
       return NextResponse.json(
         { error: "Kendinize mesaj atamazsınız" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -164,4 +170,3 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Mesaj gönderilemedi" }, { status: 500 });
   }
 }
-

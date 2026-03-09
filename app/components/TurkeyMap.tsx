@@ -21,17 +21,25 @@ function normalizeCityName(name: string): string {
 
   // Özel isimlendirme eşleştirmeleri
   if (lowerCleaned === "hakkari") return "Hakkâri";
-  if (lowerCleaned === "k.maraş" || lowerCleaned === "kahramanmaras") return "Kahramanmaraş";
+  if (lowerCleaned === "k.maraş" || lowerCleaned === "kahramanmaras")
+    return "Kahramanmaraş";
   if (lowerCleaned === "afyon") return "Afyonkarahisar";
 
   // constants.ts içerisindeki tam adıyla eşleşme bulmaya çalış (büyük/küçük harf duyarsız)
-  const matchedCity = cities.find(c => c.toLocaleLowerCase("tr") === lowerCleaned);
+  const matchedCity = cities.find(
+    (c) => c.toLocaleLowerCase("tr") === lowerCleaned,
+  );
   if (matchedCity) return matchedCity;
 
   // Bulunamazsa baş harfi büyük yapıp döndür
-  return cleaned.split(" ").map(word =>
-    word.charAt(0).toLocaleUpperCase("tr") + word.slice(1).toLocaleLowerCase("tr")
-  ).join(" ");
+  return cleaned
+    .split(" ")
+    .map(
+      (word) =>
+        word.charAt(0).toLocaleUpperCase("tr") +
+        word.slice(1).toLocaleLowerCase("tr"),
+    )
+    .join(" ");
 }
 
 function normalizeRegion(name: string): string {
@@ -63,7 +71,7 @@ function applyRegionStyles(root: HTMLElement) {
   const regionGroups = root.querySelectorAll<SVGGElement>("g[data-bolge]");
   regionGroups.forEach((rg) => {
     const shapes = rg.querySelectorAll<SVGElement>(
-      "path, polygon, rect, circle, polyline"
+      "path, polygon, rect, circle, polyline",
     );
     shapes.forEach((sh) => {
       // Bölge içi şekiller için ince ve zarif bir kurumsal sınır
@@ -75,7 +83,7 @@ function applyRegionStyles(root: HTMLElement) {
     // Bölge dış hat konturu (Sadece arka plan derinliği için)
     const regionOutlineLayer = document.createElementNS(
       "http://www.w3.org/2000/svg",
-      "g"
+      "g",
     );
     regionOutlineLayer.setAttribute("aria-hidden", "true");
     regionOutlineLayer.setAttribute("pointer-events", "none");
@@ -96,7 +104,7 @@ function applyRegionStyles(root: HTMLElement) {
 
   // Bölge dış sınırı için ek bir stil ver (eğer ayrı path varsa)
   const outerPaths = root.querySelectorAll<SVGPathElement>(
-    "path[id*='dis-sinir'], path[id*='outer']"
+    "path[id*='dis-sinir'], path[id*='outer']",
   );
   outerPaths.forEach((p) => {
     p.setAttribute("stroke", "var(--foreground)");
@@ -152,13 +160,22 @@ export default function TurkeyMap({
       try {
         const svgEl = root as unknown as SVGSVGElement;
         const bbox = svgEl.getBBox();
-        if (bbox && isFinite(bbox.width) && isFinite(bbox.height) && bbox.width > 0 && bbox.height > 0) {
-          svgEl.setAttribute("viewBox", `${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}`);
+        if (
+          bbox &&
+          isFinite(bbox.width) &&
+          isFinite(bbox.height) &&
+          bbox.width > 0 &&
+          bbox.height > 0
+        ) {
+          svgEl.setAttribute(
+            "viewBox",
+            `${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}`,
+          );
           svgEl.removeAttribute("width");
           svgEl.removeAttribute("height");
           svgEl.setAttribute("preserveAspectRatio", "xMidYMid meet");
         }
-      } catch (_) { }
+      } catch (_) {}
 
       applyRegionStyles(containerRef.current);
 
@@ -179,25 +196,32 @@ export default function TurkeyMap({
     const root = containerRef.current.querySelector("#svg-turkiye-haritasi");
     if (!root) return;
 
-    const provinceGroups = containerRef.current.querySelectorAll<SVGGElement>("g[data-iladi]");
+    const provinceGroups =
+      containerRef.current.querySelectorAll<SVGGElement>("g[data-iladi]");
 
     // Olası event karmaşasını engellemek için sinyalleyici
     const abortController = new AbortController();
     const { signal } = abortController;
 
     provinceGroups.forEach((g) => {
-      const cityAttr = g.getAttribute("data-iladi") || g.getAttribute("data-province") || "";
+      const cityAttr =
+        g.getAttribute("data-iladi") || g.getAttribute("data-province") || "";
       const city = normalizeCityName(cityAttr);
 
       const count = alumniCounts[city] || 0;
       const baseColor = getColor(count);
       const isSelected = selectedCity && city === selectedCity;
 
-      const shapes = g.querySelectorAll<SVGElement>("path, polygon, rect, circle, polyline");
+      const shapes = g.querySelectorAll<SVGElement>(
+        "path, polygon, rect, circle, polyline",
+      );
 
       // Temel ve Seçili Stil
       shapes.forEach((sh) => {
-        sh.setAttribute("stroke", isSelected ? "var(--primary)" : "var(--border)");
+        sh.setAttribute(
+          "stroke",
+          isSelected ? "var(--primary)" : "var(--border)",
+        );
         sh.setAttribute("stroke-width", isSelected ? "2" : "1.25");
 
         if (isSelected) {
@@ -219,30 +243,42 @@ export default function TurkeyMap({
       g.style.transition = "transform 150ms cubic-bezier(0.16, 1, 0.3, 1)";
 
       // Hover Olayları
-      g.addEventListener("mouseenter", () => {
-        if (!isSelected) {
-          shapes.forEach(sh => {
-            sh.setAttribute("fill", "var(--primary-light)");
-            sh.style.fill = "var(--primary-light)";
-          });
-        }
-        setHoveredCity(city);
-      }, { signal });
+      g.addEventListener(
+        "mouseenter",
+        () => {
+          if (!isSelected) {
+            shapes.forEach((sh) => {
+              sh.setAttribute("fill", "var(--primary-light)");
+              sh.style.fill = "var(--primary-light)";
+            });
+          }
+          setHoveredCity(city);
+        },
+        { signal },
+      );
 
-      g.addEventListener("mouseleave", () => {
-        if (!isSelected) {
-          shapes.forEach(sh => {
-            sh.setAttribute("fill", baseColor);
-            sh.style.fill = baseColor;
-          });
-        }
-        setHoveredCity(null);
-      }, { signal });
+      g.addEventListener(
+        "mouseleave",
+        () => {
+          if (!isSelected) {
+            shapes.forEach((sh) => {
+              sh.setAttribute("fill", baseColor);
+              sh.style.fill = baseColor;
+            });
+          }
+          setHoveredCity(null);
+        },
+        { signal },
+      );
 
       // Basılma Olayları
-      g.addEventListener("mousedown", () => {
-        g.style.transform = "scale(0.985)";
-      }, { signal });
+      g.addEventListener(
+        "mousedown",
+        () => {
+          g.style.transform = "scale(0.985)";
+        },
+        { signal },
+      );
 
       const clearPress = () => {
         g.style.transform = "";
@@ -254,12 +290,16 @@ export default function TurkeyMap({
       // Seçim Olayları ve Erişilebilirlik
       g.setAttribute("tabindex", "0");
       g.style.outline = "none"; // Tarayıcının kare şeklindeki siyah focus outline'ını gizle
-      g.addEventListener("keydown", (ev: KeyboardEvent) => {
-        if (ev.key === "Enter" || ev.key === " ") {
-          ev.preventDefault();
-          onCitySelect(city);
-        }
-      }, { signal });
+      g.addEventListener(
+        "keydown",
+        (ev: KeyboardEvent) => {
+          if (ev.key === "Enter" || ev.key === " ") {
+            ev.preventDefault();
+            onCitySelect(city);
+          }
+        },
+        { signal },
+      );
 
       g.addEventListener("click", () => onCitySelect(city), { signal });
     });
@@ -300,7 +340,9 @@ export default function TurkeyMap({
         {/* Fixed City Label */}
         <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-10 bg-background/80 backdrop-blur-sm px-4 py-2 rounded-full border border-border shadow-sm pointer-events-none transition-all duration-200">
           <span className="text-lg font-semibold text-foreground">
-            {hoveredCity || selectedCity !== "Tümü" ? (hoveredCity || selectedCity) : "Şehir Seçin"}
+            {hoveredCity || selectedCity !== "Tümü"
+              ? hoveredCity || selectedCity
+              : "Şehir Seçin"}
           </span>
         </div>
 

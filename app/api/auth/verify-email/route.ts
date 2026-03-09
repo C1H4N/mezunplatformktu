@@ -9,17 +9,14 @@ export async function GET(req: Request) {
     if (!token) {
       return NextResponse.json(
         { message: "Doğrulama tokeni eksik." },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const result = await verifyEmailToken(token);
 
     if (!result.success) {
-      return NextResponse.json(
-        { message: result.error },
-        { status: 400 }
-      );
+      return NextResponse.json({ message: result.error }, { status: 400 });
     }
 
     return NextResponse.json({
@@ -30,8 +27,7 @@ export async function GET(req: Request) {
     console.error("Email doğrulama hatası:", error);
     return NextResponse.json(
       { message: "Doğrulama sırasında bir hata oluştu." },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
-

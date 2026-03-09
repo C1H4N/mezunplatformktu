@@ -3,7 +3,15 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { Eye, EyeOff, Lock, CheckCircle, XCircle, Loader2, Check } from "lucide-react";
+import {
+  Eye,
+  EyeOff,
+  Lock,
+  CheckCircle,
+  XCircle,
+  Loader2,
+  Check,
+} from "lucide-react";
 import toast from "react-hot-toast";
 
 export default function ResetPasswordPage() {
@@ -11,7 +19,9 @@ export default function ResetPasswordPage() {
   const router = useRouter();
   const token = searchParams.get("token");
 
-  const [status, setStatus] = useState<"loading" | "valid" | "invalid" | "success">("loading");
+  const [status, setStatus] = useState<
+    "loading" | "valid" | "invalid" | "success"
+  >("loading");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -55,7 +65,12 @@ export default function ResetPasswordPage() {
       return;
     }
 
-    if (password.length < 8 || !/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/[0-9]/.test(password)) {
+    if (
+      password.length < 8 ||
+      !/[A-Z]/.test(password) ||
+      !/[a-z]/.test(password) ||
+      !/[0-9]/.test(password)
+    ) {
       toast.error("Şifre gereksinimleri karşılanmıyor.");
       return;
     }
@@ -95,7 +110,9 @@ export default function ResetPasswordPage() {
               <Loader2 className="w-8 h-8 text-primary animate-spin" />
             </div>
             <h1 className="text-2xl font-bold mb-2">Doğrulanıyor...</h1>
-            <p className="text-muted">Bağlantı doğrulanıyor, lütfen bekleyin.</p>
+            <p className="text-muted">
+              Bağlantı doğrulanıyor, lütfen bekleyin.
+            </p>
           </div>
         </div>
       </div>
@@ -111,7 +128,9 @@ export default function ResetPasswordPage() {
             <div className="w-16 h-16 bg-error/10 rounded-full flex items-center justify-center mx-auto mb-4">
               <XCircle className="w-8 h-8 text-error" />
             </div>
-            <h1 className="text-2xl font-bold mb-2 text-error">Geçersiz Bağlantı</h1>
+            <h1 className="text-2xl font-bold mb-2 text-error">
+              Geçersiz Bağlantı
+            </h1>
             <p className="text-muted mb-6">{errorMessage}</p>
             <Link
               href="/forgot-password"
@@ -134,8 +153,13 @@ export default function ResetPasswordPage() {
             <div className="w-16 h-16 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-4">
               <CheckCircle className="w-8 h-8 text-success" />
             </div>
-            <h1 className="text-2xl font-bold mb-2 text-success">Şifre Güncellendi!</h1>
-            <p className="text-muted mb-6">Şifreniz başarıyla güncellendi. Giriş sayfasına yönlendiriliyorsunuz...</p>
+            <h1 className="text-2xl font-bold mb-2 text-success">
+              Şifre Güncellendi!
+            </h1>
+            <p className="text-muted mb-6">
+              Şifreniz başarıyla güncellendi. Giriş sayfasına
+              yönlendiriliyorsunuz...
+            </p>
           </div>
         </div>
       </div>
@@ -158,7 +182,9 @@ export default function ResetPasswordPage() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="text-sm font-medium mb-1 block">Yeni Şifre</label>
+              <label className="text-sm font-medium mb-1 block">
+                Yeni Şifre
+              </label>
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
@@ -177,33 +203,53 @@ export default function ResetPasswordPage() {
                 </button>
               </div>
               <div className="mt-2 flex flex-wrap gap-2">
-                <span className={`text-xs px-2 py-1 rounded ${/[A-Z]/.test(password) ? "bg-success/20 text-success" : "bg-muted-bg text-muted"}`}>
-                  {/[A-Z]/.test(password) && <Check className="w-3 h-3 inline mr-1" />}
+                <span
+                  className={`text-xs px-2 py-1 rounded ${/[A-Z]/.test(password) ? "bg-success/20 text-success" : "bg-muted-bg text-muted"}`}
+                >
+                  {/[A-Z]/.test(password) && (
+                    <Check className="w-3 h-3 inline mr-1" />
+                  )}
                   Büyük harf
                 </span>
-                <span className={`text-xs px-2 py-1 rounded ${/[a-z]/.test(password) ? "bg-success/20 text-success" : "bg-muted-bg text-muted"}`}>
-                  {/[a-z]/.test(password) && <Check className="w-3 h-3 inline mr-1" />}
+                <span
+                  className={`text-xs px-2 py-1 rounded ${/[a-z]/.test(password) ? "bg-success/20 text-success" : "bg-muted-bg text-muted"}`}
+                >
+                  {/[a-z]/.test(password) && (
+                    <Check className="w-3 h-3 inline mr-1" />
+                  )}
                   Küçük harf
                 </span>
-                <span className={`text-xs px-2 py-1 rounded ${/[0-9]/.test(password) ? "bg-success/20 text-success" : "bg-muted-bg text-muted"}`}>
-                  {/[0-9]/.test(password) && <Check className="w-3 h-3 inline mr-1" />}
+                <span
+                  className={`text-xs px-2 py-1 rounded ${/[0-9]/.test(password) ? "bg-success/20 text-success" : "bg-muted-bg text-muted"}`}
+                >
+                  {/[0-9]/.test(password) && (
+                    <Check className="w-3 h-3 inline mr-1" />
+                  )}
                   Rakam
                 </span>
-                <span className={`text-xs px-2 py-1 rounded ${password.length >= 8 ? "bg-success/20 text-success" : "bg-muted-bg text-muted"}`}>
-                  {password.length >= 8 && <Check className="w-3 h-3 inline mr-1" />}
+                <span
+                  className={`text-xs px-2 py-1 rounded ${password.length >= 8 ? "bg-success/20 text-success" : "bg-muted-bg text-muted"}`}
+                >
+                  {password.length >= 8 && (
+                    <Check className="w-3 h-3 inline mr-1" />
+                  )}
                   8+ karakter
                 </span>
               </div>
             </div>
 
             <div>
-              <label className="text-sm font-medium mb-1 block">Şifre Tekrar</label>
+              <label className="text-sm font-medium mb-1 block">
+                Şifre Tekrar
+              </label>
               <input
                 type={showPassword ? "text" : "password"}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 className={`w-full bg-background border p-3 rounded-lg focus:ring-2 focus:ring-primary outline-none transition ${
-                  confirmPassword && password !== confirmPassword ? "border-error" : "border-border"
+                  confirmPassword && password !== confirmPassword
+                    ? "border-error"
+                    : "border-border"
                 }`}
                 placeholder="Şifrenizi tekrar girin"
                 required
@@ -226,4 +272,3 @@ export default function ResetPasswordPage() {
     </div>
   );
 }
-

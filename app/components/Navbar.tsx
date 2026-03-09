@@ -182,8 +182,9 @@ export default function Navbar() {
         typeof document !== "undefined" &&
         createPortal(
           <div
-            className={`fixed inset-0 z-[999] md:hidden bg-white flex flex-col font-lucide ${isClosing ? "animate-fade-out" : "animate-fade-in"
-              }`}
+            className={`fixed inset-0 z-[999] md:hidden bg-white flex flex-col font-lucide ${
+              isClosing ? "animate-fade-out" : "animate-fade-in"
+            }`}
           >
             <div className="flex justify-between items-center h-16 px-4 sm:px-6 border-b border-gray-100">
               <h2 className="text-lg font-bold text-gray-900">Menü</h2>
@@ -422,7 +423,7 @@ export default function Navbar() {
               )}
             </div>
           </div>,
-          document.body
+          document.body,
         )}
     </nav>
   );

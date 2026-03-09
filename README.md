@@ -124,7 +124,7 @@ Background: #f8fafc  /* Açık gri */
 Foreground: #1e293b  /* Koyu gri */
 ```
 
-**Koyu Tema:** Sistem tercihi ile otomatik aktif
+
 
 ### Responsive Stratejisi
 

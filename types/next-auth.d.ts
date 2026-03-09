@@ -1,31 +1,49 @@
-import NextAuth from 'next-auth'
+import NextAuth from "next-auth";
 
-declare module 'next-auth' {
+declare module "next-auth" {
   interface Session {
-    user: User
+    user: User;
   }
 
   interface User {
-    id: string
-    firstName?: string
-    lastName?: string
-    email: string
-    phoneNumber: string
-    image?: string | null
-    coverImage?: string | null
-    role: 'admin' | 'user' | 'STUDENT' | 'ALUMNI' | 'MODERATOR' | 'ADMIN' | 'USER' | 'ACADEMICIAN' | 'HEAD_OF_DEPARTMENT'
+    id: string;
+    firstName?: string;
+    lastName?: string;
+    email: string;
+    phoneNumber: string;
+    image?: string | null;
+    coverImage?: string | null;
+    role:
+      | "admin"
+      | "user"
+      | "STUDENT"
+      | "ALUMNI"
+      | "MODERATOR"
+      | "ADMIN"
+      | "USER"
+      | "ACADEMICIAN"
+      | "HEAD_OF_DEPARTMENT";
   }
 }
 
-declare module 'next-auth/jwt' {
+declare module "next-auth/jwt" {
   interface JWT {
-    id: string
-    firstName?: string
-    lastName?: string
-    email: string
-    role: 'admin' | 'user' | 'STUDENT' | 'ALUMNI' | 'MODERATOR' | 'ADMIN' | 'USER' | 'ACADEMICIAN' | 'HEAD_OF_DEPARTMENT'
-    phoneNumber: string
-    image?: string | null
-    coverImage?: string | null
+    id: string;
+    firstName?: string;
+    lastName?: string;
+    email: string;
+    role:
+      | "admin"
+      | "user"
+      | "STUDENT"
+      | "ALUMNI"
+      | "MODERATOR"
+      | "ADMIN"
+      | "USER"
+      | "ACADEMICIAN"
+      | "HEAD_OF_DEPARTMENT";
+    phoneNumber: string;
+    image?: string | null;
+    coverImage?: string | null;
   }
 }

@@ -5,14 +5,17 @@ import { NextResponse } from "next/server";
 // Belirli bir kullanıcı ile olan mesajları getir
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ partnerId: string }> }
+  { params }: { params: Promise<{ partnerId: string }> },
 ) {
   try {
     const { partnerId } = await params;
     const session = await auth();
 
     if (!session?.user) {
-      return NextResponse.json({ error: "Giriş yapmalısınız" }, { status: 401 });
+      return NextResponse.json(
+        { error: "Giriş yapmalısınız" },
+        { status: 401 },
+      );
     }
 
     const userId = session.user.id;
@@ -30,7 +33,10 @@ export async function GET(
     });
 
     if (!partner) {
-      return NextResponse.json({ error: "Kullanıcı bulunamadı" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Kullanıcı bulunamadı" },
+        { status: 404 },
+      );
     }
 
     // İki kullanıcı arasındaki mesajları getir
@@ -69,4 +75,3 @@ export async function GET(
     return NextResponse.json({ error: "Bir hata oluştu" }, { status: 500 });
   }
 }
-

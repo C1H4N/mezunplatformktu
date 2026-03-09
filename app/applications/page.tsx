@@ -15,7 +15,7 @@ import {
   XCircle,
   Eye,
   FileText,
-  ArrowLeft
+  ArrowLeft,
 } from "lucide-react";
 
 interface Application {
@@ -40,22 +40,22 @@ const statusConfig = {
   PENDING: {
     label: "Beklemede",
     color: "bg-yellow-500/10 text-yellow-600 border-yellow-500/20",
-    icon: Clock
+    icon: Clock,
   },
   REVIEWED: {
     label: "İnceleniyor",
     color: "bg-blue-500/10 text-blue-600 border-blue-500/20",
-    icon: Eye
+    icon: Eye,
   },
   ACCEPTED: {
     label: "Kabul Edildi",
     color: "bg-green-500/10 text-green-600 border-green-500/20",
-    icon: CheckCircle
+    icon: CheckCircle,
   },
   REJECTED: {
     label: "Reddedildi",
     color: "bg-red-500/10 text-red-600 border-red-500/20",
-    icon: XCircle
+    icon: XCircle,
   },
 };
 
@@ -64,7 +64,9 @@ export default function ApplicationsPage() {
   const router = useRouter();
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<"ALL" | "PENDING" | "REVIEWED" | "ACCEPTED" | "REJECTED">("ALL");
+  const [filter, setFilter] = useState<
+    "ALL" | "PENDING" | "REVIEWED" | "ACCEPTED" | "REJECTED"
+  >("ALL");
 
   useEffect(() => {
     if (sessionStatus === "unauthenticated") {
@@ -93,16 +95,17 @@ export default function ApplicationsPage() {
     }
   };
 
-  const filteredApplications = filter === "ALL"
-    ? applications
-    : applications.filter(app => app.status === filter);
+  const filteredApplications =
+    filter === "ALL"
+      ? applications
+      : applications.filter((app) => app.status === filter);
 
   const stats = {
     total: applications.length,
-    pending: applications.filter(a => a.status === "PENDING").length,
-    reviewed: applications.filter(a => a.status === "REVIEWED").length,
-    accepted: applications.filter(a => a.status === "ACCEPTED").length,
-    rejected: applications.filter(a => a.status === "REJECTED").length,
+    pending: applications.filter((a) => a.status === "PENDING").length,
+    reviewed: applications.filter((a) => a.status === "REVIEWED").length,
+    accepted: applications.filter((a) => a.status === "ACCEPTED").length,
+    rejected: applications.filter((a) => a.status === "REJECTED").length,
   };
 
   if (loading) {
@@ -126,57 +129,68 @@ export default function ApplicationsPage() {
             İlanlara Dön
           </Link>
           <h1 className="text-3xl font-bold text-foreground">Başvurularım</h1>
-          <p className="text-muted mt-1">İş ve staj başvurularınızı takip edin</p>
+          <p className="text-muted mt-1">
+            İş ve staj başvurularınızı takip edin
+          </p>
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
           <button
             onClick={() => setFilter("ALL")}
-            className={`p-4 rounded-xl border transition-all ${filter === "ALL"
+            className={`p-4 rounded-xl border transition-all ${
+              filter === "ALL"
                 ? "bg-primary/10 border-primary"
                 : "bg-card border-border hover:border-primary/50"
-              }`}
+            }`}
           >
             <p className="text-2xl font-bold">{stats.total}</p>
             <p className="text-xs text-muted">Toplam</p>
           </button>
           <button
             onClick={() => setFilter("PENDING")}
-            className={`p-4 rounded-xl border transition-all ${filter === "PENDING"
+            className={`p-4 rounded-xl border transition-all ${
+              filter === "PENDING"
                 ? "bg-yellow-500/10 border-yellow-500"
                 : "bg-card border-border hover:border-yellow-500/50"
-              }`}
+            }`}
           >
-            <p className="text-2xl font-bold text-yellow-600">{stats.pending}</p>
+            <p className="text-2xl font-bold text-yellow-600">
+              {stats.pending}
+            </p>
             <p className="text-xs text-muted">Beklemede</p>
           </button>
           <button
             onClick={() => setFilter("REVIEWED")}
-            className={`p-4 rounded-xl border transition-all ${filter === "REVIEWED"
+            className={`p-4 rounded-xl border transition-all ${
+              filter === "REVIEWED"
                 ? "bg-blue-500/10 border-blue-500"
                 : "bg-card border-border hover:border-blue-500/50"
-              }`}
+            }`}
           >
             <p className="text-2xl font-bold text-blue-600">{stats.reviewed}</p>
             <p className="text-xs text-muted">İnceleniyor</p>
           </button>
           <button
             onClick={() => setFilter("ACCEPTED")}
-            className={`p-4 rounded-xl border transition-all ${filter === "ACCEPTED"
+            className={`p-4 rounded-xl border transition-all ${
+              filter === "ACCEPTED"
                 ? "bg-green-500/10 border-green-500"
                 : "bg-card border-border hover:border-green-500/50"
-              }`}
+            }`}
           >
-            <p className="text-2xl font-bold text-green-600">{stats.accepted}</p>
+            <p className="text-2xl font-bold text-green-600">
+              {stats.accepted}
+            </p>
             <p className="text-xs text-muted">Kabul</p>
           </button>
           <button
             onClick={() => setFilter("REJECTED")}
-            className={`p-4 rounded-xl border transition-all ${filter === "REJECTED"
+            className={`p-4 rounded-xl border transition-all ${
+              filter === "REJECTED"
                 ? "bg-red-500/10 border-red-500"
                 : "bg-card border-border hover:border-red-500/50"
-              }`}
+            }`}
           >
             <p className="text-2xl font-bold text-red-600">{stats.rejected}</p>
             <p className="text-xs text-muted">Reddedilen</p>
@@ -188,8 +202,13 @@ export default function ApplicationsPage() {
           <div className="bg-card border border-border rounded-xl p-12 text-center">
             <Briefcase className="w-16 h-16 mx-auto text-muted mb-4" />
             <h3 className="text-lg font-semibold mb-2">Henüz başvuru yok</h3>
-            <p className="text-muted mb-6">İş ilanlarına göz atın ve başvurun</p>
-            <Link href="/jobs" className={buttonVariants({ variant: "default" })}>
+            <p className="text-muted mb-6">
+              İş ilanlarına göz atın ve başvurun
+            </p>
+            <Link
+              href="/jobs"
+              className={buttonVariants({ variant: "default" })}
+            >
               İlanları Gör
             </Link>
           </div>
@@ -212,10 +231,11 @@ export default function ApplicationsPage() {
                           {app.job.title}
                         </Link>
                         <span
-                          className={`px-2.5 py-1 rounded-full text-xs font-medium border ${app.job.type === "JOB"
+                          className={`px-2.5 py-1 rounded-full text-xs font-medium border ${
+                            app.job.type === "JOB"
                               ? "bg-blue-500/10 text-blue-500 border-blue-500/20"
                               : "bg-purple-500/10 text-purple-500 border-purple-500/20"
-                            }`}
+                          }`}
                         >
                           {app.job.type === "JOB" ? "İş" : "Staj"}
                         </span>
@@ -229,7 +249,10 @@ export default function ApplicationsPage() {
                       <div className="flex flex-wrap items-center gap-4 text-sm text-muted">
                         <div className="flex items-center gap-1.5">
                           <Building2 className="w-4 h-4" />
-                          <span>{app.job.publisher.firstName} {app.job.publisher.lastName}</span>
+                          <span>
+                            {app.job.publisher.firstName}{" "}
+                            {app.job.publisher.lastName}
+                          </span>
                         </div>
                         <div className="flex items-center gap-1.5">
                           <MapPin className="w-4 h-4" />
@@ -238,11 +261,14 @@ export default function ApplicationsPage() {
                         <div className="flex items-center gap-1.5">
                           <Calendar className="w-4 h-4" />
                           <span>
-                            {new Date(app.applicationDate).toLocaleDateString("tr-TR", {
-                              day: "numeric",
-                              month: "long",
-                              year: "numeric",
-                            })}
+                            {new Date(app.applicationDate).toLocaleDateString(
+                              "tr-TR",
+                              {
+                                day: "numeric",
+                                month: "long",
+                                year: "numeric",
+                              },
+                            )}
                           </span>
                         </div>
                         {app.coverLetter && (
@@ -256,15 +282,19 @@ export default function ApplicationsPage() {
 
                     <div className="flex items-center gap-3">
                       <span
-                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium border ${statusConfig[app.status].color
-                          }`}
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium border ${
+                          statusConfig[app.status].color
+                        }`}
                       >
                         <StatusIcon className="w-4 h-4" />
                         {statusConfig[app.status].label}
                       </span>
                       <Link
                         href={`/jobs/${app.job.id}`}
-                        className={buttonVariants({ variant: "ghost", size: "sm" })}
+                        className={buttonVariants({
+                          variant: "ghost",
+                          size: "sm",
+                        })}
                       >
                         Detay
                       </Link>
@@ -279,4 +309,3 @@ export default function ApplicationsPage() {
     </div>
   );
 }
-

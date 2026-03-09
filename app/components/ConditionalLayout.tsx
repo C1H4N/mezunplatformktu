@@ -5,22 +5,22 @@ import Navbar from "./Navbar";
 import Footer from "./Footer";
 
 export default function ConditionalLayout({
-    children,
+  children,
 }: {
-    children: React.ReactNode;
+  children: React.ReactNode;
 }) {
-    const pathname = usePathname();
-    const isAdminRoute = pathname.startsWith("/admin");
+  const pathname = usePathname();
+  const isAdminRoute = pathname.startsWith("/admin");
 
-    if (isAdminRoute) {
-        return <>{children}</>;
-    }
+  if (isAdminRoute) {
+    return <>{children}</>;
+  }
 
-    return (
-        <>
-            <Navbar />
-            {children}
-            <Footer />
-        </>
-    );
+  return (
+    <>
+      <Navbar />
+      {children}
+      <Footer />
+    </>
+  );
 }

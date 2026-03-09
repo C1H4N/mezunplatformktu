@@ -2,11 +2,28 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { Bell, Check, Trash2, MessageSquare, Briefcase, Calendar, Users, Settings, X, ShieldCheck } from "lucide-react";
+import {
+  Bell,
+  Check,
+  Trash2,
+  MessageSquare,
+  Briefcase,
+  Calendar,
+  Users,
+  Settings,
+  X,
+  ShieldCheck,
+} from "lucide-react";
 
 interface Notification {
   id: string;
-  type: "MESSAGE" | "JOB_APPLICATION" | "EVENT" | "MENTORSHIP" | "SYSTEM" | "APPROVAL";
+  type:
+    | "MESSAGE"
+    | "JOB_APPLICATION"
+    | "EVENT"
+    | "MENTORSHIP"
+    | "SYSTEM"
+    | "APPROVAL";
   title: string;
   message: string;
   link?: string;
@@ -48,7 +65,10 @@ export default function NotificationBell() {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
@@ -172,7 +192,8 @@ export default function NotificationBell() {
               <div className="divide-y divide-border">
                 {notifications.map((notif) => {
                   const Icon = typeIcons[notif.type] || Bell;
-                  const colorClass = typeColors[notif.type] || "text-gray-500 bg-gray-500/10";
+                  const colorClass =
+                    typeColors[notif.type] || "text-gray-500 bg-gray-500/10";
 
                   return (
                     <div
@@ -188,24 +209,36 @@ export default function NotificationBell() {
                           }}
                           className="flex gap-3 p-4 hover:bg-muted-bg/50 transition-colors"
                         >
-                          <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${colorClass}`}>
+                          <div
+                            className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${colorClass}`}
+                          >
                             <Icon className="w-5 h-5" />
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="font-medium text-sm">{notif.title}</p>
-                            <p className="text-xs text-muted line-clamp-2">{notif.message}</p>
-                            <p className="text-xs text-muted mt-1">{formatTime(notif.createdAt)}</p>
+                            <p className="text-xs text-muted line-clamp-2">
+                              {notif.message}
+                            </p>
+                            <p className="text-xs text-muted mt-1">
+                              {formatTime(notif.createdAt)}
+                            </p>
                           </div>
                         </Link>
                       ) : (
                         <div className="flex gap-3 p-4">
-                          <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${colorClass}`}>
+                          <div
+                            className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${colorClass}`}
+                          >
                             <Icon className="w-5 h-5" />
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="font-medium text-sm">{notif.title}</p>
-                            <p className="text-xs text-muted line-clamp-2">{notif.message}</p>
-                            <p className="text-xs text-muted mt-1">{formatTime(notif.createdAt)}</p>
+                            <p className="text-xs text-muted line-clamp-2">
+                              {notif.message}
+                            </p>
+                            <p className="text-xs text-muted mt-1">
+                              {formatTime(notif.createdAt)}
+                            </p>
                           </div>
                         </div>
                       )}
@@ -259,4 +292,3 @@ export default function NotificationBell() {
     </div>
   );
 }
-

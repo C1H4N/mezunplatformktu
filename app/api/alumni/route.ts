@@ -33,7 +33,7 @@ export async function GET(request: Request) {
     // Department filter
     if (department && department !== "Tümü") {
       whereClause.alumni = {
-        ...(whereClause.alumni as Record<string, unknown> || {}),
+        ...((whereClause.alumni as Record<string, unknown>) || {}),
         department: { contains: department, mode: "insensitive" },
       };
     }
@@ -41,7 +41,7 @@ export async function GET(request: Request) {
     // Graduation Year filter
     if (year && year !== "Tümü") {
       whereClause.alumni = {
-        ...(whereClause.alumni as Record<string, unknown> || {}),
+        ...((whereClause.alumni as Record<string, unknown>) || {}),
         graduationYear: parseInt(year),
       };
     }
@@ -71,10 +71,13 @@ export async function GET(request: Request) {
         profileImage: user.image || user.moreinfo?.image,
       };
     });
-    
+
     return NextResponse.json(alumni);
   } catch (error) {
     console.error("Error fetching alumni:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 },
+    );
   }
 }

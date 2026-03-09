@@ -26,7 +26,7 @@ import {
   Presentation,
   Coffee,
   MoreHorizontal,
-  AlertCircle
+  AlertCircle,
 } from "lucide-react";
 import { ReportModal } from "../../components/ui/ReportModal";
 
@@ -53,14 +53,45 @@ interface Event {
   };
 }
 
-const eventTypeConfig: Record<string, { label: string; icon: React.ReactNode; color: string }> = {
-  CAREER_FAIR: { label: "Kariyer Fuarı", icon: <Briefcase className="w-5 h-5" />, color: "bg-blue-500/10 text-blue-600 border-blue-500/20" },
-  NETWORKING: { label: "Networking", icon: <Users2 className="w-5 h-5" />, color: "bg-purple-500/10 text-purple-600 border-purple-500/20" },
-  WORKSHOP: { label: "Atölye", icon: <Wrench className="w-5 h-5" />, color: "bg-orange-500/10 text-orange-600 border-orange-500/20" },
-  SEMINAR: { label: "Seminer", icon: <GraduationCap className="w-5 h-5" />, color: "bg-green-500/10 text-green-600 border-green-500/20" },
-  CONFERENCE: { label: "Konferans", icon: <Presentation className="w-5 h-5" />, color: "bg-red-500/10 text-red-600 border-red-500/20" },
-  MEETUP: { label: "Buluşma", icon: <Coffee className="w-5 h-5" />, color: "bg-yellow-500/10 text-yellow-600 border-yellow-500/20" },
-  OTHER: { label: "Diğer", icon: <MoreHorizontal className="w-5 h-5" />, color: "bg-gray-500/10 text-gray-600 border-gray-500/20" },
+const eventTypeConfig: Record<
+  string,
+  { label: string; icon: React.ReactNode; color: string }
+> = {
+  CAREER_FAIR: {
+    label: "Kariyer Fuarı",
+    icon: <Briefcase className="w-5 h-5" />,
+    color: "bg-blue-500/10 text-blue-600 border-blue-500/20",
+  },
+  NETWORKING: {
+    label: "Networking",
+    icon: <Users2 className="w-5 h-5" />,
+    color: "bg-purple-500/10 text-purple-600 border-purple-500/20",
+  },
+  WORKSHOP: {
+    label: "Atölye",
+    icon: <Wrench className="w-5 h-5" />,
+    color: "bg-orange-500/10 text-orange-600 border-orange-500/20",
+  },
+  SEMINAR: {
+    label: "Seminer",
+    icon: <GraduationCap className="w-5 h-5" />,
+    color: "bg-green-500/10 text-green-600 border-green-500/20",
+  },
+  CONFERENCE: {
+    label: "Konferans",
+    icon: <Presentation className="w-5 h-5" />,
+    color: "bg-red-500/10 text-red-600 border-red-500/20",
+  },
+  MEETUP: {
+    label: "Buluşma",
+    icon: <Coffee className="w-5 h-5" />,
+    color: "bg-yellow-500/10 text-yellow-600 border-yellow-500/20",
+  },
+  OTHER: {
+    label: "Diğer",
+    icon: <MoreHorizontal className="w-5 h-5" />,
+    color: "bg-gray-500/10 text-gray-600 border-gray-500/20",
+  },
 };
 
 export default function EventDetailPage() {
@@ -130,9 +161,12 @@ export default function EventDetailPage() {
       const eventData = await eventRes.json();
       setEvent(eventData);
 
-      toast.success(isParticipating ? "Katılım iptal edildi" : "Etkinliğe katıldınız!");
+      toast.success(
+        isParticipating ? "Katılım iptal edildi" : "Etkinliğe katıldınız!",
+      );
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : "Bir hata oluştu";
+      const message =
+        error instanceof Error ? error.message : "Bir hata oluştu";
       toast.error(message);
     } finally {
       setActionLoading(false);
@@ -211,7 +245,9 @@ export default function EventDetailPage() {
 
             {/* Type Badge */}
             <div className="absolute top-4 left-4">
-              <span className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border ${typeInfo.color}`}>
+              <span
+                className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border ${typeInfo.color}`}
+              >
                 {typeInfo.icon}
                 {typeInfo.label}
               </span>
@@ -276,7 +312,9 @@ export default function EventDetailPage() {
                     {event._count.participants} kişi
                     {event.capacity && ` / ${event.capacity} kapasite`}
                   </p>
-                  {isFull && <p className="text-xs text-red-500">Kapasite doldu</p>}
+                  {isFull && (
+                    <p className="text-xs text-red-500">Kapasite doldu</p>
+                  )}
                 </div>
               </div>
 
@@ -365,4 +403,3 @@ export default function EventDetailPage() {
     </div>
   );
 }
-

@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { 
-  Calendar, 
-  Search, 
-  Trash2, 
+import {
+  Calendar,
+  Search,
+  Trash2,
   Eye,
   MapPin,
   Users,
@@ -86,8 +86,8 @@ export default function AdminEventsPage() {
 
       setEvents((prev) =>
         prev.map((event) =>
-          event.id === eventId ? { ...event, status: newStatus } : event
-        )
+          event.id === eventId ? { ...event, status: newStatus } : event,
+        ),
       );
       toast.success("Etkinlik durumu güncellendi");
     } catch (error) {
@@ -233,7 +233,8 @@ export default function AdminEventsPage() {
 
               <div className="flex items-center justify-between pt-4 border-t border-border">
                 <span className="text-xs text-muted">
-                  Düzenleyen: {event.organizer.firstName} {event.organizer.lastName}
+                  Düzenleyen: {event.organizer.firstName}{" "}
+                  {event.organizer.lastName}
                 </span>
                 <div className="flex items-center gap-2">
                   <Link
@@ -266,4 +267,3 @@ export default function AdminEventsPage() {
     </div>
   );
 }
-

@@ -27,7 +27,7 @@ export default function LoginPage() {
           toast.error(
             result.error === "CredentialsSignin"
               ? "E-posta veya şifre hatalı!"
-              : result.error || "Giriş başarısız! Lütfen tekrar deneyin."
+              : result.error || "Giriş başarısız! Lütfen tekrar deneyin.",
           );
         } else {
           toast.success("Giriş başarılı! Yönlendiriliyorsunuz...");
@@ -123,7 +123,11 @@ export default function LoginPage() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors p-0.5"
                 >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  {showPassword ? (
+                    <EyeOff className="w-4 h-4" />
+                  ) : (
+                    <Eye className="w-4 h-4" />
+                  )}
                 </button>
               </div>
             </div>
@@ -140,12 +144,22 @@ export default function LoginPage() {
                 />
                 <svg
                   className="absolute inset-0 m-auto w-3 h-3 text-white opacity-0 peer-checked:opacity-100 pointer-events-none transition-opacity"
-                  fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3.5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth="3.5"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M5 13l4 4L19 7"
+                  />
                 </svg>
               </div>
-              <label htmlFor="rememberMe" className="text-sm text-slate-600 font-semibold cursor-pointer select-none">
+              <label
+                htmlFor="rememberMe"
+                className="text-sm text-slate-600 font-semibold cursor-pointer select-none"
+              >
                 Beni hatırla
               </label>
             </div>
@@ -184,7 +198,8 @@ export default function LoginPage() {
         </div>
 
         <p className="text-center text-xs text-white/50 mt-6 leading-relaxed px-4">
-          Bu platform yalnızca KTÜ Araklı Ali Cevat Özyurt MYO mensuplarına ve mezunlarına özeldir.
+          Bu platform yalnızca KTÜ Araklı Ali Cevat Özyurt MYO mensuplarına ve
+          mezunlarına özeldir.
         </p>
       </div>
     </div>

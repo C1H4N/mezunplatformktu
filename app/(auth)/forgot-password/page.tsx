@@ -12,7 +12,7 @@ export default function ForgotPasswordPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!email) {
       toast.error("Lütfen e-posta adresinizi girin.");
       return;
@@ -52,8 +52,9 @@ export default function ForgotPasswordPage() {
             </div>
             <h1 className="text-2xl font-bold mb-2">E-posta Gönderildi!</h1>
             <p className="text-muted mb-6">
-              Eğer <strong>{email}</strong> adresi sistemimizde kayıtlıysa, şifre sıfırlama bağlantısı gönderildi.
-              Lütfen gelen kutunuzu ve spam klasörünüzü kontrol edin.
+              Eğer <strong>{email}</strong> adresi sistemimizde kayıtlıysa,
+              şifre sıfırlama bağlantısı gönderildi. Lütfen gelen kutunuzu ve
+              spam klasörünüzü kontrol edin.
             </p>
             <div className="flex flex-col gap-3">
               <button
@@ -96,12 +97,15 @@ export default function ForgotPasswordPage() {
 
           <h1 className="text-2xl font-bold mb-2">Şifremi Unuttum</h1>
           <p className="text-muted mb-6">
-            Kayıtlı e-posta adresinizi girin. Size şifre sıfırlama bağlantısı göndereceğiz.
+            Kayıtlı e-posta adresinizi girin. Size şifre sıfırlama bağlantısı
+            göndereceğiz.
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="text-sm font-medium mb-1 block">E-posta Adresi</label>
+              <label className="text-sm font-medium mb-1 block">
+                E-posta Adresi
+              </label>
               <input
                 type="email"
                 value={email}
@@ -125,4 +129,3 @@ export default function ForgotPasswordPage() {
     </div>
   );
 }
-
