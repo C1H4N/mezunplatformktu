@@ -32,7 +32,35 @@ export async function GET(req: Request) {
       orderBy: { createdAt: "desc" },
     });
 
-    return NextResponse.json(reports);
+    const enrichedReports = await Promise.all(
+      reports.map(async (report) => {
+        let reportedEntityInfo = "Bilinmeyen/Silinmiş İçerik";
+        let reportedEntityLink: string | null = null;
+
+        try {
+          if (report.type === "JOB_POSTING") {
+            const job = await prisma.jobAdvertisement.findUnique({ where: { id: report.reportedId }, select: { title: true } });
+            if (job) { reportedEntityInfo = job.title; reportedEntityLink = `/jobs/${report.reportedId}`; }
+          } else if (report.type === "USER_PROFILE") {
+            const user = await prisma.user.findUnique({ where: { id: report.reportedId }, select: { firstName: true, lastName: true } });
+            if (user) { reportedEntityInfo = `${user.firstName} ${user.lastName}`; }
+          } else if (report.type === "EVENT") {
+            const event = await prisma.event.findUnique({ where: { id: report.reportedId }, select: { title: true } });
+            if (event) { reportedEntityInfo = event.title; reportedEntityLink = `/events/${report.reportedId}`; }
+          }
+        } catch (e) {
+          console.error("Şikayet edilen varlık bulunamadı:", e)
+        }
+
+        return {
+          ...report,
+          reportedEntityInfo,
+          reportedEntityLink
+        };
+      })
+    );
+
+    return NextResponse.json(enrichedReports);
   } catch (error) {
     console.error("Error fetching reports:", error);
     return NextResponse.json({ error: "Bir hata oluştu" }, { status: 500 });

@@ -163,7 +163,7 @@ export default function AdminJobsPage() {
           </p>
         </div>
         <Link
-          href="/ilanlar"
+          href="/jobs"
           className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 rounded-xl text-sm font-semibold transition"
         >
           <Eye className="w-4 h-4" /> Kullanıcı Görünümü

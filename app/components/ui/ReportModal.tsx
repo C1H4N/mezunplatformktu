@@ -141,7 +141,7 @@ export function ReportModal({
             </Button>
             <Button
               type="submit"
-              disabled={isLoading || reason.length < 10}
+              disabled={isLoading}
               className="bg-rose-600 hover:bg-rose-700 text-white"
             >
               {isLoading ? (

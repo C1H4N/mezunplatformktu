@@ -2,11 +2,13 @@
 
 import { useState, useEffect, useRef } from "react";
 import { cities } from "../lib/constants";
+import { MapPin } from "lucide-react";
 
 interface TurkeyMapProps {
   selectedCity: string;
   onCitySelect: (city: string) => void;
   alumniCounts?: Record<string, number>;
+  abroadCount?: number;
 }
 
 function normalizeCityName(name: string): string {
@@ -117,6 +119,7 @@ export default function TurkeyMap({
   selectedCity,
   onCitySelect,
   alumniCounts = {},
+  abroadCount = 0,
 }: TurkeyMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [hoveredCity, setHoveredCity] = useState<string | null>(null);
@@ -175,7 +178,7 @@ export default function TurkeyMap({
           svgEl.removeAttribute("height");
           svgEl.setAttribute("preserveAspectRatio", "xMidYMid meet");
         }
-      } catch (_) {}
+      } catch (_) { }
 
       applyRegionStyles(containerRef.current);
 
@@ -351,6 +354,42 @@ export default function TurkeyMap({
           className="w-full h-full flex items-center justify-center"
           aria-label="Türkiye Haritası"
         />
+
+        {/* Yurt Dışı Kutusu */}
+        <button
+          onClick={() => onCitySelect("Yurt Dışı")}
+          className={`absolute bottom-5 right-5 flex items-center gap-2.5 bg-background border-2 rounded-xl px-4 py-2.5 shadow-md hover:shadow-lg transition-all group cursor-pointer ${selectedCity === "Yurt Dışı"
+              ? "border-emerald-500 ring-2 ring-emerald-500/20"
+              : abroadCount > 0
+                ? "border-emerald-300 hover:border-emerald-500"
+                : "border-border hover:border-border/80 opacity-70"
+            }`}
+          title="Yurt dışındaki mezunları gör"
+        >
+          <span className="text-2xl">🌍</span>
+          <div className="text-left">
+            <p
+              className={`text-xs font-bold leading-none ${abroadCount > 0 ? "text-emerald-600" : "text-muted"}`}
+            >
+              Yurt Dışı
+            </p>
+            <p
+              className={`text-lg font-extrabold leading-tight transition-colors ${selectedCity === "Yurt Dışı" ? "text-emerald-700" : abroadCount > 0 ? "text-foreground group-hover:text-emerald-600" : "text-muted"}`}
+            >
+              {abroadCount}{" "}
+              <span className="text-xs font-semibold text-muted">
+                mezun
+              </span>
+            </p>
+          </div>
+          <div
+            className={`w-7 h-7 rounded-lg flex items-center justify-center transition-colors ${selectedCity === "Yurt Dışı" || abroadCount > 0 ? "bg-emerald-500/10 group-hover:bg-emerald-500/20" : "bg-muted-bg"}`}
+          >
+            <MapPin
+              className={`w-4 h-4 ${selectedCity === "Yurt Dışı" || abroadCount > 0 ? "text-emerald-600" : "text-muted"}`}
+            />
+          </div>
+        </button>
       </div>
       <div className="mt-0 text-xs text-muted px-2 sm:px-3">
         Şehre tıklayarak filtreleyin. Temizle ile sıfırlayabilirsiniz.

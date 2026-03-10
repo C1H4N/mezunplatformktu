@@ -14,6 +14,7 @@ import { format } from "date-fns";
 import { tr } from "date-fns/locale";
 import Image from "next/image";
 import HomeAlumniMap from "./components/HomeAlumniMap";
+import HomeStats from "./components/HomeStats";
 
 export default async function Home() {
   const latestAnnouncements = await prisma.announcement.findMany({
@@ -170,6 +171,8 @@ export default async function Home() {
           </div>
         </div>
       </div>
+
+      <HomeStats />
 
       {/* Info Section */}
       <section className="py-24 px-4 sm:px-6 lg:px-8 bg-white relative z-20">

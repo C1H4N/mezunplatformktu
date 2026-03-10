@@ -164,6 +164,17 @@ export async function POST(req: Request) {
       },
     });
 
+    // Mesaj alıcısına bildirim gönder (zaten unreadCount poll ediliyor)
+    await prisma.notification.create({
+      data: {
+        userId: receiverId,
+        type: "MESSAGE",
+        title: "Yeni Mesaj",
+        message: `${session.user.firstName} size bir mesaj gönderdi: "${content.substring(0, 30)}${content.length > 30 ? "..." : ""}"`,
+        link: `/messages/${session.user.id}`,
+      },
+    });
+
     return NextResponse.json(message, { status: 201 });
   } catch (error) {
     console.error("Error sending message:", error);

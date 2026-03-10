@@ -25,9 +25,19 @@ export async function GET(request: Request) {
 
     // City filter
     if (city && city !== "Tümü") {
-      whereClause.moreinfo = {
-        location: { contains: city, mode: "insensitive" },
-      };
+      if (city === "Yurt Dışı") {
+        whereClause.moreinfo = {
+          OR: [
+            { location: { contains: "yurt dışı", mode: "insensitive" } },
+            { location: { contains: "yurtdışı", mode: "insensitive" } },
+            { location: { startsWith: "abroad", mode: "insensitive" } },
+          ]
+        };
+      } else {
+        whereClause.moreinfo = {
+          location: { contains: city, mode: "insensitive" },
+        };
+      }
     }
 
     // Department filter

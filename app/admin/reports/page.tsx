@@ -22,6 +22,8 @@ interface Report {
   status: string;
   actionTaken?: string;
   reportedId: string;
+  reportedEntityInfo?: string;
+  reportedEntityLink?: string | null;
   createdAt: string;
   reporter: { id: string; firstName: string; lastName: string; email: string };
 }
@@ -275,10 +277,24 @@ export default function AdminReportsPage() {
                       </div>
                       <div>
                         <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">
-                          Hedef ID
+                          Hedef İçerik
                         </p>
-                        <code className="text-xs bg-slate-200 px-2 py-1 rounded font-mono">
-                          {report.reportedId}
+                        {report.reportedEntityLink ? (
+                          <a
+                            href={report.reportedEntityLink}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="font-medium text-primary hover:underline"
+                          >
+                            {report.reportedEntityInfo}
+                          </a>
+                        ) : (
+                          <p className="font-medium text-slate-800">
+                            {report.reportedEntityInfo || "Bilinmeyen İçerik"}
+                          </p>
+                        )}
+                        <code className="text-[10px] text-slate-400 mt-1 block font-mono">
+                          ID: {report.reportedId}
                         </code>
                       </div>
                     </div>

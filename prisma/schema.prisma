@@ -364,7 +364,7 @@ model Event {
   image       String?     // Etkinlik görseli
 
   organizerId String
-  organizer   User   @relation(fields: [organizerId], references: [id])
+  organizer   User   @relation(fields: [organizerId], references: [id], onDelete: Cascade)
 
   participants EventParticipant[]
 
@@ -398,10 +398,10 @@ model Message {
   timestamp DateTime @default(now())
 
   senderId String
-  sender   User   @relation("SentMessages", fields: [senderId], references: [id])
+  sender   User   @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
 
   receiverId String
-  receiver   User   @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  receiver   User   @relation("ReceivedMessages", fields: [receiverId], references: [id], onDelete: Cascade)
 }
 
 // Existing models preserved
@@ -524,7 +524,7 @@ enum ReportStatus {
 model Report {
   id         String @id @default(cuid())
   reporterId String // Şikâyet eden kullanıcı
-  reporter   User   @relation("ReportSubmitted", fields: [reporterId], references: [id])
+  reporter   User   @relation("ReportSubmitted", fields: [reporterId], references: [id], onDelete: Cascade)
 
   reportedId  String // Şikâyet edilen içerik/kullanıcı ID'si
   type        ReportType

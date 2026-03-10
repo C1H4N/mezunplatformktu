@@ -93,15 +93,23 @@ export default function MezunlarPage() {
     return () => clearTimeout(timeoutId);
   }, [search, departmentFilter, cityFilter, yearFilter]);
 
-  const alumniCounts = alumni.reduce(
-    (acc, person) => {
-      if (person.city && person.city !== "Bilinmiyor") {
-        acc[person.city] = (acc[person.city] || 0) + 1;
+  let abroadCount = 0;
+  const alumniCounts: Record<string, number> = {};
+
+  alumni.forEach((person) => {
+    if (person.city && person.city !== "Bilinmiyor") {
+      const loc = person.city.toLowerCase();
+      if (
+        loc.includes("yurt dışı") ||
+        loc.includes("yurtdışı") ||
+        loc.startsWith("abroad")
+      ) {
+        abroadCount++;
+      } else {
+        alumniCounts[person.city] = (alumniCounts[person.city] || 0) + 1;
       }
-      return acc;
-    },
-    {} as Record<string, number>,
-  );
+    }
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted-bg/20">
@@ -255,6 +263,7 @@ export default function MezunlarPage() {
               selectedCity={cityFilter}
               onCitySelect={(city) => setCityFilter(city)}
               alumniCounts={alumniCounts}
+              abroadCount={abroadCount}
             />
           </div>
         </div>

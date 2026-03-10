@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { writeFile } from "fs/promises";
+import { writeFile, mkdir } from "fs/promises";
 import path from "path";
 import { auth } from "@/auth";
 
@@ -22,6 +22,7 @@ export async function POST(req: Request) {
     const uploadDir = path.join(process.cwd(), "public/uploads");
 
     try {
+      await mkdir(uploadDir, { recursive: true });
       await writeFile(path.join(uploadDir, filename), buffer);
     } catch (error) {
       console.error("Error saving file:", error);
