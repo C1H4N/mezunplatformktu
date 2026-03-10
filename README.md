@@ -2,19 +2,53 @@
 
 KTÜ Araklı Ali Cevat Özyurt Meslek Yüksekokulu mezunlarını bir araya getiren, kariyer gelişimini destekleyen ve networking fırsatları sunan modern web platformu.
 
-![Next.js](https://img.shields.io/badge/Next.js-15.5-black?style=flat-square&logo=next.js)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat-square&logo=typescript)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.0-38bdf8?style=flat-square&logo=tailwind-css)
+![Next.js](https://img.shields.io/badge/Next.js-16.x-black?style=flat-square&logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue?style=flat-square&logo=typescript)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.x-38bdf8?style=flat-square&logo=tailwind-css)
 ![Prisma](https://img.shields.io/badge/Prisma-6.16-2D3748?style=flat-square&logo=prisma)
 
 ---
 
 ## ✨ Özellikler
 
-- **🔍 Gelişmiş Arama:** Real-time arama ve çoklu filtre seçenekleri (şehir, bölüm, iş alanı)
-- **👤 Detaylı Profiller:** Deneyim, yetenekler, sosyal medya linkleri ile kapsamlı mezun profilleri
-- **🎨 Modern Tasarım:** Kurumsal mavi tonları, açık/koyu tema desteği, mobil öncelikli responsive tasarım
-- **⚡ Hızlı & Akıcı:** Next.js 15 App Router, smooth animasyonlar, optimized performans
+### Genel
+- **🔍 Gelişmiş Arama:** Real-time arama, şehir, bölüm ve iş alanı filtreleri ile mezun listeleme
+- **🗺️ Türkiye Haritası:** İl bazında mezun dağılımı görselleştirmesi (anadolu harita SVG)
+- **📊 Canlı İstatistikler:** Platform istatistikleri (mezun, öğrenci, ilan, etkinlik sayıları)
+- **🎨 Modern Tasarım:** Kurumsal mavi tonları, responsive layout, mobil öncelikli
+- **⚡ Hızlı & Akıcı:** Next.js 16 App Router, Server Components, optimize edilmiş performans
+
+### Kimlik Doğrulama
+- **🔐 Credentials Auth:** E-posta/telefon + şifre ile giriş (NextAuth v5)
+- **📧 E-posta Doğrulama:** Kayıt sonrası e-posta aktivasyonu (Resend)
+- **🔑 Şifre Sıfırlama:** Unutulan şifre için e-posta ile token akışı
+- **✅ Üyelik Onay Akışı:** Bölüm başkanı/admin onayı ile üyelik (PENDING → APPROVED/REJECTED)
+
+### Rol ve Yetkilendirme
+- **👑 Admin:** Tam yetki, tüm admin panel erişimi
+- **🛡️ Moderatör / Bölüm Başkanı:** Moderasyon, rapor inceleme, onay işlemleri
+- **👨‍🎓 Mezun (Alumni):** Profil, deneyim, yetenek, iş ilanı paylaşımı
+- **🎓 Öğrenci:** Profil, ilan başvurusu, mentorluk talepleri
+
+### Modüller
+- **👤 Mezun Profilleri:** Detaylı profil sayfaları (deneyim, eğitim, yetenekler, sosyal linkler)
+- **💼 İş İlanları:** İlan oluşturma, başvuru yönetimi, durum takibi
+- **📅 Etkinlikler:** Etkinlik oluşturma, katılım kaydı
+- **💬 Mesajlaşma:** Kullanıcılar arası özel mesajlaşma
+- **🔔 Bildirimler:** Bildirim çanı ile sistem/mesaj/ilan/etkinlik bildirimleri
+- **📢 Duyurular:** Sabitlenmiş ve standart duyurular
+- **🚩 Raporlama:** Kullanıcı/ilan/etkinlik/mesaj şikâyeti, moderatör incelemesi
+
+### Admin Paneli
+- Kullanıcı yönetimi, rol atama
+- Üyelik onayları (approvals)
+- Duyuru yönetimi
+- Etkinlik yönetimi
+- İş ilanları moderasyonu
+- Rapor inceleme ve detaylı raporlar
+- Bölüm/Program (CRUD) yönetimi
+- Sistem ayarları
+- Denetim izleri (audit logs)
 
 ---
 
@@ -22,92 +56,169 @@ KTÜ Araklı Ali Cevat Özyurt Meslek Yüksekokulu mezunlarını bir araya getir
 
 ### Gereksinimler
 - Node.js 20+
-- Docker
+- Docker (PostgreSQL için)
 - npm
+
+### Ortam Değişkenleri
+
+`.env` dosyası için [@ashetian](https://github.com/ashetian) ile iletişime geçin.
+
+**Zorunlu değişkenler:**
+```env
+# Veritabanı
+DATABASE_URL="postgresql://ktu:ktu@localhost:5432/ktu"
+INTERNAL_DATABASE_URL="postgresql://ktu:ktu@db:5432/ktu"
+
+# NextAuth
+NEXTAUTH_SECRET="güçlü-gizli-anahtar"
+NEXTAUTH_URL="http://localhost:3000"
+AUTH_SECRET="güçlü-gizli-anahtar"
+AUTH_URL="http://localhost:3000/api/auth"
+
+# E-posta (Resend - opsiyonel, doğrulama/şifre sıfırlama için)
+RESEND_API_KEY="re_xxx"
+NEXT_PUBLIC_APP_URL="http://localhost:3000"
+```
 
 ### Kurulum
 
-.env dosyası için [@ashetian](https://github.com/ashetian) ile iletişime geçin.
-
 **Docker ile Çalıştırma (Önerilen)**
-Tüm projeyi (Frontend + Veritabanı) tek komutla ayağa kaldırmak için:
+
+Frontend + PostgreSQL’i tek komutla ayağa kaldırmak için:
 
 ```bash
 docker-compose -f docker-compose-dev.yml up -d
 ```
-Ardından tarayıcınızda [http://localhost:3000](http://localhost:3000) adresine gidebilirsiniz. Kodunuzu her kaydettiğinizde sayfa otomatik olarak yenilenecektir.
 
-**Veritabanını Hazırlama (İlk Kurulumda):**
+Ardından tarayıcıda [http://localhost:3000](http://localhost:3000) adresine gidin. Değişiklikleri kaydettikçe sayfa otomatik yenilenecektir.
+
+**Veritabanını Hazırlama (İlk Kurulum):**
 ```bash
 npx prisma db push
 npx prisma db seed
 ```
 
-**Yeniden build almak gerekirse:**
+**Yeniden build almak gerektiğinde:**
 ```bash
 docker-compose -f docker-compose-dev.yml build --no-cache
 ```
 
-### Lokal Geliştirme (Docker Hariç Sadece Frontend)
-Uygulamayı Docker dışında, yerel olarak çalıştırmak isterseniz:
+### Lokal Geliştirme (Docker Olmadan)
+
+PostgreSQL’in ayakta olduğundan emin olun; ardından:
+
 ```bash
-npm install          # Bağımlılıkları yükle
-npm run dev          # Geliştirme sunucusu
+npm install
+npm run dev
 ```
 
 ### Diğer Komutlar
 ```bash
 npm run build        # Production build
-npm run lint         # Kod kontrolü
-npm run format       # Kod formatlama
+npm run start        # Production sunucu
+npm run lint         # Biome ile kod kontrolü
+npm run format       # Biome ile formatlama
 npx prisma studio    # Veritabanı GUI
+npx prisma migrate dev   # Migration oluştur/uygula
 ```
 
 ---
 
 ## 👥 Test Kullanıcıları
 
-Uygulamayı lokal ortamda test edebilmeniz için aşağıdaki hesaplar `npx prisma db seed` komutu çalıştırıldığında otomatik olarak oluşturulur. **Tüm hesapların şifresi:** `Test123!`
+`npx prisma db seed` çalıştırıldığında aşağıdaki test verileri oluşturulur. **Tüm hesapların şifresi:** `Test123!`
 
-| Rol | E-posta | İsim |
+| Rol | E-posta | Not |
 | :--- | :--- | :--- |
-| **👑 Admin** | `admin@ktu.edu.tr` | Admin AACOMYO |
-| **🛡️ Moderatör** | `moderator@ktu.edu.tr` | Moderatör AACOMYO |
-| **🏢 İşveren 1** | `hr@techcorp.com` | Ayşe Yılmaz (Tech Corp) |
-| **🏢 İşveren 2** | `kariyer@finansbank.com` | Mehmet Kaya (Finans Bank) |
-| **🎓 Öğrenci 1** | `ogrenci1@ktu.edu.tr` | Ali Demir |
-| **🎓 Öğrenci 2** | `ogrenci2@ktu.edu.tr` | Zeynep Şahin |
-| **👨‍🎓 Mezun 1** | `ahmet.yilmaz@gmail.com` | Ahmet Yılmaz (Google) |
-| **👨‍🎓 Mezun 2** | `elif.ozturk@outlook.com` | Elif Öztürk (Microsoft) |
-| **👨‍🎓 Mezun 3** | `can.arslan@yahoo.com` | Can Arslan (Ford Otosan) |
-| **👨‍🎓 Mezun 4** | `selin.kaya@gmail.com` | Selin Kaya (Garanti BBVA) |
+| **👑 Admin** | `admin@ktu.edu.tr` | Tam yetkili yönetici |
+| **👨‍🎓 Mezunlar** | `mezun1_ahmet.yilmaz@example.com` … `mezun60_...` | 60 adet örnek mezun |
+| **🎓 Öğrenciler** | `ogrenci1_ahmet.yilmaz@ktu.edu.tr` … `ogrenci30_...` | 30 adet örnek öğrenci |
 
-*Not: İlanlar, etkinlikler ve bildirimler de mock veri olarak bu hesaplara entegre şekilde yüklenmektedir.*
+Seed ayrıca 6 bölüm (Department) ve ilişkili programları oluşturur (DDE, ISG, LOJ, YZO, BDTA, IKY).
 
 ---
 
 ## 📂 Proje Yapısı
 
 ```
-app/
-├── components/              # UI bileşenleri
-│   ├── Navbar.tsx          # Navigasyon (sticky, hamburger menü)
-│   ├── Footer.tsx          # Alt bilgi
-│   ├── SearchFilters.tsx   # Arama ve filtreleme
-│   └── AlumniCard.tsx      # Mezun kartı
-├── mezunlar/[id]/          # Dinamik profil sayfaları
-├── api/                    # API routes
-├── globals.css             # Tema ve global stiller
-├── layout.tsx              # Root layout (Navbar + Footer)
-└── page.tsx                # Ana sayfa
-
-lib/
-├── authOptions.ts          # NextAuth config
-├── db.ts                   # Prisma client
-└── schemas/                # Zod validation
-
-prisma/
-└── schema.prisma           # Database modeli
+mezunplatformktu/
+├── app/
+│   ├── (auth)/                 # Kimlik doğrulama route grubu
+│   │   ├── login/
+│   │   ├── register/
+│   │   ├── forgot-password/
+│   │   ├── reset-password/
+│   │   └── verify-email/
+│   ├── (dashboard)/           # Korumalı dashboard
+│   │   └── jobs/               # İş ilanları listesi ve detay
+│   ├── (pages)/                # Ortak sayfa layout'u
+│   │   ├── mezunlar/           # Mezun listesi ve [id] profil
+│   │   └── duyurular/
+│   ├── (protected)/            # Auth gerekli layout
+│   ├── admin/                  # Admin paneli
+│   │   ├── approvals/          # Üyelik onayları
+│   │   ├── announcements/      # Duyuru yönetimi
+│   │   ├── departments/        # Bölüm/Program CRUD
+│   │   ├── events/             # Etkinlik yönetimi
+│   │   ├── jobs/               # İlan moderasyonu
+│   │   ├── moderation/         # Moderasyon
+│   │   ├── reports/            # Rapor listesi
+│   │   ├── detailed-reports/  # Detaylı raporlar
+│   │   ├── roles/              # Rol yönetimi
+│   │   ├── settings/           # Sistem ayarları
+│   │   └── users/              # Kullanıcı yönetimi
+│   ├── api/                    # API routes
+│   │   ├── admin/              # Admin endpoint'leri
+│   │   ├── alumni/             # Mezun CRUD
+│   │   ├── auth/               # E-posta doğrulama, şifre sıfırlama
+│   │   ├── events/             # Etkinlik CRUD
+│   │   ├── jobs/               # İlan CRUD, başvuru
+│   │   ├── messages/           # Mesajlaşma
+│   │   ├── notifications/      # Bildirimler
+│   │   ├── profile/            # Deneyim, eğitim, yetenek
+│   │   ├── reports/            # Şikâyet oluşturma
+│   │   ├── register/           # Kayıt
+│   │   ├── stats/              # İstatistikler
+│   │   ├── turkey-map/         # Harita SVG
+│   │   ├── upload/             # Dosya yükleme
+│   │   ├── user/               # Profil güncelleme, mezuniyet
+│   │   └── users/              # Kullanıcı arama
+│   ├── applications/          # Başvurularım
+│   ├── events/                 # Etkinlik listesi, detay, yeni
+│   ├── messages/               # Mesajlaşma sayfaları
+│   ├── profile/                # Profil sayfası
+│   ├── components/             # UI bileşenleri
+│   │   ├── Navbar.tsx
+│   │   ├── Footer.tsx
+│   │   ├── SearchFilters.tsx
+│   │   ├── AlumniCard.tsx
+│   │   ├── JobCard.tsx
+│   │   ├── NotificationBell.tsx
+│   │   ├── HomeStats.tsx
+│   │   ├── HomeAlumniMap.tsx
+│   │   ├── TurkeyMap.tsx
+│   │   ├── ReportModal.tsx
+│   │   └── ui/                 # Button vb.
+│   ├── lib/constants.ts        # Şehir, bölüm, iş alanı listeleri
+│   ├── globals.css
+│   ├── layout.tsx
+│   └── page.tsx                # Ana sayfa
+├── lib/
+│   ├── authOptions.ts
+│   ├── db.ts                   # Prisma client
+│   ├── email.ts                # Resend e-posta gönderimi
+│   ├── notifications.ts
+│   ├── permissions.ts
+│   ├── tokens.ts               # Doğrulama/şifre sıfırlama token'ları
+│   └── schemas/                # Zod validasyon (login, register)
+├── prisma/
+│   ├── schema.prisma           # Veritabanı modeli
+│   ├── seed.ts
+│   └── migrations/
+├── auth.ts                     # NextAuth config
+├── auth.config.ts
+├── middleware.ts               # Route koruma
+└── next.Dockerfile
 ```
 
 ---
@@ -115,143 +226,149 @@ prisma/
 ## 🎨 Tasarım Sistemi
 
 ### Renk Paleti
-
 **Açık Tema**
 ```css
 Primary:    #2563eb  /* Mavi */
-Accent:     #0ea5e9  /* Sky Blue */
-Background: #f8fafc  /* Açık gri */
-Foreground: #1e293b  /* Koyu gri */
+Accent:    #0ea5e9  /* Sky Blue */
+Background: #f8fafc
+Foreground: #1e293b
 ```
 
-
-
 ### Responsive Stratejisi
-
-**Breakpoint'ler:**
-- Mobile: `< 640px` → Tek kolon, hamburger menü, filtreler gizli
-- Tablet: `640-1024px` → İki kolon, yatay menü, filtreler açık
-- Desktop: `> 1024px` → Üç kolon, tam genişlik layout
+- **Mobile:** `< 640px` → Tek kolon, hamburger menü
+- **Tablet:** `640–1024px` → İki kolon, yatay menü
+- **Desktop:** `> 1024px` → Üç kolon, tam genişlik layout
 
 **Grid Düzenleri:**
 ```tsx
-// Ana sayfa mezun kartları
-grid-cols-1 md:grid-cols-2 lg:grid-cols-3
-
-// Profil sayfası
-grid-cols-1 lg:grid-cols-3  // Sol: 2 birim, Sağ: 1 birim
+grid-cols-1 md:grid-cols-2 lg:grid-cols-3  /* Ana sayfa / mezun kartları */
+grid-cols-1 lg:grid-cols-3                  /* Profil sayfası */
 ```
-
-### Bileşen Davranışları
-
-**Navbar**
-- Mobile: Logo sadeleşir, hamburger menü, profil ikonu gizli
-- Desktop: Tam logo, yatay menü, profil ikonu görünür
-- Sticky pozisyon (her zaman üstte)
-
-**SearchFilters**
-- Mobile: Toggle butonu ile açılır/kapanır, aktif filtre badge'i
-- Desktop: Her zaman açık, 3 kolonlu grid
-
-**AlumniCard**
-- Profil fotoğrafı yoksa baş harfler gösterilir
-- LinkedIn badge ve profil bağlantısı
-- Hover efektleri: border rengi, shadow artışı
-
-**Footer**
-- Mobile: 1 kolon, dikey hizalama
-- Desktop: 4 kolon, yatay düzen
 
 ---
 
 ## 🛠️ Teknoloji Stack
 
-**Frontend:** Next.js 15.5 (App Router), React 19, TypeScript, Tailwind CSS 4  
-**Backend:** Next.js API Routes, Prisma ORM, PostgreSQL  
-**Auth:** NextAuth  
-**Tools:** Biome (lint/format), Docker
+| Katman | Teknoloji |
+|--------|------------|
+| **Frontend** | Next.js 16, React 19, TypeScript, Tailwind CSS 4 |
+| **Backend** | Next.js API Routes, Prisma ORM, PostgreSQL |
+| **Auth** | NextAuth v5 (Credentials, JWT) |
+| **E-posta** | Resend |
+| **Araçlar** | Biome (lint/format), Docker |
 
 ---
 
-## 📱 Sayfa ve Bileşenler
+## 📱 Sayfalar ve Rotalar
 
-### Ana Sayfa (`/`)
-**Özellikler:**
-- Hero section (gradient arka plan, istatistikler)
-- Arama çubuğu (real-time, isim/şirket/pozisyon)
-- Filtreler (şehir, bölüm, iş alanı)
-- Grid düzeninde mezun kartları
-- "Sonuç bulunamadı" boş durumu
+### Herkese Açık
+| Rota | Açıklama |
+|------|----------|
+| `/` | Ana sayfa (duyurular, harita, istatistikler) |
+| `/login` | Giriş |
+| `/register` | Kayıt |
+| `/forgot-password` | Şifre sıfırlama talebi |
+| `/reset-password` | Token ile şifre güncelleme |
+| `/verify-email` | E-posta doğrulama |
+| `/duyurular` | Duyuru listesi |
 
-**Kullanım:**
-1. Arama çubuğuna yazın veya filtre seçin
-2. Kartlar anında güncellenir
-3. "Profili Görüntüle" ile detay sayfasına gidin
+### Giriş Gerektiren
+| Rota | Açıklama |
+|------|----------|
+| `/mezunlar` | Mezun listesi (arama/filtre) |
+| `/mezunlar/[id]` | Mezun profil detayı |
+| `/profile` | Profil sayfası |
+| `/jobs` | İş ilanları |
+| `/jobs/[id]` | İlan detayı ve başvuru |
+| `/events` | Etkinlik listesi |
+| `/events/[id]` | Etkinlik detayı |
+| `/events/new` | Yeni etkinlik oluşturma |
+| `/messages` | Mesaj listesi |
+| `/messages/[partnerId]` | Sohbet |
+| `/applications` | Başvurularım |
 
-### Mezun Profili (`/mezunlar/[id]`)
-**Bölümler:**
-- Header: Gradient arka plan, profil fotoğrafı, sosyal medya
-- Sol kolon: Hakkında, deneyim geçmişi
-- Sağ kolon: İletişim, yetenekler, diller, eğitim
-- "Mezunlara Dön" breadcrumb
-
-**URL Formatı:** `/mezunlar/1`, `/mezunlar/2`, ...
+### Admin (ADMIN / MODERATOR / HEAD_OF_DEPARTMENT)
+| Rota | Açıklama |
+|------|----------|
+| `/admin` | Genel bakış |
+| `/admin/approvals` | Üyelik onayları |
+| `/admin/users` | Kullanıcı yönetimi |
+| `/admin/announcements` | Duyuru yönetimi |
+| `/admin/events` | Etkinlik yönetimi |
+| `/admin/jobs` | İlan moderasyonu |
+| `/admin/reports` | Rapor listesi |
+| `/admin/detailed-reports` | Detaylı raporlar |
+| `/admin/departments` | Bölüm/Program CRUD |
+| `/admin/roles` | Rol yönetimi |
+| `/admin/settings` | Sistem ayarları |
+| `/admin/moderation` | Moderasyon |
 
 ---
 
-## 🎯 UX Prensipleri
+## 🌐 API Özeti
 
-### Sezgisel Arama
+| Endpoint | Metot | Açıklama |
+|----------|-------|----------|
+| `/api/alumni` | GET, POST | Mezun listesi, filtreleme |
+| `/api/alumni/[id]` | GET | Mezun detayı |
+| `/api/jobs` | GET, POST | İlan listesi, oluşturma |
+| `/api/jobs/[id]` | GET, PATCH, DELETE | İlan detayı, güncelleme |
+| `/api/jobs/[id]/apply` | POST | Başvuru gönderme |
+| `/api/events` | GET, POST | Etkinlik listesi, oluşturma |
+| `/api/events/[id]` | GET, PATCH, DELETE | Etkinlik detayı |
+| `/api/events/[id]/participate` | POST | Etkinlik katılımı |
+| `/api/messages` | GET, POST | Mesaj listesi, gönderim |
+| `/api/messages/[partnerId]` | GET | Sohbet mesajları |
+| `/api/notifications` | GET, PATCH | Bildirim listesi, okundu işareti |
+| `/api/profile/experience` | POST, DELETE | Deneyim ekleme/silme |
+| `/api/profile/education` | POST, DELETE | Eğitim ekleme/silme |
+| `/api/profile/skills` | POST, DELETE | Yetenek ekleme/silme |
+| `/api/register` | POST | Kullanıcı kaydı |
+| `/api/stats` | GET | Platform istatistikleri |
+| `/api/turkey-map` | GET | Harita SVG verisi |
+| `/api/upload` | POST | Dosya yükleme |
+| `/api/user/update` | PATCH | Profil güncelleme |
+| `/api/user/graduate` | POST | Mezuniyet bilgisi |
+| `/api/reports` | POST | Şikâyet oluşturma |
+| `/api/auth/forgot-password` | POST | Şifre sıfırlama talebi |
+| `/api/auth/reset-password` | POST | Token ile şifre güncelleme |
+| `/api/auth/verify-email` | POST | E-posta doğrulama |
+
+Admin endpoint'leri (`/api/admin/*`) yetkiye göre erişilebilir.
+
+---
+
+## 🎯 UX ve Erişilebilirlik
+
+### Arama
 - Görünür arama çubuğu, açıklayıcı placeholder
 - Aktif filtre sayısı göstergesi
-- "Filtreleri Temizle" hızlı eylem
+- "Filtreleri Temizle" butonu
 
-### Hızlı Navigasyon
-- Sticky navbar (her zaman erişilebilir)
+### Navigasyon
+- Sticky navbar
 - Breadcrumb (profil → mezunlar)
-- Hover efektleri ve görsel feedback
-
-### Görsel Hiyerarşi
-- Başlıklar belirgin (`text-3xl sm:text-4xl lg:text-5xl`)
-- İkincil bilgiler muted renklerde
-- Yeterli boşluk (`gap-6`, `py-8`)
+- Hover ve görsel geri bildirim
 
 ### Erişilebilirlik
-- ARIA labels (`aria-label="Profil"`)
-- Semantic HTML (`<nav>`, `<main>`, `<footer>`)
-- Klavye navigasyonu desteği
-- WCAG AA kontrast oranları
+- ARIA etiketleri
+- Anlamlı HTML (`<nav>`, `<main>`, `<footer>`)
+- Klavye navigasyonu
+- WCAG AA kontrast hedefleri
 
 ---
 
 ## 🔧 Özelleştirme
 
-### Mock Data Düzenleme
-**Konum:** `app/page.tsx`
-```tsx
-const mockAlumni = [
-  {
-    id: "9",
-    name: "Yeni Mezun",
-    department: "Bilgisayar Mühendisliği",
-    city: "Trabzon",
-    jobTitle: "Yazılım Geliştirici",
-    company: "Tech Şirket",
-    graduationYear: 2023,
-    linkedinUrl: "https://linkedin.com/in/...",
-  },
-  // ...
-];
+### Filtre Seçenekleri
+**Konum:** `app/lib/constants.ts`
+```ts
+export const cities = ["Adana", "Ankara", ...];
+export const flatDepartments = [...];
+export const jobFields = [...];
 ```
 
-### Filtre Seçenekleri Ekleme
-**Konum:** `app/components/SearchFilters.tsx`
-```tsx
-const cities = ["Tümü", "İstanbul", "Ankara", "Yeni Şehir"];
-const departments = ["Tümü", "Bilgisayar Mühendisliği", "Yeni Bölüm"];
-```
-
-### Renk Değiştirme
+### Renk Paleti
 **Konum:** `app/globals.css`
 ```css
 :root {
@@ -262,77 +379,16 @@ const departments = ["Tümü", "Bilgisayar Mühendisliği", "Yeni Bölüm"];
 
 ---
 
-## 💡 Geliştirme İpuçları
-
-### Client vs Server Components
-```tsx
-// Client (state, event handlers)
-"use client";
-import { useState } from "react";
-
-// Server (default, SEO friendly)
-export default function Page() { ... }
-```
-
-### TypeScript Türleri
-```tsx
-interface AlumniCardProps {
-  id: string;
-  name: string;
-  department: string;
-  // ...
-}
-
-interface FilterState {
-  search: string;
-  city: string;
-  department: string;
-  jobField: string;
-}
-```
-
-### Responsive Pattern
-```tsx
-className="
-  text-sm md:text-base lg:text-lg    // Font boyutu
-  grid-cols-1 md:grid-cols-2 lg:grid-cols-3  // Grid
-  hidden md:flex    // Visibility
-"
-```
-
----
-
-## 🌐 API Entegrasyonu (Planlı)
-
-### Mezun Listesi
-```tsx
-async function getAlumni(filters: FilterState) {
-  const res = await fetch('/api/alumni', {
-    method: 'POST',
-    body: JSON.stringify(filters),
-  });
-  return res.json();
-}
-```
-
-### Profil Detayı
-```tsx
-async function getProfile(id: string) {
-  const res = await fetch(`/api/alumni/${id}`);
-  return res.json();
-}
-```
-
----
-
 ## 🐛 Sorun Giderme
 
 | Sorun | Çözüm |
 |-------|-------|
-| Filtreleme çalışmıyor | `onFilterChange` prop'u doğru iletilmiş mi kontrol edin |
-| Mobil menü açılmıyor | `Navbar.tsx` başında `"use client"` var mı? |
-| Renkler yanlış | `globals.css` import edilmiş mi? (`layout.tsx`) |
-| Docker hatası | `.env` dosyası var mı? Portlar dolu mu? |
+| Filtreleme çalışmıyor | `onFilterChange` prop'unun doğru iletildiğini kontrol edin |
+| Mobil menü açılmıyor | `Navbar.tsx` başında `"use client"` olduğundan emin olun |
+| Docker hatası | `.env` ve `INTERNAL_DATABASE_URL` tanımlı mı? Portlar boş mu? |
+| Prisma client bulunamıyor | `npx prisma generate` çalıştırın |
+| E-posta gelmiyor | `RESEND_API_KEY` ayarlı mı? `lib/email.ts` loglarına bakın |
+| 401 Unauthorized | Giriş yapılmış mı? `NEXTAUTH_SECRET` doğru mu? |
 
 ---
 
@@ -340,22 +396,19 @@ async function getProfile(id: string) {
 
 ### ✅ Tamamlanan
 - Modern UI/UX tasarımı
-- Responsive tasarım (mobile-first)
-- Arama ve filtreleme sistemi
+- Responsive, mobil öncelikli tasarım
+- Arama ve filtreleme
 - Mezun profil sayfaları
-
-### 🚧 Devam Eden
-- Gerçek veritabanı entegrasyonu
-- API endpoint'leri
-- Authentication akışı
-
-### 📋 Planlanan
-- Profil fotoğrafı upload
-- Etkinlik takvimi
-- Kariyer fırsatları
+- PostgreSQL + Prisma entegrasyonu
+- NextAuth kimlik doğrulama
+- E-posta doğrulama ve şifre sıfırlama
+- Üyelik onay akışı
+- İş ilanları ve başvuru sistemi
+- Etkinlikler ve katılım
+- Mesajlaşma
+- Bildirimler
+- Duyurular
+- Raporlama ve moderasyon
 - Admin paneli
-- Email bildirimleri
-
----
-
-**Not:** Şu an mock data kullanılıyor. API entegrasyonu için altyapı hazır.
+- Türkiye haritası ve istatistikler
+- Profil fotoğrafı ve kapak görseli yükleme
