@@ -5,6 +5,8 @@ COPY package*.json ./
 RUN npm install
 COPY . .
 RUN npx prisma generate
+# Build-time dummy URL — Prisma'nın module-level init'i için gerekli, gerçek bağlantı runtime'da geliyor
+ENV DATABASE_URL=postgresql://dummy:dummy@localhost:5432/dummy
 RUN npm run build
 
 # Stage 2: Run (Next.js standalone)

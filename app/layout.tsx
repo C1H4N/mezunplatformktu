@@ -5,6 +5,8 @@ import ConditionalLayout from "./components/ConditionalLayout";
 import { SessionProvider } from "next-auth/react";
 import { Toaster } from "react-hot-toast";
 
+export const dynamic = "force-dynamic";
+
 const fontSans = Plus_Jakarta_Sans({
   subsets: ["latin", "latin-ext"],
   variable: "--font-sans-primary",
