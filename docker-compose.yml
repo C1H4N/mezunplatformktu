@@ -31,8 +31,8 @@ services:
 
   web:
     build:
-      context: ./MezunPlatform.UI
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: MezunPlatform.UI/Dockerfile
     depends_on:
       - api
     restart: always
