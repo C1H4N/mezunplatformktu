@@ -1,0 +1,57 @@
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    user: root
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD="YourStrong(!)Password"
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql_data:/var/opt/mssql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong(!)Password' -C -Q 'SELECT 1' || exit 1" ]
+      interval: 10s
+      retries: 5
+      start_period: 10s
+      timeout: 3s
+
+  api:
+    build:
+      context: ./MezunPlatform.API
+      dockerfile: Dockerfile
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=db;Database=MezunPlatformDb;User Id=sa;Password=YourStrong(!)Password;TrustServerCertificate=True;
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: always
+
+  web:
+    build:
+      context: ./MezunPlatform.UI
+      dockerfile: Dockerfile
+    depends_on:
+      - api
+    restart: always
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - letsencrypt_certs:/etc/letsencrypt:ro # certbot tarafından doldurulur
+      - certbot_webroot:/var/www/certbot:ro # HTTP-01 challenge için
+    depends_on:
+      - api
+      - web
+    restart: always
+
+volumes:
+  mssql_data:
+  letsencrypt_certs:
+  certbot_webroot:
