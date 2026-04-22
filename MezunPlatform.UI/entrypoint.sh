@@ -1,8 +1,8 @@
 #!/bin/sh
 set -e
 
-echo "Running Prisma migrations..."
-node node_modules/prisma/build/index.js migrate deploy
+echo "Syncing Prisma schema to DB..."
+node node_modules/prisma/build/index.js db push --accept-data-loss
 
 echo "Starting Next.js server..."
 exec node server.js

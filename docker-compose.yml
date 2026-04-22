@@ -53,8 +53,10 @@ services:
       dockerfile: MezunPlatform.UI/Dockerfile
     environment:
       - DATABASE_URL=postgresql://mezun:mezunpass@postgres:5432/mezunplatform
-      - NEXTAUTH_URL=http://localhost # TODO: prod'da domain ile değiştir
+      - NEXTAUTH_URL=http://localhost
       - NEXTAUTH_SECRET=changeme-use-a-long-random-string # TODO: değiştir
+      - AUTH_TRUST_HOST=true
+      - AUTH_URL=http://localhost
     depends_on:
       postgres:
         condition: service_healthy
