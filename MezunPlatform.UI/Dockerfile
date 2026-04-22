@@ -22,6 +22,8 @@ COPY --from=build /app/public ./public
 COPY --from=build /app/prisma ./prisma
 COPY --from=build /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=build /app/node_modules/@prisma ./node_modules/@prisma
+COPY --from=build /app/node_modules/prisma ./node_modules/prisma
+COPY --from=build /app/node_modules/.bin/prisma ./node_modules/.bin/prisma
 COPY MezunPlatform.UI/entrypoint.sh ./entrypoint.sh
 RUN chmod +x entrypoint.sh
 
