@@ -48,7 +48,7 @@ export default auth((req) => {
       );
     }
     // Sayfa route'ları için unauthorized sayfasına yönlendir
-    return NextResponse.rewrite(new URL("/unauthorized", nextUrl));
+    return NextResponse.redirect(new URL("/unauthorized", nextUrl));
   }
 
   return NextResponse.next();
